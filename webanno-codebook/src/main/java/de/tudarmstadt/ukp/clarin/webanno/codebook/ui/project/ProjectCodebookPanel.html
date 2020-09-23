@@ -17,24 +17,26 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
-  <wicket:panel>
-    <div class="scrolling flex-content flex-h-container flex-gutter">
-      <div class="flex-v-container flex-gutter min-content-height" style="flex-basis: 20%;">
-        <form wicket:id="codebookSelectionForm" class="flex-content card">
-           <div class="card-header">
-              <wicket:message key="codebooks"/>
-              <span>
+<wicket:panel>
+  <div class="scrolling flex-content flex-h-container flex-gutter">
+    <div class="flex-v-container flex-gutter" style="flex-basis: 20%;">
+      <form wicket:id="codebookSelectionForm" class="flex-content card">
+        <div class="card-header">
+          <wicket:message key="codebooks"/>
+          <span>
               <a target="_blank" wicket:message="href:layers.help.link">
                 <i class="fas fa-question-circle"></i>
               </a>
             </span>
-              <div class="actions">
+          <div class="actions">
               <span class="dropdown" aria-haspopup="true" aria-expanded="false">
-                <button class="btn btn-action btn-secondary dropdown-toggle flex-content" type="button" data-toggle="dropdown">
+                <button class="btn btn-action btn-secondary dropdown-toggle flex-content"
+                        type="button" data-toggle="dropdown">
                   <i class="fas fa-file-upload"></i>&nbsp;
                   <wicket:message key="import"/>
                 </button>
-                <div class="dropdown-menu shadow-lg pt-0 pb-0" role="menu" style="min-width: 440px;">
+                <div class="dropdown-menu shadow-lg pt-0 pb-0" role="menu"
+                     style="min-width: 440px;">
                   <form wicket:id="importCodebookForm">
                     <div class="card-header">
                       <wicket:message key="import.codebooks"/>
@@ -45,7 +47,7 @@
                           <wicket:message key="filesToImport"/>
                         </label>
                         <div class="col-sm-8">
-                          <input wicket:id="content" type="file" multiple />
+                          <input wicket:id="content" type="file" multiple/>
                         </div>
                       </div>
                     </div>
@@ -59,44 +61,44 @@
                 </div>
               </span>
 
-              <input wicket:id="create"  type="submit" class="btn btn-primary"
+            <input wicket:id="create" type="submit" class="btn btn-primary"
                    wicket:message="value:new.codebook.create"/>
-            </div>
           </div>
+        </div>
 
-          <div class="card-body">
-            <div>
-              <button class="btn btn-sm btn-outline-secondary" wicket:id="expandAll">Expand all
-              </button>
-              <button class="btn btn-sm btn-outline-secondary float-right" wicket:id="collapseAll">
-                Collapse all
-              </button>
-            </div>
-            <hr/>
-            <div wicket:id="projectCodebookTreePanel">[projectCodebookTreePanel]</div>
+        <div class="card-body scrolling">
+          <div>
+            <button class="btn btn-sm btn-outline-secondary" wicket:id="expandAll">Expand all
+            </button>
+            <button class="btn btn-sm btn-outline-secondary float-right" wicket:id="collapseAll">
+              Collapse all
+            </button>
           </div>
-        </form>
-      </div>
+          <hr/>
+          <div wicket:id="projectCodebookTreePanel">[projectCodebookTreePanel]</div>
+        </div>
+      </form>
+    </div>
 
-      <form wicket:id="codebookDetailForm" class="flex-content flex-v-container flex-gutter">
-        <div class="flex-content card">
-          <div class="card-header">
-            <wicket:message key="codebook.details"/>
-            <div class="actions">
-              <button wicket:id="save" class="btn btn-primary">
-                <i class="fas fa-save"></i>&nbsp;
-                <wicket:message key="save"/>
-              </button>
-              <button wicket:id="delete" class="btn btn-danger">
-                <i class="fas fa-times"></i>&nbsp;
-                <wicket:message key="delete"/>
-              </button>
-              <button wicket:id="close" class="btn btn-secondary">
-                <i class="fas fa-times"></i>&nbsp;
-                <wicket:message key="close"/>
-              </button>
+    <form wicket:id="codebookDetailForm" class="flex-content flex-v-container flex-gutter">
+      <div class="flex-content card">
+        <div class="card-header">
+          <wicket:message key="codebook.details"/>
+          <div class="actions">
+            <button wicket:id="save" class="btn btn-primary">
+              <i class="fas fa-save"></i>&nbsp;
+              <wicket:message key="save"/>
+            </button>
+            <button wicket:id="delete" class="btn btn-danger">
+              <i class="fas fa-times"></i>&nbsp;
+              <wicket:message key="delete"/>
+            </button>
+            <button wicket:id="close" class="btn btn-secondary">
+              <i class="fas fa-times"></i>&nbsp;
+              <wicket:message key="close"/>
+            </button>
 
-              <span class="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="dropdown" aria-haspopup="true" aria-expanded="false">
                 <button class="btn btn-secondary btn-action dropdown-toggle flex-content"
                         type="button" data-toggle="dropdown">
                   <i class="fas fa-download"></i>&nbsp;
@@ -118,87 +120,87 @@
                 </div>
               </span>
 
-            </div>
           </div>
-          <div wicket:id="confirmationDialog"></div>
+        </div>
+        <div wicket:id="confirmationDialog"></div>
 
-          <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
-            <div class="card min-content-height">
-              <div class="card-header small">
-                <wicket:message key="properties"/>
-                <a target="_blank" wicket:message="href:properties.help.link">
-                  <i class="fas fa-question-circle"></i>
-                </a>
-              </div>
-
-              <div class="card-body">
-                <div class="form-group form-row">
-                  <label wicket:for="uiName" class="col-sm-4 col-form-label">
-                    <wicket:label key="name"/>
-                  </label>
-                  <div class="col-sm-8">
-                    <input wicket:id="uiName" class="form-control"/>
-                  </div>
-                </div>
-                <div class="form-group form-row">
-                  <label wicket:for="description" class="col-sm-4 col-form-label">
-                    <wicket:label key="description"/>
-                  </label>
-                  <div class="col-sm-8">
-                    <textarea wicket:id="description" rows="4" class="form-control"></textarea>
-                  </div>
-                </div>
-                <div class="form-group form-row">
-                  <label wicket:for="parent" class="col-sm-4 control-label">
-                    <wicket:label key="parentSelection"/>
-                  </label>
-                  <div class="col-sm-8">
-                    <select wicket:id="parent" class="form-control"></select>
-                  </div>
-                </div>
-                <div class="form-group form-row">
-                  <label wicket:for="createTag" class="col-sm-4 control-label">
-                    <wicket:label key="createTag"/>
-                  </label>
-                  <div class="col-sm-8">
-                    <input wicket:id="createTag" class="form-control-md" type="checkbox" checked/>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
           <div class="card min-content-height">
             <div class="card-header small">
-              <wicket:message key="technicalProperties"/>
+              <wicket:message key="properties"/>
               <a target="_blank" wicket:message="href:properties.help.link">
                 <i class="fas fa-question-circle"></i>
               </a>
             </div>
+
             <div class="card-body">
               <div class="form-group form-row">
-                <label class="col-sm-4 col-form-label">
-                  <wicket:message
-                          key="internalName"/>
+                <label wicket:for="uiName" class="col-sm-4 col-form-label">
+                  <wicket:label key="name"/>
                 </label>
                 <div class="col-sm-8">
-                    <span class="form-control" readonly=""><wicket:container
-                            wicket:id="name"/></span>
+                  <input wicket:id="uiName" class="form-control"/>
+                </div>
+              </div>
+              <div class="form-group form-row">
+                <label wicket:for="description" class="col-sm-4 col-form-label">
+                  <wicket:label key="description"/>
+                </label>
+                <div class="col-sm-8">
+                  <textarea wicket:id="description" rows="4" class="form-control"></textarea>
+                </div>
+              </div>
+              <div class="form-group form-row">
+                <label wicket:for="parent" class="col-sm-4 control-label">
+                  <wicket:label key="parentSelection"/>
+                </label>
+                <div class="col-sm-8">
+                  <select wicket:id="parent" class="form-control"></select>
+                </div>
+              </div>
+              <div class="form-group form-row">
+                <label wicket:for="createTag" class="col-sm-4 control-label">
+                  <wicket:label key="createTag"/>
+                </label>
+                <div class="col-sm-8">
+                  <input wicket:id="createTag" class="form-control-md" type="checkbox" checked/>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </form>
 
-      <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
-        <div wicket:id="codebookTagSelector" class="flex-h-container flex-no-gutter"
-             style="flex: .3;"></div>
-        <div wicket:id="codebookTagEditor" class="flex-content flex-h-container flex-no-gutter">
-          Codes
+        <div class="card min-content-height">
+          <div class="card-header small">
+            <wicket:message key="technicalProperties"/>
+            <a target="_blank" wicket:message="href:properties.help.link">
+              <i class="fas fa-question-circle"></i>
+            </a>
+          </div>
+          <div class="card-body">
+            <div class="form-group form-row">
+              <label class="col-sm-4 col-form-label">
+                <wicket:message
+                        key="internalName"/>
+              </label>
+              <div class="col-sm-8">
+                    <span class="form-control" readonly=""><wicket:container
+                            wicket:id="name"/></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </form>
+
+    <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
+      <div wicket:id="codebookTagSelector" class="flex-h-container flex-no-gutter"
+           style="flex: .3;"></div>
+      <div wicket:id="codebookTagEditor" class="flex-content flex-h-container flex-no-gutter">
+        Codes
+      </div>
     </div>
-  </wicket:panel>
+  </div>
+</wicket:panel>
 </body>
 </html>

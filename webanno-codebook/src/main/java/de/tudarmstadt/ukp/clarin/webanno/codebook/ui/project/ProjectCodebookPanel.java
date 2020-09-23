@@ -113,11 +113,11 @@ public class ProjectCodebookPanel
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean CodebookExporter codebookExporter;
-    private @SpringBean ProjectService repository;
-    private @SpringBean UserDao userRepository;
-    private @SpringBean FeatureSupportRegistry featureSupportRegistry;
-    private @SpringBean CodebookFeatureSupportRegistry codebookFeatureSupportRegistry;
     private @SpringBean ApplicationEventPublisherHolder applicationEventPublisherHolder;
+    private @SpringBean CasStorageService casStorageService;
+    private @SpringBean DocumentService documentService;
+
+    private ConfirmationDialog confirmationDialog;
 
     private CodebookSelectionForm codebookSelectionForm;
     private CodebookDetailForm codebookDetailForm;
@@ -382,10 +382,6 @@ public class ProjectCodebookPanel
                     ProjectCodebookPanel.this.getModelObject());
         }
     }
-
-    private ConfirmationDialog confirmationDialog;
-    private @SpringBean CasStorageService casStorageService;
-    private @SpringBean DocumentService documentService;
 
     // package private by intention
     class CodebookDetailForm
