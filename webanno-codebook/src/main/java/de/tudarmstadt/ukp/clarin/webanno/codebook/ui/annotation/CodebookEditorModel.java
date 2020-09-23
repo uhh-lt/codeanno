@@ -32,9 +32,6 @@ public class CodebookEditorModel
 {
 
     private static final long serialVersionUID = -628789175872734603L;
-    // TODO I think we can remove codebook and code from the editor model ?!
-    private Codebook codebook;
-    private String code;
     private User user;
     private SourceDocument document;
     private Project project;
@@ -44,31 +41,6 @@ public class CodebookEditorModel
     public CodebookEditorModel()
     {
 
-    }
-
-    public CodebookEditorModel(Codebook aCodebook)
-    {
-        this.codebook = aCodebook;
-    }
-
-    public Codebook getCodebook()
-    {
-        return codebook;
-    }
-
-    public void setCodebook(Codebook codebook)
-    {
-        this.codebook = codebook;
-    }
-
-    public String getCode()
-    {
-        return code;
-    }
-
-    public void setCode(String code)
-    {
-        this.code = code;
     }
 
     public SourceDocument getDocument()

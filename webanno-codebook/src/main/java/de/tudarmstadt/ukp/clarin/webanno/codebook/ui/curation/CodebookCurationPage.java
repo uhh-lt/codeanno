@@ -131,7 +131,7 @@ public class CodebookCurationPage
     public CodebookCurationPage()
     {
         super();
-        LOG.debug("Setting up curation page without parameters");
+        LOG.debug("Setting up codebook curation page without parameters");
         commonInit();
 
         Map<String, StringValue> fragmentParameters = Session.get()
@@ -151,7 +151,7 @@ public class CodebookCurationPage
     public CodebookCurationPage(final PageParameters aPageParameters)
     {
         super(aPageParameters);
-        LOG.debug("Setting up curation page with parameters: {}", aPageParameters);
+        LOG.debug("Setting up codebook curation page with parameters: {}", aPageParameters);
 
         commonInit();
 
@@ -406,7 +406,7 @@ public class CodebookCurationPage
         }
 
         Map<String, CAS> curationCASes = listCASesForCuration(finishedAnnotationDocuments,
-                randomAnnotationDocument, state.getMode());
+                randomAnnotationDocument);
 
         createMergeCas(state, state.getDocument(), curationCASes, randomAnnotationDocument, true,
                 aMergeIncompleteAnnotations);
@@ -444,8 +444,6 @@ public class CodebookCurationPage
         // the
         // end of the open dialog - it must not happen during editing because the CAS
         // addresses are used as IDs in the UI
-        // repository.upgradeCasAndSave(aDocument, aBratAnnotatorModel.getMode(),
-        // aBratAnnotatorModel.getUser().getUsername());
         CAS mergeCas = null;
         try {
             mergeCas = curationDocumentService.readCurationCas(aDocument);
@@ -493,9 +491,6 @@ public class CodebookCurationPage
         CAS mergeCas = documentService.readAnnotationCas(aRandomAnnotationDocument);
 
         try (StopWatch watch = new StopWatch(LOG, "CasMerge (codebook)")) {
-            // codebook types
-            // List<Type> entryTypes = CurationUtil.getCodebookTypes(mergeCas,
-            // codebookService.listCodebook(aState.getProject()));
             // codebook cas diff
             CasDiff.DiffResult diff = CodebookDiff.doCodebookDiff(codebookService,
                     aState.getProject(), // entryTypes,
@@ -515,7 +510,7 @@ public class CodebookCurationPage
     }
 
     public Map<String, CAS> listCASesForCuration(List<AnnotationDocument> annotationDocuments,
-            AnnotationDocument randomAnnotationDocument, Mode aMode)
+            AnnotationDocument randomAnnotationDocument)
         throws UIMAException, ClassNotFoundException, IOException
     {
         Map<String, CAS> casses = new HashMap<>();

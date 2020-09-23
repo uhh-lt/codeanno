@@ -15,17 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.annotation;
+package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree;
 
-import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.enabledWhen;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationSuggestion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
@@ -35,17 +40,18 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 
-public class CodebookEditorTreePanel
+public class CodebookAutomationTreePanel
     extends CodebookTreePanel
 {
     private static final long serialVersionUID = -8329270688665288003L;
 
-    private CodebookEditorPanel parentEditor;
-    private Map<CodebookNode, CodebookEditorNodePanel> nodePanels;
+    private CodebookAutomationPage parentPage;
+    private Map<CodebookNode, CodebookAutomationNodePanel> nodePanels;
+    private transient Map<Codebook, List<CodebookAutomationSuggestion>> automationSuggestions;
 
-    public CodebookEditorTreePanel(String aId, IModel<CodebookEditorModel> aModel, CodebookEditorPanel parentEditor)
+    public CodebookAutomationTreePanel(String aId, CodebookAutomationPage parentPage)
     {
-        super(aId, aModel);
+        super(aId, new Model<>(null));
 
         // create and add expand and collapse links
         this.add(new Link<Void>("expandAll")
@@ -57,7 +63,6 @@ public class CodebookEditorTreePanel
                 CodebookNodeExpansion.get().expandAll();
             }
         });
-
         this.add(new Link<Void>("collapseAll")
         {
             private static final long serialVersionUID = -4576757597732733009L;
@@ -69,19 +74,33 @@ public class CodebookEditorTreePanel
         });
 
         this.nodePanels = new HashMap<>();
-        this.parentEditor = parentEditor;
+        this.parentPage = parentPage;
+    }
+
+    private Map<Codebook, List<CodebookAutomationSuggestion>> createDummySuggestions() {
+        Map<Codebook, List<CodebookAutomationSuggestion>> suggestions = new HashMap<>();
+
+        List<Codebook> codebooks = this.codebookService
+                .listCodebook(parentPage.getModelObject().getProject());
+
+        for (Codebook cb : codebooks) {
+            suggestions.put(cb, Collections.singletonList(new CodebookAutomationSuggestion(
+                    cb,
+                    parentPage.getModelObject().getDocument(),
+                    "Dummy1312",
+                    1.0
+            )));
+        }
+
+        return suggestions;
     }
 
     @Override
     public void initCodebookTreeProvider()
     {
-        CodebookEditorModel model = (CodebookEditorModel) this.getDefaultModelObject();
-        // TODO what to throw?!
-        // if(model == null || !(model instanceof CodebookEditorModel))
-        // throw new IOException("Model must not be null and of type 'CodebookEditorModel'!");
-
         // get all codebooks and init the provider
-        List<Codebook> codebooks = this.codebookService.listCodebook(model.getProject());
+        List<Codebook> codebooks = this.codebookService
+                .listCodebook(parentPage.getModelObject().getProject());
         this.provider = new CodebookTreeProvider(codebooks);
     }
 
@@ -89,7 +108,8 @@ public class CodebookEditorTreePanel
     public void initTree()
     {
         this.initCodebookTreeProvider();
-        tree = new NestedTree<CodebookNode>("editorCodebookTree", this.provider,
+
+        tree = new NestedTree<CodebookNode>("codebookCurationTree", this.provider,
                 new CodebookNodeExpansionModel())
         {
             private static final long serialVersionUID = 2285250157811357702L;
@@ -98,27 +118,35 @@ public class CodebookEditorTreePanel
             protected Component newContentComponent(String id, IModel<CodebookNode> model)
             {
                 // we save the nodes and their panels to get 'easy' access to the panels since
-                // we have need them later
-                CodebookEditorNodePanel nodePanel = new CodebookEditorNodePanel(id, model, parentEditor);
-                CodebookEditorTreePanel.this.nodePanels.put(model.getObject(), nodePanel);
+                // we need them later
+                CodebookAutomationNodePanel nodePanel = new CodebookAutomationNodePanel(id, model,
+                        automationSuggestions.get(provider.getCodebook(model.getObject())),
+                        CodebookAutomationTreePanel.this);
+                CodebookAutomationTreePanel.this.nodePanels.put(model.getObject(), nodePanel);
                 return nodePanel;
             }
         };
 
         this.applyTheme();
 
+        this.automationSuggestions = createDummySuggestions();
+
         tree.setOutputMarkupId(true);
-
-        tree.add(enabledWhen(() ->
-                parentEditor.getModelObject() != null && !documentService.isAnnotationFinished(
-                parentEditor.getModelObject().getDocument(),
-                parentEditor.getModelObject().getUser())));
-
         this.addOrReplace(tree);
     }
 
-    public Map<CodebookNode, CodebookEditorNodePanel> getNodePanels()
+    public Map<CodebookNode, CodebookAutomationNodePanel> getNodePanels()
     {
         return nodePanels;
+    }
+
+    public CodebookAutomationPage getParentPage()
+    {
+        return parentPage;
+    }
+
+    public void expandNode(CodebookNode n)
+    {
+        tree.expand(n);
     }
 }

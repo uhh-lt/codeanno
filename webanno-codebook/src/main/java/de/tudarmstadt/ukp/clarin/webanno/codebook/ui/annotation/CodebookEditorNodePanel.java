@@ -21,10 +21,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -37,17 +41,17 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 
-public class CodebookNodePanel extends Panel {
+public class CodebookEditorNodePanel extends CodebookNodePanel {
     private static final long serialVersionUID = 5875644822389693657L;
 
     private CodebookTagSelectionComboBox tagSelectionComboBox;
     private @SpringBean CodebookSchemaService codebookService;
+    protected @SpringBean DocumentService documentService;
     private CodebookEditorPanel parentEditor;
     private Form<CodebookTag> tagSelectionForm;
-    private CodebookNode node;
 
-    public CodebookNodePanel(String id, IModel<CodebookNode> node,
-            CodebookEditorPanel parentEditor) {
+    public CodebookEditorNodePanel(String id, IModel<CodebookNode> node,
+                                   CodebookEditorPanel parentEditor) {
         super(id, new CompoundPropertyModel<>(node));
 
         this.node = node.getObject();
@@ -77,8 +81,18 @@ public class CodebookNodePanel extends Panel {
 
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
         String existingCode = this.parentEditor.getExistingCode(this.node.getCodebook());
+
+
+        String userName = this.parentEditor.getModelObject().getUser().getUsername();
         CodebookTagSelectionComboBox tagSelection = new CodebookTagSelectionComboBox(this,
-                "codebookTagBox", new Model<>(existingCode), tagChoices);
+                "codebookTagBox", new Model<>(existingCode), tagChoices, node);
+
+        SourceDocument doc = parentEditor.getModelObject().getDocument();
+
+        tagSelection.setEnabled(doc !=null
+                && !documentService.isAnnotationFinished(
+                parentEditor.getModelObject().getDocument(),
+                parentEditor.getModelObject().getUser()));
 
         Codebook codebook = this.node.getCodebook();
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
@@ -92,10 +106,12 @@ public class CodebookNodePanel extends Panel {
     private List<CodebookTag> getPossibleTagChoices() {
 
         // get the possible tag choices for the current node
-        CodebookNodePanel parentPanel = this.parentEditor.getNodePanels()
+        CodebookEditorNodePanel parentPanel = this.parentEditor.getNodePanels()
                 .get(this.node.getParent());
+
         if (parentPanel == null)
             return codebookService.listTags(this.node.getCodebook());
+
         // TODO also check parents of parent
         CodebookTag parentTag = parentPanel.getCurrentlySelectedTag();
         if (parentTag == null) // TODO why is this null for street ?!?!?!?
@@ -118,10 +134,7 @@ public class CodebookNodePanel extends Panel {
         List<CodebookTag> tags = codebookService.listTags(this.node.getCodebook());
         Set<CodebookTag> tag = tags.stream().filter(t -> t.getName().equals(tagString))
                 .collect(Collectors.toSet());
-        // assert tag.size() == 1; // TODO what to throw?
-        if (tag.size() < 1) {
-            return null;
-        }
+        assert tag.size() == 1; // TODO what to throw?
         return tag.iterator().next();
     }
 
@@ -145,5 +158,10 @@ public class CodebookNodePanel extends Panel {
 
     public CodebookNode getNode() {
         return node;
+    }
+
+    @Override
+    public CodebookNodePanel getParentNodePanel() {
+        return parentEditor.getParentNodePanel(node);
     }
 }

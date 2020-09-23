@@ -17,6 +17,7 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.actionbar;
 
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.springframework.core.annotation.Order;
@@ -42,7 +43,7 @@ public class CodebookCurationUserPreferencesActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage;
+        return aPage instanceof CodebookCurationPage || aPage instanceof CodebookAutomationPage;
     }
 
     @Override

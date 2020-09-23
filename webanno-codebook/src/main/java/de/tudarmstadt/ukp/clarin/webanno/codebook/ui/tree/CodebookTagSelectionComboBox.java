@@ -1,5 +1,5 @@
 /*
- * Copyright 2019
+ * Copyright 2020
  * Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
  * Technische Universität Darmstadt
  *
@@ -15,11 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.annotation;
+package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree;
 
 import java.util.List;
 import java.util.Optional;
 
+import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -40,6 +41,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.api.coloring.ColoringStrategy;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.annotation.CodebookEditorPanel;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.support.StyledComboBox;
 
@@ -61,13 +63,19 @@ public class CodebookTagSelectionComboBox
     private static final long serialVersionUID = -6038478625103441332L;
 
     private CodebookNodePanel parentPanel;
+    private CodebookNode node;
+
     private @SpringBean CodebookSchemaService codebookService;
+    private @SpringBean UserDao userRepo;
 
     public CodebookTagSelectionComboBox(CodebookNodePanel parentPanel, String id,
-            IModel<String> model, List<CodebookTag> choices)
+            IModel<String> model, List<CodebookTag> choices, CodebookNode node)
     {
         super(id, model, choices);
+
         this.parentPanel = parentPanel;
+        this.node = node;
+
         this.add(new Behavior()
         {
             private static final long serialVersionUID = -8375331706930026335L;
@@ -96,28 +104,26 @@ public class CodebookTagSelectionComboBox
 
                 // every third time it's the real blur event
                 // create a new Tag if it doesnt exist yet
-                CodebookNode node = parentPanel.getNode();
 
                 CodebookTag newUserTag = new CodebookTag();
                 newUserTag.setName(newTagValue);
                 newUserTag.setCodebook(node.getCodebook());
 
-                String user =
-                        parentPanel.getParentEditor().getModelObject().getUser().getUsername();
-                newUserTag.setDescription("This tag was created by " + user + "!");
+                newUserTag.setDescription("This tag was created by "
+                        + userRepo.getCurrentUsername() + "!");
 
                 // parent tag
-                CodebookNodePanel parentNodePanel =
-                        parentPanel.getParentEditor().getParentNodePanel(node);
+                CodebookNodePanel parentNodePanel = parentPanel.getParentNodePanel();
                 if (parentNodePanel != null)
                     newUserTag.setParent(parentNodePanel.getCurrentlySelectedTag());
 
                 // persist
-                if (!codebookService
-                        .existsCodebookTag(newUserTag.getName(), newUserTag.getCodebook())) {
+                if (!codebookService.existsCodebookTag(newUserTag.getName(),
+                        newUserTag.getCodebook())) {
                     codebookService.createCodebookTag(newUserTag);
-                } else {
-                    // TODO log or waring or whateveR?!
+                }
+                else {
+                    // TODO log or warning?
                 }
             }
         });

@@ -334,13 +334,11 @@ public class AnnotationPage
     }
 
 
-    private CodebookEditorPanel createCodebookEditorPanel()
+    private CodebookEditorPanel createCodebookEditorPanel(AjaxRequestTarget aTarget)
     {
-        // initialize with empty model since model depends on project.
-        // later on the correct model gets loaded with getCodebookEditorModel()
-        CodebookEditorModel model = getCodebookEditorModel();
-        // model.setp
-        return new CodebookEditorPanel("codebookEditorPanel", Model.of(model))
+        CodebookEditorPanel editorPanel
+                = new CodebookEditorPanel("codebookEditorPanel",
+                Model.of(getCodebookEditorModel()))
         {
             private static final long serialVersionUID = 2857345299480098279L;
 
@@ -348,6 +346,7 @@ public class AnnotationPage
             protected void onConfigure()
             {
                 super.onConfigure();
+                setModel(aTarget, getCodebookEditorModel());
             }
 
             @Override
@@ -362,6 +361,11 @@ public class AnnotationPage
                 AnnotationPage.this.getModelObject().setAnnotationDocumentTimestamp(aTimeStamp);
             }
         };
+
+        if (aTarget != null)
+            aTarget.add(editorPanel);
+
+        return editorPanel;
     }
 
     private void createAnnotationEditor(IPartialPageRequestHandler aTarget)
@@ -409,6 +413,15 @@ public class AnnotationPage
         leftSidebar.add(new AttributeModifier("style", LambdaModel.of(() -> String
                 .format("flex-basis: %d%%;", getModelObject().getPreferences().getSidebarSize()))));
         return leftSidebar;
+    }
+
+    private void updateLeftSidebar(AjaxRequestTarget aTarget) {
+
+        leftSidebar = createLeftSidebar();
+        addOrReplace(leftSidebar);
+
+        if (aTarget != null)
+            aTarget.add(leftSidebar);
     }
 
     private void createRightSidebar()
@@ -549,6 +562,9 @@ public class AnnotationPage
             // scheduled and *after* the preferences have been loaded (because the current editor
             // type is set in the preferences.
             createAnnotationEditor(aTarget);
+
+            // update the CodebookEditor
+            createCodebookEditorPanel(aTarget);
 
             // Initialize the visible content - this has to happen after the annotation editor
             // component has been created because only then the paging strategy is known
@@ -921,15 +937,15 @@ public class AnnotationPage
     private CodebookEditorModel getCodebookEditorModel()
     {
         CodebookEditorModel model = new CodebookEditorModel();
-        model.setDocument(getModelObject().getDocument());
-        model.setUser(getModelObject().getUser());
-        model.setProject(getModelObject().getProject());
+        model.setDocument(AnnotationPage.this.getModelObject().getDocument());
+        model.setUser(AnnotationPage.this.getModelObject().getUser());
+        model.setProject(AnnotationPage.this.getModelObject().getProject());
         return model;
     }
 
     public WebMarkupContainer getCodebookEditorPanel()
     {
-        codebookEditorPanel = createCodebookEditorPanel();
+        codebookEditorPanel = createCodebookEditorPanel(null);
         codebookEditorPanel.setOutputMarkupId(true);
 
         return codebookEditorPanel;

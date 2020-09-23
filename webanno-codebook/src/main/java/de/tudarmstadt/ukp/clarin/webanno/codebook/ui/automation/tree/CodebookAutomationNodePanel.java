@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.tree;
+package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree;
 
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.getAddr;
 
@@ -25,9 +25,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
+import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.wicket.AttributeModifier;
@@ -52,129 +52,129 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookUserSuggestion;
-import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationSuggestion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
+import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
+import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 
-public class CodebookCurationNodePanel
+public class CodebookAutomationNodePanel
     extends CodebookNodePanel
 {
     private static final long serialVersionUID = 5875644822389693657L;
 
-    private static final String HAS_DIFF = "bg-danger";
-    private static final String HAS_NO_DIFF = "bg-success";
-
     private @SpringBean CodebookSchemaService codebookService;
-    private @SpringBean CurationDocumentService curationDocumentService;
+    private @SpringBean DocumentService documentService;
+    private @SpringBean UserDao userRepository;
 
-    private CodebookTagSelectionComboBox codebookTagSelectionComboBox;
-    private CodebookCurationTreePanel parentTreePanel;
-    private Form<CodebookTag> codebookCurationForm;
-    private List<CodebookUserSuggestion> codebookUserSuggestions;
-    private WebMarkupContainer codebookCurationPanelHeader;
-    private WebMarkupContainer codebookCurationPanelFooter;
-    private WebMarkupContainer codebookCurationPanel;
+    private static final String AUTOMATION_SUGGESTED = "bg-primary";
+    private static final String AUTOMATION_ACCEPTED = "bg-success";
 
-    public CodebookCurationNodePanel(String id, IModel<CodebookNode> node,
-            CodebookCurationTreePanel parentTreePanel,
-            List<CodebookUserSuggestion> codebookUserSuggestions)
+    private CodebookTagSelectionComboBox codebookAutomationComboBox;
+    private CodebookAutomationTreePanel parentTreePanel;
+    private Form<CodebookTag> codebookAutomationForm;
+    private CodebookNode node;
+    private List<CodebookAutomationSuggestion> automationSuggestions;
+
+    private WebMarkupContainer codebookAutomationPanel;
+    private WebMarkupContainer codebookAutomationPanelHeader;
+    private WebMarkupContainer codebookAutomationPanelFooter;
+
+    public CodebookAutomationNodePanel(String id, IModel<CodebookNode> node,
+            List<CodebookAutomationSuggestion> automationSuggestions,
+            CodebookAutomationTreePanel parentTreePanel)
     {
         super(id, new CompoundPropertyModel<>(node));
 
         this.node = node.getObject();
         this.parentTreePanel = parentTreePanel;
-        this.codebookUserSuggestions = codebookUserSuggestions;
+        this.automationSuggestions = automationSuggestions;
 
-        this.codebookCurationPanel = new WebMarkupContainer("codebookCurationPanel");
-        this.codebookCurationPanel.setOutputMarkupPlaceholderTag(true);
-        boolean hasDiff = codebookUserSuggestions.get(0).hasDiff();
+        this.codebookAutomationPanel = new WebMarkupContainer("codebookAutomationPanel");
+        this.codebookAutomationPanel.setOutputMarkupPlaceholderTag(true);
 
         // header
-        this.codebookCurationPanelHeader = new WebMarkupContainer("codebookCurationPanelHeader");
-        this.codebookCurationPanelHeader.setOutputMarkupPlaceholderTag(true);
-        this.codebookCurationPanelHeader
-                .add(AttributeModifier.append("class", hasDiff ? HAS_DIFF : HAS_NO_DIFF));
+        this.codebookAutomationPanelHeader = new WebMarkupContainer("codebookAutomationPanelHeader");
+        this.codebookAutomationPanelHeader.setOutputMarkupPlaceholderTag(true);
+        this.codebookAutomationPanelHeader
+                .add(AttributeModifier.append("class", AUTOMATION_SUGGESTED));
         // name of the CB
-        this.codebookCurationPanelHeader.add(new Label("codebookName", this.node.getUiName()));
+        this.codebookAutomationPanelHeader.add(new Label("codebookName", this.node.getUiName()));
 
-        this.codebookCurationPanel.add(codebookCurationPanelHeader);
+        this.codebookAutomationPanel.add(codebookAutomationPanelHeader);
 
         // suggestions list view
-        this.codebookCurationPanel.add(
-                new ListView<CodebookUserSuggestion>("suggestionsListView", codebookUserSuggestions)
+        this.codebookAutomationPanel.add(
+                new ListView<CodebookAutomationSuggestion>("suggestionsListView", automationSuggestions)
                 {
                     private static final long serialVersionUID = -3459331980449938289L;
 
                     @Override
                     protected void populateItem(ListItem item)
                     {
-                        CodebookUserSuggestion userSuggestion = (CodebookUserSuggestion) item
+                        CodebookAutomationSuggestion suggestion = (CodebookAutomationSuggestion) item
                                 .getModelObject();
 
-                        item.add(new Label("userName", userSuggestion.getUser()));
-                        String tag = userSuggestion.getValue();
+                        item.add(new Label("confidence", suggestion.getConfidence()));
+                        String tag = suggestion.getValue();
                         if (tag == null)
                             tag = "<NULL>";
                         else if (tag.isEmpty())
                             tag = "<EMPTY>";
-                        item.add(new Label("codebookTag", tag));
-
-                        // item.add(AttributeModifier.append("class",
-                        // userSuggestion.hasDiff() ? HAS_DIFF : HAS_NO_DIFF));
+                        item.add(new Label("tag", tag));
                     }
                 });
 
-        this.codebookCurationPanelFooter = new WebMarkupContainer("codebookCurationPanelFooter");
-        this.codebookCurationPanelFooter.setOutputMarkupPlaceholderTag(true);
+        this.codebookAutomationPanelFooter = new WebMarkupContainer(
+                "codebookAutomationPanelFooter");
+        this.codebookAutomationPanelFooter.setOutputMarkupPlaceholderTag(true);
 
-        // codebook curation form
+        // codebook automation form
         IModel<CodebookTag> selectedTag = Model.of();
-        this.codebookCurationForm = new Form<>("codebookCurationForm",
+        this.codebookAutomationForm = new Form<>("codebookAutomationForm",
                 CompoundPropertyModel.of(selectedTag));
-        this.codebookCurationForm.setOutputMarkupId(true);
+        this.codebookAutomationForm.setOutputMarkupId(true);
 
         // codebook curation ComboBox
-        this.codebookTagSelectionComboBox = createCurationComboBox();
-        this.codebookCurationForm.addOrReplace(this.codebookTagSelectionComboBox);
+        this.codebookAutomationComboBox = createAutomationComboBox();
+        this.codebookAutomationForm.addOrReplace(this.codebookAutomationComboBox);
 
         // tooltip for the codebooks
         Codebook codebook = this.node.getCodebook();
-        this.codebookCurationPanel.add(
+        this.codebookAutomationPanel.add(
                 new DescriptionTooltipBehavior(codebook.getUiName(), codebook.getDescription()));
 
-        this.codebookCurationPanelFooter.add(this.codebookCurationForm);
+        this.codebookAutomationPanelFooter.add(this.codebookAutomationForm);
 
-        this.codebookCurationPanel.add(codebookCurationPanelFooter);
-        this.add(codebookCurationPanel);
+        this.codebookAutomationPanel.add(codebookAutomationPanelFooter);
+        this.add(codebookAutomationPanel);
     }
 
-    private CodebookTagSelectionComboBox createCurationComboBox()
+    private CodebookTagSelectionComboBox createAutomationComboBox()
     {
-        CAS curationCas = null;
+        CAS automationCas = null;
         try {
-            curationCas = curationDocumentService
-                    .readCurationCas(codebookUserSuggestions.get(0).getDocument());
+            automationCas = parentTreePanel.getParentPage().getEditorCas();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+
         Codebook codebook = this.node.getCodebook();
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         CodebookAdapter adapter = new CodebookAdapter(feature.getCodebook());
+        User user = userRepository.getCurrentUser();
 
-        String existingValue = (String) adapter.getExistingCodeValue(curationCas, feature);
+        String existingValue = (String) adapter.getExistingCodeValue(automationCas, feature);
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
-
         CodebookTagSelectionComboBox comboBox = new CodebookTagSelectionComboBox(this,
-                "codebookTagSelectionComboBox",
-                Model.of(existingValue),
-                tagChoices, node);
+                "codebookTagSelectionComboBox", Model.of(existingValue), tagChoices, node);
 
-        // only enable if curation in progress
-        comboBox.setEnabled(codebookUserSuggestions.get(0).getDocument().getState()
-                .equals(SourceDocumentState.CURATION_IN_PROGRESS));
+        SourceDocument doc = this.parentTreePanel.getParentPage().getModelObject().getDocument();
+        comboBox.setEnabled(doc != null && !doc.getState()
+                .equals(SourceDocumentState.CURATION_FINISHED));
 
         comboBox.add(new AjaxFormComponentUpdatingBehavior("change")
         {
@@ -183,20 +183,19 @@ public class CodebookCurationNodePanel
             @Override
             protected void onUpdate(AjaxRequestTarget target)
             {
-                // persist changes in curation cas
+                // persist changes in automation cas
                 try {
-                    CAS curationCas = curationDocumentService
-                            .readCurationCas(codebookUserSuggestions.get(0).getDocument());
+                    CAS cas = parentTreePanel.getParentPage().getEditorCas();
 
                     if (comboBox.getModelObject() == null) {
                         // combo box got cleared or NONE was selected
                         CodebookAdapter adapter = new CodebookAdapter(codebook);
-                        adapter.delete(curationCas, feature);
-                        writeCodebookCas(curationCas);
+                        adapter.delete(cas, feature);
+                        writeCodebookCas(cas);
                     }
                     else {
                         saveCodebookAnnotation(feature, comboBox.getModelObject(),
-                                curationCas);
+                                cas);
                     }
                 }
                 catch (IOException | AnnotationException e) {
@@ -245,13 +244,14 @@ public class CodebookCurationNodePanel
         aAdapter.setFeatureValue(aJCas, feature, annoId, value);
     }
 
-    private void writeCodebookCas(CAS aCas) throws IOException
-    {
-        SourceDocument document = this.codebookUserSuggestions.get(0).getDocument();
-        curationDocumentService.writeCurationCas(aCas, document, true);
+    private void writeCodebookCas(CAS aJCas) throws IOException {
+
+        AnnotatorState state = parentTreePanel.getParentPage().getModelObject();
+        documentService.writeAnnotationCas(aJCas, state.getDocument(), state.getUser(), true);
 
         // Update timestamp in state
-        Optional<Long> diskTimestamp = curationDocumentService.getCurationCasTimestamp(document);
+        Optional<Long> diskTimestamp = documentService
+                .getAnnotationCasTimestamp(state.getDocument(), state.getUser().getUsername());
         diskTimestamp.ifPresent(aLong -> parentTreePanel.getParentPage().getModelObject()
                 .setAnnotationDocumentTimestamp(aLong));
     }
@@ -259,7 +259,7 @@ public class CodebookCurationNodePanel
     private List<CodebookTag> getPossibleTagChoices()
     {
         // get the possible tag choices for the current node
-        CodebookCurationNodePanel parentPanel = this.parentTreePanel.getNodePanels()
+        CodebookAutomationNodePanel parentPanel = this.parentTreePanel.getNodePanels()
                 .get(this.node.getParent());
         if (parentPanel == null)
             return codebookService.listTags(this.node.getCodebook());
@@ -280,19 +280,21 @@ public class CodebookCurationNodePanel
 
     public CodebookTag getCurrentlySelectedTag()
     {
-        String tagString = this.codebookTagSelectionComboBox.getModelObject();
+        String tagString = this.codebookAutomationComboBox.getModelObject();
         if (tagString == null || tagString.isEmpty())
             return null;
         List<CodebookTag> tags = codebookService.listTags(this.node.getCodebook());
-        Set<CodebookTag> tag = tags.stream()
-                .filter(t -> t.getName().equals(tagString)).collect(Collectors.toSet());
+        Set<CodebookTag> tag = tags.stream().filter(t -> {
+            return t.getName().equals(tagString);
+
+        }).collect(Collectors.toSet());
         assert tag.size() == 1; // TODO what to throw?
         return tag.iterator().next();
     }
 
     @Override
-    public CodebookNodePanel getParentNodePanel() {
-        // TODO
+    public CodebookNodePanel getParentNodePanel()
+    {
         return null;
     }
 
@@ -306,7 +308,7 @@ public class CodebookCurationNodePanel
     {
         // TODO how to update the combo boxes without an AjaxRequestTarget?!
         if (changedEvent.getNewState().equals(SourceDocumentState.CURATION_FINISHED)) {
-            this.codebookTagSelectionComboBox.setEnabled(false);
+            this.codebookAutomationComboBox.setEnabled(false);
         }
     }
 }

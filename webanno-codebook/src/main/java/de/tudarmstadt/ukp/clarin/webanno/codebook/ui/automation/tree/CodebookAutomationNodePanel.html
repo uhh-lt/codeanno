@@ -20,23 +20,23 @@
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.3-strict.dtd">
 <body>
 <wicket:panel>
-    <div class="card mb-1" wicket:id="codebookCurationPanel">
+    <div class="card mb-1" wicket:id="codebookAutomationPanel">
 
-        <div class="card-header text-center" wicket:id="codebookCurationPanelHeader">
+        <div class="card-header text-center" wicket:id="codebookAutomationPanelHeader">
             <strong><span wicket:id="codebookName"/></strong>
         </div>
 
         <div class="card-body pt-0 pb-0" style="overflow-y: auto; overflow-x: hidden">
             <div class="row" wicket:id="suggestionsListView">
-                <div class="col-md-3"><i><span wicket:id="userName">userName</span></i></div>
-                <div class="col-md-9"><i><span wicket:id="codebookTag">codebookTag</span></i></div>
+                <div class="col-md-3"><i><span wicket:id="confidence">confidence</span></i></div>
+                <div class="col-md-9"><i><span wicket:id="tag">tag</span></i></div>
             </div>
         </div>
 
-        <div class="card-footer pb-0 mb-0" wicket:id="codebookCurationPanelFooter">
-            <form class="form-horizontal" wicket:id="codebookCurationForm">
+        <div class="card-footer pb-0 mb-0" wicket:id="codebookAutomationPanelFooter">
+            <form class="form-horizontal" wicket:id="codebookAutomationForm">
                 <div class="form-row">
-                    <label class="col-sm-3 col-form-label">Curation:</label>
+                    <label class="col-sm-3 col-form-label">Tag:</label>
                     <div class="col-sm-9">
                         <input type="text" wicket:id="codebookTagSelectionComboBox" class="form-control custom-select-sm"/>
                     </div>

@@ -43,7 +43,7 @@ import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.dialog.ConfirmationDialog;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 
-public class CodebookCuratorWorkflowActionBarItemGroup
+public class CodebookCurationWorkflowActionBarItemGroup
     extends Panel
 {
     private static final long serialVersionUID = 8596786586955459711L;
@@ -58,7 +58,7 @@ public class CodebookCuratorWorkflowActionBarItemGroup
     private MergeDialog resetDocumentDialog;
     private LambdaAjaxLink resetDocumentLink;
 
-    public CodebookCuratorWorkflowActionBarItemGroup(String aId, AnnotationPageBase aPage)
+    public CodebookCurationWorkflowActionBarItemGroup(String aId, AnnotationPageBase aPage)
     {
         super(aId);
 
@@ -137,7 +137,6 @@ public class CodebookCuratorWorkflowActionBarItemGroup
         // Initialize a new one ...
         ((CodebookCurationPage) page)
                 .prepareMergeCAS(aForm.getModelObject().isMergeIncompleteAnnotations());
-
         // ... and load it
         page.actionLoadDocument(aTarget);
 

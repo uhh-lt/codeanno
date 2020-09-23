@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.actionbar;
+package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.actionbar;
 
 import static java.lang.Integer.MAX_VALUE;
 
@@ -30,7 +30,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPa
 
 @Order(0)
 @Component
-public class CodebookCurationDocumentNavigatorActionBarExtension
+public class CodebookAutomationDocumentNavigatorActionBarExtension
     extends DefaultDocumentNavigatorActionBarExtension
 {
     @Override
@@ -48,13 +48,13 @@ public class CodebookCurationDocumentNavigatorActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage;
+        return aPage instanceof CodebookAutomationPage;
     }
 
     @Override
     protected OpenDocumentDialog createOpenDocumentsDialog(String aId, AnnotationPageBase aPage)
     {
-        CodebookCurationPage page = (CodebookCurationPage) aPage;
+        CodebookAutomationPage page = (CodebookAutomationPage) aPage;
 
         return new OpenDocumentDialog(aId, aPage.getModel(), aPage.getAllowedProjects(),
                 page::listDocuments);
