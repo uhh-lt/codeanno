@@ -18,22 +18,17 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
-import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaModel;
-import de.tudarmstadt.ukp.clarin.webanno.support.wicket.OverviewListChoice;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PropertyListView;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.ComponentPropertyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -43,22 +38,20 @@ import org.slf4j.LoggerFactory;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
+import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.support.spring.ApplicationEventPublisherHolder;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.settings.ProjectSettingsPanelBase;
-
-import java.util.Collections;
-import java.util.List;
 
 public class CodebookAutomationSettingsPanel
     extends ProjectSettingsPanelBase
 {
     private static final Logger LOG = LoggerFactory.getLogger(
-            de.tudarmstadt.ukp.clarin.webanno
-                    .codebook.ui.automation.settings.CodebookAutomationSettingsPanel.class);
+            de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings.CodebookAutomationSettingsPanel.class);
 
     private static final long serialVersionUID = -7870526462864489252L;
 
@@ -67,14 +60,13 @@ public class CodebookAutomationSettingsPanel
     private @SpringBean ApplicationEventPublisherHolder applicationEventPublisherHolder;
     private @SpringBean UserDao userRepository;
 
-
     private CodebookSelectionForm codebookSelectionForm;
 
     private WebMarkupContainer propertiesCard;
     private WebMarkupContainer tagsCard;
+    private AutomationSettingsPanel automationSettingsPanel;
 
     private CodebookAutomationSettingsTreePanel codebookAutomationSettingsTreePanel;
-
 
     CodebookAutomationSettingsPanel(String id, final IModel<Project> aProjectModel)
     {
@@ -89,37 +81,43 @@ public class CodebookAutomationSettingsPanel
         createPropertiesCard(null);
 
         // add and init tree
-        codebookAutomationSettingsTreePanel = new CodebookAutomationSettingsTreePanel("codebookAutomationSettingsTreePanel",
-                aProjectModel, this, codebookSelectionForm);
+        codebookAutomationSettingsTreePanel = new CodebookAutomationSettingsTreePanel(
+                "codebookAutomationSettingsTreePanel", aProjectModel, this, codebookSelectionForm);
         updateTree();
         codebookAutomationSettingsTreePanel.setOutputMarkupId(true);
         // add tree to selection form
         codebookSelectionForm.add(codebookAutomationSettingsTreePanel);
 
+        // cb automation settings panel
+        this.automationSettingsPanel = new AutomationSettingsPanel(Model.of());
+        this.addOrReplace(automationSettingsPanel);
+
     }
 
-    private void createPropertiesCard(Codebook selectedCodebook) {
+    private void createPropertiesCard(Codebook selectedCodebook)
+    {
         String id = "propertiesCard";
 
         propertiesCard = new WebMarkupContainer(id);
         propertiesCard.setDefaultModel(new CompoundPropertyModel<>(selectedCodebook));
 
-        propertiesCard.add(new TextField<String>("uiName")
-                .setEnabled(false).setOutputMarkupId(true));
-        propertiesCard.add(new TextArea<String>("description")
-                .setEnabled(false).setOutputMarkupId(true));
-        propertiesCard.add(new TextField<String>("parent")
-                .setEnabled(false).setOutputMarkupId(true));
+        propertiesCard
+                .add(new TextField<String>("uiName").setEnabled(false).setOutputMarkupId(true));
+        propertiesCard
+                .add(new TextArea<String>("description").setEnabled(false).setOutputMarkupId(true));
+        propertiesCard
+                .add(new TextField<String>("parent").setEnabled(false).setOutputMarkupId(true));
 
         propertiesCard.setOutputMarkupPlaceholderTag(true);
         propertiesCard.setVisible(selectedCodebook != null);
         this.addOrReplace(propertiesCard);
 
         // tags card
-        createTagsCard(null);
+        createTagsCard(selectedCodebook);
     }
 
-    private void createTagsCard(Codebook selectedCodebook) {
+    private void createTagsCard(Codebook selectedCodebook)
+    {
         String id = "tagsCard";
         tagsCard = new WebMarkupContainer(id);
 
@@ -129,17 +127,26 @@ public class CodebookAutomationSettingsPanel
         else
             tags = Collections.emptyList();
 
-        tagsCard.add(new PropertyListView<CodebookTag>("tagListView", tags) {
+        tagsCard.add(new PropertyListView<CodebookTag>("tagListView", tags)
+        {
             private static final long serialVersionUID = 5328960765143797557L;
 
-            protected void populateItem(ListItem item) {
-                item.add(new Label("name"));
+            protected void populateItem(ListItem item)
+            {
+                CodebookTag tag = (CodebookTag) item.getModelObject();
+                item.add(new Label("name")
+                        .add(new DescriptionTooltipBehavior(tag.getName(), tag.getDescription())));
             }
         }.setOutputMarkupId(true));
 
         tagsCard.setOutputMarkupPlaceholderTag(true);
         tagsCard.setVisible(selectedCodebook != null);
         propertiesCard.addOrReplace(tagsCard);
+    }
+
+    private void updateAutomationSettingsPanel(Codebook selectedCodebook)
+    {
+        this.automationSettingsPanel.setDefaultModel(Model.of(selectedCodebook));
     }
 
     private void updateTree()
@@ -154,11 +161,12 @@ public class CodebookAutomationSettingsPanel
         super.onModelChanged();
 
         createPropertiesCard(null);
-        updateTree();
+        updateAutomationSettingsPanel(null);
+        // updateTree();
     }
 
     class CodebookSelectionForm
-            extends Form<Codebook>
+        extends Form<Codebook>
     {
 
         private static final long serialVersionUID = -7757401460625924337L;
@@ -203,11 +211,12 @@ public class CodebookAutomationSettingsPanel
         }
 
         @Override
-        protected void onModelChanged() {
+        protected void onModelChanged()
+        {
             super.onModelChanged();
 
             createPropertiesCard(getModelObject());
-            createTagsCard(getModelObject());
+            updateAutomationSettingsPanel(getModelObject());
         }
     }
 }

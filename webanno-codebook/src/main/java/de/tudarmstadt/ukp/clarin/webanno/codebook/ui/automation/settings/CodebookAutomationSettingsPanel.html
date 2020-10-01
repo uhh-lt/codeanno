@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <!--
-#Copyright 2019
-#Ubiquitous Knowledge Processing (UKP) Lab  Technische Universität Darmstadt and Language Technology Universität Hamburg
+#Copyright 2020
+#Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
+#and  Language Technology Universität Hamburg
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -45,7 +46,7 @@
             </form>
         </div>
 
-        <!-- Codebook properties-->
+        <!-- Codebook properties -->
         <div wicket:id="propertiesCard" class="flex-v-container flex-gutter" style="flex-basis: 25%;">
 
             <!-- Codebook details -->
@@ -102,16 +103,19 @@
                             <wicket:message key="codebook.tags"/>
                         </div>
 
-                        <div class="card-body flex-v-container scrolling">
-                            <div class="flex-content" wicket:id="tagListView">
-                                <span wicket:id="name">name</span>
+                        <div class="card-body scrolling">
+                            <div wicket:id="tagListView">
+                                <span class="d-block" wicket:id="name">name</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- Automation Settings Panel -->
+        <div wicket:id="automationSettingsPanel" class="flex-content flex-v-container flex-gutter"></div>
+
     </div>
 </wicket:panel>
 </body>

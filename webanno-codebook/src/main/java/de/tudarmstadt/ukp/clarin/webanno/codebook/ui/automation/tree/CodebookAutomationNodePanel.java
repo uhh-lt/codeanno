@@ -20,14 +20,15 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.getAddr;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
-import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.wicket.AttributeModifier;
@@ -44,7 +45,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.context.event.EventListener;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.event.DocumentStateChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
@@ -52,9 +55,12 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationSuggestion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
@@ -63,28 +69,30 @@ import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 public class CodebookAutomationNodePanel
     extends CodebookNodePanel
 {
+
     private static final long serialVersionUID = 5875644822389693657L;
 
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean DocumentService documentService;
     private @SpringBean UserDao userRepository;
+    private @SpringBean CodebookAutomationService automationService;
 
-    private static final String AUTOMATION_SUGGESTED = "bg-primary";
+    private static final String AUTOMATION_AVAILABLE = "bg-primary";
+    private static final String AUTOMATION_NOT_AVAILABLE = "bg-warning";
     private static final String AUTOMATION_ACCEPTED = "bg-success";
 
     private CodebookTagSelectionComboBox codebookAutomationComboBox;
     private CodebookAutomationTreePanel parentTreePanel;
     private Form<CodebookTag> codebookAutomationForm;
     private CodebookNode node;
-    private List<CodebookAutomationSuggestion> automationSuggestions;
+    private PredictionResult automationSuggestions;
 
     private WebMarkupContainer codebookAutomationPanel;
     private WebMarkupContainer codebookAutomationPanelHeader;
     private WebMarkupContainer codebookAutomationPanelFooter;
 
     public CodebookAutomationNodePanel(String id, IModel<CodebookNode> node,
-            List<CodebookAutomationSuggestion> automationSuggestions,
-            CodebookAutomationTreePanel parentTreePanel)
+            PredictionResult automationSuggestions, CodebookAutomationTreePanel parentTreePanel)
     {
         super(id, new CompoundPropertyModel<>(node));
 
@@ -96,36 +104,40 @@ public class CodebookAutomationNodePanel
         this.codebookAutomationPanel.setOutputMarkupPlaceholderTag(true);
 
         // header
-        this.codebookAutomationPanelHeader = new WebMarkupContainer("codebookAutomationPanelHeader");
+        this.codebookAutomationPanelHeader = new WebMarkupContainer(
+                "codebookAutomationPanelHeader");
         this.codebookAutomationPanelHeader.setOutputMarkupPlaceholderTag(true);
-        this.codebookAutomationPanelHeader
-                .add(AttributeModifier.append("class", AUTOMATION_SUGGESTED));
+        try {
+            this.codebookAutomationPanelHeader.add(AttributeModifier.append("class",
+                    automationService.automationIsAvailable(this.node.getCodebook(), true)
+                            ? AUTOMATION_AVAILABLE
+                            : AUTOMATION_NOT_AVAILABLE));
+        }
+        catch (ApiException exception) {
+            // TODO what to throw?!
+            exception.printStackTrace();
+        }
+
         // name of the CB
         this.codebookAutomationPanelHeader.add(new Label("codebookName", this.node.getUiName()));
 
         this.codebookAutomationPanel.add(codebookAutomationPanelHeader);
 
         // suggestions list view
-        this.codebookAutomationPanel.add(
-                new ListView<CodebookAutomationSuggestion>("suggestionsListView", automationSuggestions)
-                {
-                    private static final long serialVersionUID = -3459331980449938289L;
+        List<PredictionPojo> preds = buildPredictionList();
+        this.codebookAutomationPanel.add(new ListView<PredictionPojo>("suggestionsListView", preds)
+        {
+            private static final long serialVersionUID = -3459331980449938289L;
 
-                    @Override
-                    protected void populateItem(ListItem item)
-                    {
-                        CodebookAutomationSuggestion suggestion = (CodebookAutomationSuggestion) item
-                                .getModelObject();
+            @Override
+            protected void populateItem(ListItem<PredictionPojo> item)
+            {
+                PredictionPojo pred = item.getModelObject();
 
-                        item.add(new Label("confidence", suggestion.getConfidence()));
-                        String tag = suggestion.getValue();
-                        if (tag == null)
-                            tag = "<NULL>";
-                        else if (tag.isEmpty())
-                            tag = "<EMPTY>";
-                        item.add(new Label("tag", tag));
-                    }
-                });
+                item.add(new Label("tag", pred.tag));
+                item.add(new Label("probability", pred.prob));
+            }
+        });
 
         this.codebookAutomationPanelFooter = new WebMarkupContainer(
                 "codebookAutomationPanelFooter");
@@ -137,7 +149,7 @@ public class CodebookAutomationNodePanel
                 CompoundPropertyModel.of(selectedTag));
         this.codebookAutomationForm.setOutputMarkupId(true);
 
-        // codebook curation ComboBox
+        // codebook automation ComboBox
         this.codebookAutomationComboBox = createAutomationComboBox();
         this.codebookAutomationForm.addOrReplace(this.codebookAutomationComboBox);
 
@@ -150,6 +162,19 @@ public class CodebookAutomationNodePanel
 
         this.codebookAutomationPanel.add(codebookAutomationPanelFooter);
         this.add(codebookAutomationPanel);
+    }
+
+    private List<PredictionPojo> buildPredictionList()
+    {
+        List<PredictionPojo> preds = new ArrayList<>();
+        if (automationSuggestions == null)
+            return preds;
+
+        for (Map.Entry<String, BigDecimal> e : automationSuggestions.getProbabilities()
+                .entrySet()) {
+            preds.add(new PredictionPojo(e.getKey(), e.getValue().doubleValue()));
+        }
+        return preds;
     }
 
     private CodebookTagSelectionComboBox createAutomationComboBox()
@@ -173,8 +198,8 @@ public class CodebookAutomationNodePanel
                 "codebookTagSelectionComboBox", Model.of(existingValue), tagChoices, node);
 
         SourceDocument doc = this.parentTreePanel.getParentPage().getModelObject().getDocument();
-        comboBox.setEnabled(doc != null && !doc.getState()
-                .equals(SourceDocumentState.CURATION_FINISHED));
+        comboBox.setEnabled(
+                doc != null && !doc.getState().equals(SourceDocumentState.CURATION_FINISHED));
 
         comboBox.add(new AjaxFormComponentUpdatingBehavior("change")
         {
@@ -194,8 +219,7 @@ public class CodebookAutomationNodePanel
                         writeCodebookCas(cas);
                     }
                     else {
-                        saveCodebookAnnotation(feature, comboBox.getModelObject(),
-                                cas);
+                        saveCodebookAnnotation(feature, comboBox.getModelObject(), cas);
                     }
                 }
                 catch (IOException | AnnotationException e) {
@@ -244,7 +268,8 @@ public class CodebookAutomationNodePanel
         aAdapter.setFeatureValue(aJCas, feature, annoId, value);
     }
 
-    private void writeCodebookCas(CAS aJCas) throws IOException {
+    private void writeCodebookCas(CAS aJCas) throws IOException
+    {
 
         AnnotatorState state = parentTreePanel.getParentPage().getModelObject();
         documentService.writeAnnotationCas(aJCas, state.getDocument(), state.getUser(), true);
@@ -309,6 +334,21 @@ public class CodebookAutomationNodePanel
         // TODO how to update the combo boxes without an AjaxRequestTarget?!
         if (changedEvent.getNewState().equals(SourceDocumentState.CURATION_FINISHED)) {
             this.codebookAutomationComboBox.setEnabled(false);
+        }
+    }
+
+    private static class PredictionPojo
+        implements Serializable
+    {
+        private static final long serialVersionUID = -7298275007124902612L;
+
+        public String tag;
+        public Double prob;
+
+        public PredictionPojo(String tag, double prob)
+        {
+            this.tag = tag;
+            this.prob = prob;
         }
     }
 }

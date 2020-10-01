@@ -1,5 +1,5 @@
 /*
- * Copyright 2019
+ * Copyright 2020
  * Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
  * Technische Universität Darmstadt
  *
@@ -17,28 +17,29 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationSuggestion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.model.Project;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 
 public class CodebookAutomationTreePanel
     extends CodebookTreePanel
@@ -46,8 +47,10 @@ public class CodebookAutomationTreePanel
     private static final long serialVersionUID = -8329270688665288003L;
 
     private CodebookAutomationPage parentPage;
-    private Map<CodebookNode, CodebookAutomationNodePanel> nodePanels;
-    private transient Map<Codebook, List<CodebookAutomationSuggestion>> automationSuggestions;
+    private transient Map<CodebookNode, CodebookAutomationNodePanel> nodePanels;
+    private transient Map<Codebook, PredictionResult> automationSuggestions;
+
+    private @SpringBean CodebookAutomationService codebookAutomationService;
 
     public CodebookAutomationTreePanel(String aId, CodebookAutomationPage parentPage)
     {
@@ -74,25 +77,8 @@ public class CodebookAutomationTreePanel
         });
 
         this.nodePanels = new HashMap<>();
+        this.automationSuggestions = new HashMap<>();
         this.parentPage = parentPage;
-    }
-
-    private Map<Codebook, List<CodebookAutomationSuggestion>> createDummySuggestions() {
-        Map<Codebook, List<CodebookAutomationSuggestion>> suggestions = new HashMap<>();
-
-        List<Codebook> codebooks = this.codebookService
-                .listCodebook(parentPage.getModelObject().getProject());
-
-        for (Codebook cb : codebooks) {
-            suggestions.put(cb, Collections.singletonList(new CodebookAutomationSuggestion(
-                    cb,
-                    parentPage.getModelObject().getDocument(),
-                    "Dummy1312",
-                    1.0
-            )));
-        }
-
-        return suggestions;
     }
 
     @Override
@@ -109,7 +95,15 @@ public class CodebookAutomationTreePanel
     {
         this.initCodebookTreeProvider();
 
-        tree = new NestedTree<CodebookNode>("codebookCurationTree", this.provider,
+        try {
+            this.automationSuggestions = this.fetchSuggestions();
+        }
+        catch (ApiException e) {
+            // TODO
+            e.printStackTrace();
+        }
+
+        tree = new NestedTree<CodebookNode>("codebookAutomationTree", this.provider,
                 new CodebookNodeExpansionModel())
         {
             private static final long serialVersionUID = 2285250157811357702L;
@@ -129,10 +123,26 @@ public class CodebookAutomationTreePanel
 
         this.applyTheme();
 
-        this.automationSuggestions = createDummySuggestions();
-
         tree.setOutputMarkupId(true);
         this.addOrReplace(tree);
+    }
+
+    private Map<Codebook, PredictionResult> fetchSuggestions() throws ApiException
+    {
+        Project project = parentPage.getModelObject().getProject();
+        SourceDocument sdoc = parentPage.getModelObject().getDocument();
+        List<Codebook> codebooks = this.codebookService.listCodebook(project);
+
+        Map<Codebook, PredictionResult> suggestions = new HashMap<>();
+
+        for (Codebook cb : codebooks) {
+            if (codebookAutomationService.automationIsAvailable(cb, true)) {
+                PredictionResult res = codebookAutomationService.predictTag(cb, project, sdoc);
+                suggestions.put(cb, res);
+            }
+        }
+
+        return suggestions;
     }
 
     public Map<CodebookNode, CodebookAutomationNodePanel> getNodePanels()
