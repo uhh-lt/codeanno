@@ -25,8 +25,73 @@
             <wicket:message key="header.text"/>
         </div>
 
+        <!-- Main Container -->
         <div class="card-body flex-v-container">
             <div wicket:id="automationAvailableAlert" class="alert text-center d-block p-0"></div>
+
+
+            <!-- Metadata panel-->
+            <div wicket:id="modelMetadataPanel" class="card flex-content">
+                <div class="card-header small">
+                    <wicket:message key="modelMetadataPanel.header"/>
+                </div>
+                <div class="card-body flex-v-container">
+
+                    <div class="form-group form-row">
+                        <label wicket:for="modelType" class="col-sm-4 col-form-label">
+                            <wicket:message key="metadata.modelType"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input wicket:id="modelType" class="form-control form-control-sm" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label wicket:for="embeddings" class="col-sm-4 col-form-label">
+                            <wicket:message key="metadata.embeddings"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input wicket:id="embeddings" class="form-control form-control-sm" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label">
+                            <wicket:message key="metadata.labels"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="row" wicket:id="labelsListView">
+                                <div class="col-md-4"><i><span wicket:id="key">key</span></i></div>
+                                <div class="col-md-8"><i><span wicket:id="value">value</span></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label">
+                            <wicket:message key="metadata.evaluation"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="row" wicket:id="evaluationListView">
+                                <div class="col-md-4"><i><span wicket:id="key">key</span></i></div>
+                                <div class="col-md-8"><i><span wicket:id="value">value</span></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label">
+                            <wicket:message key="metadata.timestamp"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input wicket:id="timestamp" class="form-control form-control-sm" readonly/>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
 
         </div>
     </div>

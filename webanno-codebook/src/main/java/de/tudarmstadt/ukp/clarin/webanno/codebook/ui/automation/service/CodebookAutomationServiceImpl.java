@@ -27,6 +27,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.CodebookModel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DocumentModel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionRequest;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
@@ -80,6 +81,16 @@ public class CodebookAutomationServiceImpl
 
         PredictionRequest req = buildPredictionRequest(cb, proj, sdoc);
         return predictionApi.predictPredictionPredictPost(req);
+    }
+
+    @Override
+    public ModelMetadata getModelMetadata(Codebook cb) throws ApiException
+    {
+        if (!this.performHeartbeatCheck())
+            return null;
+
+        CodebookModel cbm = buildCodebookModel(cb);
+        return modelApi.getMetadataModelGetMetadataPost(cbm);
     }
 
     private DocumentModel buildDocumentModel(Project proj, SourceDocument sdoc)

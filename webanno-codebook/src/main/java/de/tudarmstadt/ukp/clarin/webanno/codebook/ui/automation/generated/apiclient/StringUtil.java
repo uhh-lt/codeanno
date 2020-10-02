@@ -18,7 +18,8 @@
 
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-01T15:38:30.492Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
+        date = "2020-10-02T09:35:39.209Z[GMT]")
 public class StringUtil
 {
     /**

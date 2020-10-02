@@ -31,8 +31,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ValidationError
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-01T15:38:30.492Z[GMT]")
-public class ValidationError implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
+        date = "2020-10-02T09:35:39.209Z[GMT]")
+public class ValidationError
+    implements Serializable
 {
     @SerializedName("loc")
     private List<String> loc = new ArrayList<String>();

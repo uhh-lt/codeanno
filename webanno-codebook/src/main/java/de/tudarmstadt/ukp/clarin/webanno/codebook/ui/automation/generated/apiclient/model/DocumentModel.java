@@ -29,8 +29,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * DocumentModel
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-01T15:38:30.492Z[GMT]")
-public class DocumentModel implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
+        date = "2020-10-02T09:35:39.209Z[GMT]")
+public class DocumentModel
+    implements Serializable
 {
     @SerializedName("doc_id")
     private Integer docId = null;

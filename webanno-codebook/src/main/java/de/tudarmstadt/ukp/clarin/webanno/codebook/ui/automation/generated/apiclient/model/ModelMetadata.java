@@ -19,11 +19,10 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-
-import org.threeten.bp.OffsetDateTime;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -33,80 +32,35 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ModelMetadata
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-01T15:38:30.492Z[GMT]")
-public class ModelMetadata  implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
+        date = "2020-10-02T09:35:39.209Z[GMT]")
+public class ModelMetadata
+    implements Serializable
 {
-    @SerializedName("model_id")
-    private Integer modelId = null;
-
-    @SerializedName("codebook_name")
-    private String codebookName = null;
-
     @SerializedName("labels")
-    private List<String> labels = new ArrayList<String>();
+    private Map<String, String> labels = new HashMap<String, String>();
 
-    @SerializedName("size_mb")
-    private Integer sizeMb = null;
+    @SerializedName("model_type")
+    private String modelType = null;
 
-    @SerializedName("trained_with_samples")
-    private Integer trainedWithSamples = null;
+    @SerializedName("embeddings")
+    private String embeddings = null;
 
-    @SerializedName("last_update")
-    private OffsetDateTime lastUpdate = null;
+    @SerializedName("evaluation")
+    private Map<String, BigDecimal> evaluation = new HashMap<String, BigDecimal>();
 
-    public ModelMetadata modelId(Integer modelId)
-    {
-        this.modelId = modelId;
-        return this;
-    }
+    @SerializedName("timestamp")
+    private String timestamp = null;
 
-    /**
-     * Get modelId
-     * 
-     * @return modelId
-     **/
-    @Schema(required = true, description = "")
-    public Integer getModelId()
-    {
-        return modelId;
-    }
-
-    public void setModelId(Integer modelId)
-    {
-        this.modelId = modelId;
-    }
-
-    public ModelMetadata codebookName(String codebookName)
-    {
-        this.codebookName = codebookName;
-        return this;
-    }
-
-    /**
-     * Get codebookName
-     * 
-     * @return codebookName
-     **/
-    @Schema(required = true, description = "")
-    public String getCodebookName()
-    {
-        return codebookName;
-    }
-
-    public void setCodebookName(String codebookName)
-    {
-        this.codebookName = codebookName;
-    }
-
-    public ModelMetadata labels(List<String> labels)
+    public ModelMetadata labels(Map<String, String> labels)
     {
         this.labels = labels;
         return this;
     }
 
-    public ModelMetadata addLabelsItem(String labelsItem)
+    public ModelMetadata putLabelsItem(String key, String labelsItem)
     {
-        this.labels.add(labelsItem);
+        this.labels.put(key, labelsItem);
         return this;
     }
 
@@ -116,80 +70,108 @@ public class ModelMetadata  implements Serializable
      * @return labels
      **/
     @Schema(required = true, description = "")
-    public List<String> getLabels()
+    public Map<String, String> getLabels()
     {
         return labels;
     }
 
-    public void setLabels(List<String> labels)
+    public void setLabels(Map<String, String> labels)
     {
         this.labels = labels;
     }
 
-    public ModelMetadata sizeMb(Integer sizeMb)
+    public ModelMetadata modelType(String modelType)
     {
-        this.sizeMb = sizeMb;
+        this.modelType = modelType;
         return this;
     }
 
     /**
-     * Get sizeMb
+     * Get modelType
      * 
-     * @return sizeMb
-     **/
-    @Schema(description = "")
-    public Integer getSizeMb()
-    {
-        return sizeMb;
-    }
-
-    public void setSizeMb(Integer sizeMb)
-    {
-        this.sizeMb = sizeMb;
-    }
-
-    public ModelMetadata trainedWithSamples(Integer trainedWithSamples)
-    {
-        this.trainedWithSamples = trainedWithSamples;
-        return this;
-    }
-
-    /**
-     * Get trainedWithSamples
-     * 
-     * @return trainedWithSamples
-     **/
-    @Schema(description = "")
-    public Integer getTrainedWithSamples()
-    {
-        return trainedWithSamples;
-    }
-
-    public void setTrainedWithSamples(Integer trainedWithSamples)
-    {
-        this.trainedWithSamples = trainedWithSamples;
-    }
-
-    public ModelMetadata lastUpdate(OffsetDateTime lastUpdate)
-    {
-        this.lastUpdate = lastUpdate;
-        return this;
-    }
-
-    /**
-     * Get lastUpdate
-     * 
-     * @return lastUpdate
+     * @return modelType
      **/
     @Schema(required = true, description = "")
-    public OffsetDateTime getLastUpdate()
+    public String getModelType()
     {
-        return lastUpdate;
+        return modelType;
     }
 
-    public void setLastUpdate(OffsetDateTime lastUpdate)
+    public void setModelType(String modelType)
     {
-        this.lastUpdate = lastUpdate;
+        this.modelType = modelType;
+    }
+
+    public ModelMetadata embeddings(String embeddings)
+    {
+        this.embeddings = embeddings;
+        return this;
+    }
+
+    /**
+     * Get embeddings
+     * 
+     * @return embeddings
+     **/
+    @Schema(description = "")
+    public String getEmbeddings()
+    {
+        return embeddings;
+    }
+
+    public void setEmbeddings(String embeddings)
+    {
+        this.embeddings = embeddings;
+    }
+
+    public ModelMetadata evaluation(Map<String, BigDecimal> evaluation)
+    {
+        this.evaluation = evaluation;
+        return this;
+    }
+
+    public ModelMetadata putEvaluationItem(String key, BigDecimal evaluationItem)
+    {
+        this.evaluation.put(key, evaluationItem);
+        return this;
+    }
+
+    /**
+     * Get evaluation
+     * 
+     * @return evaluation
+     **/
+    @Schema(required = true, description = "")
+    public Map<String, BigDecimal> getEvaluation()
+    {
+        return evaluation;
+    }
+
+    public void setEvaluation(Map<String, BigDecimal> evaluation)
+    {
+        this.evaluation = evaluation;
+    }
+
+    public ModelMetadata timestamp(String timestamp)
+    {
+        this.timestamp = timestamp;
+        return this;
+    }
+
+    /**
+     * Get timestamp
+     * 
+     * @return timestamp
+     **/
+    @Schema(required = true, description = "")
+    public String getTimestamp()
+    {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp)
+    {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -202,18 +184,17 @@ public class ModelMetadata  implements Serializable
             return false;
         }
         ModelMetadata modelMetadata = (ModelMetadata) o;
-        return Objects.equals(this.modelId, modelMetadata.modelId)
-                && Objects.equals(this.codebookName, modelMetadata.codebookName)
-                && Objects.equals(this.labels, modelMetadata.labels)
-                && Objects.equals(this.sizeMb, modelMetadata.sizeMb)
-                && Objects.equals(this.trainedWithSamples, modelMetadata.trainedWithSamples)
-                && Objects.equals(this.lastUpdate, modelMetadata.lastUpdate);
+        return Objects.equals(this.labels, modelMetadata.labels)
+                && Objects.equals(this.modelType, modelMetadata.modelType)
+                && Objects.equals(this.embeddings, modelMetadata.embeddings)
+                && Objects.equals(this.evaluation, modelMetadata.evaluation)
+                && Objects.equals(this.timestamp, modelMetadata.timestamp);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(modelId, codebookName, labels, sizeMb, trainedWithSamples, lastUpdate);
+        return Objects.hash(labels, modelType, embeddings, evaluation, timestamp);
     }
 
     @Override
@@ -222,13 +203,11 @@ public class ModelMetadata  implements Serializable
         StringBuilder sb = new StringBuilder();
         sb.append("class ModelMetadata {\n");
 
-        sb.append("    modelId: ").append(toIndentedString(modelId)).append("\n");
-        sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
         sb.append("    labels: ").append(toIndentedString(labels)).append("\n");
-        sb.append("    sizeMb: ").append(toIndentedString(sizeMb)).append("\n");
-        sb.append("    trainedWithSamples: ").append(toIndentedString(trainedWithSamples))
-                .append("\n");
-        sb.append("    lastUpdate: ").append(toIndentedString(lastUpdate)).append("\n");
+        sb.append("    modelType: ").append(toIndentedString(modelType)).append("\n");
+        sb.append("    embeddings: ").append(toIndentedString(embeddings)).append("\n");
+        sb.append("    evaluation: ").append(toIndentedString(evaluation)).append("\n");
+        sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
@@ -98,4 +99,6 @@ public abstract class CodebookAutomationService
 
     public abstract PredictionResult predictTag(Codebook cb, Project proj, SourceDocument doc)
         throws ApiException;
+
+    public abstract ModelMetadata getModelMetadata(Codebook cb) throws ApiException;
 }
