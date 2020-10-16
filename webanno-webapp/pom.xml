@@ -27,6 +27,7 @@
   <packaging>war</packaging>
   <properties>
     <docker.image.name>webanno/webanno-snapshots</docker.image.name>
+    <docker.tag.name>latest</docker.tag.name>
   </properties>
   <dependencies>
     <dependency>
@@ -725,7 +726,7 @@
                   <name>${docker.image.name}</name>
                   <build>
                     <tags>
-                      <tag>latest</tag>
+                      <tag>${docker.tag.name}</tag>
                       <tag>${project.version}</tag>
                     </tags>
                     <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
