@@ -68,8 +68,6 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapRadioChoic
 import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.api.CasStorageService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.feature.FeatureSupportRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConst;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.config.CodebookLayoutCssResourceBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.event.CodebookConfigurationChangedEvent;
@@ -79,14 +77,12 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookFeatureSupportRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
-import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.JSONUtil;
 import de.tudarmstadt.ukp.clarin.webanno.support.dialog.ConfirmationDialog;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
@@ -107,8 +103,8 @@ public class ProjectCodebookPanel
     private static final Logger LOG = LoggerFactory.getLogger(ProjectCodebookPanel.class);
     private static final long serialVersionUID = -7870526462864489252L;
 
-    private String CFN = "code";
-    private CodebookExportMode exportMode = CodebookExportMode.ALL;
+    private final String CFN = "code";
+    private final CodebookExportMode exportMode = CodebookExportMode.ALL;
 
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
@@ -119,16 +115,16 @@ public class ProjectCodebookPanel
 
     private ConfirmationDialog confirmationDialog;
 
-    private CodebookSelectionForm codebookSelectionForm;
-    private CodebookDetailForm codebookDetailForm;
+    private final CodebookSelectionForm codebookSelectionForm;
+    private final CodebookDetailForm codebookDetailForm;
 
-    private CodebookTagSelectionPanel tagSelectionPanel;
-    private CodebookTagEditorPanel tagEditorPanel;
-    private ImportCodebookForm importCodebookForm;
+    private final CodebookTagSelectionPanel tagSelectionPanel;
+    private final CodebookTagEditorPanel tagEditorPanel;
+    private final ImportCodebookForm importCodebookForm;
 
-    private IModel<CodebookTag> selectedTag;
+    private final IModel<CodebookTag> selectedTag;
 
-    private ProjectCodebookTreePanel projectCodebookTreePanel;
+    private final ProjectCodebookTreePanel projectCodebookTreePanel;
 
     public ProjectCodebookPanel(String id, final IModel<Project> aProjectModel)
     {
@@ -253,6 +249,68 @@ public class ProjectCodebookPanel
         }
     }
 
+    private void saveCodebook(Codebook codebook)
+    {
+        final Project project = ProjectCodebookPanel.this.getModelObject();
+        boolean isNewCodebook = isNull(codebook.getId());
+
+        if (isNewCodebook) {
+            String codebookName = StringUtils.capitalize(codebook.getUiName());
+
+            codebookName = codebookName.replaceAll("\\W", "");
+
+            if (codebookName.isEmpty()) {
+                error("Unable to derive internal name from [" + codebook.getUiName()
+                        + "]. Please choose a different initial name and rename after the "
+                        + "codebook has been created.");
+                return;
+            }
+
+            if (!Character.isJavaIdentifierStart(codebookName.charAt(0))) {
+                error("Initial codebook name cannot start with [" + codebookName.charAt(0)
+                        + "]. Please choose a different initial name and rename after the "
+                        + "codebook has been created.");
+                return;
+            }
+            String internalName = CodebookConst.CODEBOOK_NAME_PREFIX + codebookName;
+            if (codebookService.existsCodebook(internalName, project)) {
+                error("A codebook with the name [" + internalName
+                        + "] already exists in this project.");
+                return;
+            }
+
+            codebook.setName(internalName);
+        }
+
+        if (codebook.getOrder() < 1) {
+            int lastIndex = codebookService.listCodebook(project).size();
+            codebook.setOrder(lastIndex + 1);
+        }
+
+        codebook.setProject(project);
+
+        codebookService.createCodebook(codebook);
+        if (!codebookService.existsFeature(CFN, codebook)) {
+            CodebookFeature codebookFeature = new CodebookFeature();
+            codebookFeature.setCodebook(codebook);
+            codebookFeature.setProject(ProjectCodebookPanel.this.getModelObject());
+            codebookFeature.setName(CFN);
+            codebookFeature.setUiName("Code");// not visible for current implementation
+            codebookFeature.setDescription("Specific code values for this codebook");
+            codebookFeature.setType(CAS.TYPE_NAME_STRING);
+            codebookService.createCodebookFeature(codebookFeature);
+            tagSelectionPanel.setDefaultModelObject(codebook);
+        }
+
+        applicationEventPublisherHolder.get()
+                .publishEvent(new CodebookConfigurationChangedEvent(this, project));
+    }
+
+    enum CodebookExportMode
+    {
+        SELECTED, ALL
+    }
+
     private class CodebookSelectionForm
         extends Form<Codebook>
     {
@@ -281,7 +339,7 @@ public class ProjectCodebookPanel
                     // Normally, using focusComponent should work, but it doesn't.
                     // Therefore, we manually add a JavaScript snippet..
                     // (cf. https://issues.apache.org/jira/browse/WICKET-5858)
-                    //target.focusComponent(codebookDetailForm.uiName);
+                    // target.focusComponent(codebookDetailForm.uiName);
                     target.appendJavaScript("setTimeout(function() { document.getElementById('"
                             + codebookDetailForm.uiName.getMarkupId() + "').focus(); }, 100);");
                     target.add(ProjectCodebookPanel.this);
@@ -328,7 +386,7 @@ public class ProjectCodebookPanel
     {
         private static final long serialVersionUID = -7777616763931128598L;
 
-        private FileUploadField fileUpload;
+        private final FileUploadField fileUpload;
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         public ImportCodebookForm(String id)
@@ -390,9 +448,9 @@ public class ProjectCodebookPanel
 
         private static final long serialVersionUID = 4032381828920667771L;
 
-        private ParentSelectionWrapper<Codebook> codebookParentSelection;
+        private final ParentSelectionWrapper<Codebook> codebookParentSelection;
 
-        private TextField<String> uiName;
+        private final TextField<String> uiName;
 
         public CodebookDetailForm(String id, IModel<Codebook> aSelectedCodebook)
         {
@@ -499,8 +557,7 @@ public class ProjectCodebookPanel
                 setModelObject(null);
 
                 for (SourceDocument doc : documentService.listSourceDocuments(project)) {
-                    for (AnnotationDocument ann : documentService
-                            .listAllAnnotationDocuments(doc)) {
+                    for (AnnotationDocument ann : documentService.listAllAnnotationDocuments(doc)) {
                         try {
                             CAS cas = casStorageService.readCas(doc, ann.getUser());
                             annotationService.upgradeCas(cas, doc, ann.getUser());
@@ -559,71 +616,10 @@ public class ProjectCodebookPanel
             this.updateParentChoicesForCodebook(getModelObject());
         }
 
-        public TextField<String> getUiName() {
+        public TextField<String> getUiName()
+        {
             return uiName;
         }
-    }
-
-    private void saveCodebook(Codebook codebook)
-    {
-        final Project project = ProjectCodebookPanel.this.getModelObject();
-        boolean isNewCodebook = isNull(codebook.getId());
-
-        if (isNewCodebook) {
-            String codebookName = StringUtils.capitalize(codebook.getUiName());
-
-            codebookName = codebookName.replaceAll("\\W", "");
-
-            if (codebookName.isEmpty()) {
-                error("Unable to derive internal name from [" + codebook.getUiName()
-                        + "]. Please choose a different initial name and rename after the "
-                        + "codebook has been created.");
-                return;
-            }
-
-            if (!Character.isJavaIdentifierStart(codebookName.charAt(0))) {
-                error("Initial codebook name cannot start with [" + codebookName.charAt(0)
-                        + "]. Please choose a different initial name and rename after the "
-                        + "codebook has been created.");
-                return;
-            }
-            String internalName = CodebookConst.CODEBOOK_NAME_PREFIX + codebookName;
-            if (codebookService.existsCodebook(internalName, project)) {
-                error("A codebook with the name [" + internalName
-                        + "] already exists in this project.");
-                return;
-            }
-
-            codebook.setName(internalName);
-        }
-
-        if (codebook.getOrder() < 1) {
-            int lastIndex = codebookService.listCodebook(project).size();
-            codebook.setOrder(lastIndex + 1);
-        }
-
-        codebook.setProject(project);
-
-        codebookService.createCodebook(codebook);
-        if (!codebookService.existsFeature(CFN, codebook)) {
-            CodebookFeature codebookFeature = new CodebookFeature();
-            codebookFeature.setCodebook(codebook);
-            codebookFeature.setProject(ProjectCodebookPanel.this.getModelObject());
-            codebookFeature.setName(CFN);
-            codebookFeature.setUiName("Code");// not visible for current implementation
-            codebookFeature.setDescription("Specific code values for this codebook");
-            codebookFeature.setType(CAS.TYPE_NAME_STRING);
-            codebookService.createCodebookFeature(codebookFeature);
-            tagSelectionPanel.setDefaultModelObject(codebook);
-        }
-
-        applicationEventPublisherHolder.get()
-                .publishEvent(new CodebookConfigurationChangedEvent(this, project));
-    }
-
-    enum CodebookExportMode
-    {
-        SELECTED, ALL
     }
 
 }

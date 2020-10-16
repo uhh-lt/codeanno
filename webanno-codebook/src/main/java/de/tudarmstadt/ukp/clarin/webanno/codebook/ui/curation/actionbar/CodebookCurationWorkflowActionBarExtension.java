@@ -17,17 +17,16 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.actionbar;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
+import static java.lang.Integer.MAX_VALUE;
+
 import org.apache.wicket.markup.html.panel.Panel;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookCorrectionPage;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPage;
-
-import static java.lang.Integer.MAX_VALUE;
 
 @Order(1000)
 @Component
@@ -57,6 +56,6 @@ public class CodebookCurationWorkflowActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage || aPage instanceof CodebookAutomationPage;
+        return aPage instanceof CodebookCurationPage || aPage instanceof CodebookCorrectionPage;
     }
 }

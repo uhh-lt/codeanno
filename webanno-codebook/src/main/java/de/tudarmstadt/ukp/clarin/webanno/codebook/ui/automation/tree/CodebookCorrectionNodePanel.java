@@ -66,33 +66,29 @@ import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 
-public class CodebookAutomationNodePanel
+public class CodebookCorrectionNodePanel
     extends CodebookNodePanel
 {
 
     private static final long serialVersionUID = 5875644822389693657L;
-
+    private static final String AUTOMATION_AVAILABLE = "bg-primary";
+    private static final String AUTOMATION_NOT_AVAILABLE = "bg-warning";
+    private static final String AUTOMATION_ACCEPTED = "bg-success";
+    private final CodebookTagSelectionComboBox codebookCorrectionComboBox;
+    private final CodebookCorrectionTreePanel parentTreePanel;
+    private final Form<CodebookTag> codebookCorrectionForm;
+    private final CodebookNode node;
+    private final PredictionResult automationSuggestions;
+    private final WebMarkupContainer codebookCorrectionPanel;
+    private final WebMarkupContainer codebookCorrectionPanelHeader;
+    private final WebMarkupContainer codebookCorrectionPanelFooter;
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean DocumentService documentService;
     private @SpringBean UserDao userRepository;
     private @SpringBean CodebookAutomationService automationService;
 
-    private static final String AUTOMATION_AVAILABLE = "bg-primary";
-    private static final String AUTOMATION_NOT_AVAILABLE = "bg-warning";
-    private static final String AUTOMATION_ACCEPTED = "bg-success";
-
-    private CodebookTagSelectionComboBox codebookAutomationComboBox;
-    private CodebookAutomationTreePanel parentTreePanel;
-    private Form<CodebookTag> codebookAutomationForm;
-    private CodebookNode node;
-    private PredictionResult automationSuggestions;
-
-    private WebMarkupContainer codebookAutomationPanel;
-    private WebMarkupContainer codebookAutomationPanelHeader;
-    private WebMarkupContainer codebookAutomationPanelFooter;
-
-    public CodebookAutomationNodePanel(String id, IModel<CodebookNode> node,
-            PredictionResult automationSuggestions, CodebookAutomationTreePanel parentTreePanel)
+    public CodebookCorrectionNodePanel(String id, IModel<CodebookNode> node,
+            PredictionResult automationSuggestions, CodebookCorrectionTreePanel parentTreePanel)
     {
         super(id, new CompoundPropertyModel<>(node));
 
@@ -100,16 +96,16 @@ public class CodebookAutomationNodePanel
         this.parentTreePanel = parentTreePanel;
         this.automationSuggestions = automationSuggestions;
 
-        this.codebookAutomationPanel = new WebMarkupContainer("codebookAutomationPanel");
-        this.codebookAutomationPanel.setOutputMarkupPlaceholderTag(true);
+        this.codebookCorrectionPanel = new WebMarkupContainer("codebookCorrectionPanel");
+        this.codebookCorrectionPanel.setOutputMarkupPlaceholderTag(true);
 
         // header
-        this.codebookAutomationPanelHeader = new WebMarkupContainer(
-                "codebookAutomationPanelHeader");
-        this.codebookAutomationPanelHeader.setOutputMarkupPlaceholderTag(true);
+        this.codebookCorrectionPanelHeader = new WebMarkupContainer(
+                "codebookCorrectionPanelHeader");
+        this.codebookCorrectionPanelHeader.setOutputMarkupPlaceholderTag(true);
         try {
-            this.codebookAutomationPanelHeader.add(AttributeModifier.append("class",
-                    automationService.automationIsAvailable(this.node.getCodebook(), true)
+            this.codebookCorrectionPanelHeader.add(AttributeModifier.append("class",
+                    automationService.isAutomationAvailable(this.node.getCodebook(), true)
                             ? AUTOMATION_AVAILABLE
                             : AUTOMATION_NOT_AVAILABLE));
         }
@@ -119,13 +115,13 @@ public class CodebookAutomationNodePanel
         }
 
         // name of the CB
-        this.codebookAutomationPanelHeader.add(new Label("codebookName", this.node.getUiName()));
+        this.codebookCorrectionPanelHeader.add(new Label("codebookName", this.node.getUiName()));
 
-        this.codebookAutomationPanel.add(codebookAutomationPanelHeader);
+        this.codebookCorrectionPanel.add(codebookCorrectionPanelHeader);
 
         // suggestions list view
         List<PredictionPojo> preds = buildPredictionList();
-        this.codebookAutomationPanel.add(new ListView<PredictionPojo>("suggestionsListView", preds)
+        this.codebookCorrectionPanel.add(new ListView<PredictionPojo>("suggestionsListView", preds)
         {
             private static final long serialVersionUID = -3459331980449938289L;
 
@@ -135,33 +131,33 @@ public class CodebookAutomationNodePanel
                 PredictionPojo pred = item.getModelObject();
 
                 item.add(new Label("tag", pred.tag));
-                item.add(new Label("probability", pred.prob));
+                item.add(new Label("probability", String.format("%.6f", pred.prob)));
             }
         });
 
-        this.codebookAutomationPanelFooter = new WebMarkupContainer(
-                "codebookAutomationPanelFooter");
-        this.codebookAutomationPanelFooter.setOutputMarkupPlaceholderTag(true);
+        this.codebookCorrectionPanelFooter = new WebMarkupContainer(
+                "codebookCorrectionPanelFooter");
+        this.codebookCorrectionPanelFooter.setOutputMarkupPlaceholderTag(true);
 
         // codebook automation form
         IModel<CodebookTag> selectedTag = Model.of();
-        this.codebookAutomationForm = new Form<>("codebookAutomationForm",
+        this.codebookCorrectionForm = new Form<>("codebookCorrectionForm",
                 CompoundPropertyModel.of(selectedTag));
-        this.codebookAutomationForm.setOutputMarkupId(true);
+        this.codebookCorrectionForm.setOutputMarkupId(true);
 
         // codebook automation ComboBox
-        this.codebookAutomationComboBox = createAutomationComboBox();
-        this.codebookAutomationForm.addOrReplace(this.codebookAutomationComboBox);
+        this.codebookCorrectionComboBox = createAutomationComboBox();
+        this.codebookCorrectionForm.addOrReplace(this.codebookCorrectionComboBox);
 
         // tooltip for the codebooks
         Codebook codebook = this.node.getCodebook();
-        this.codebookAutomationPanel.add(
+        this.codebookCorrectionPanel.add(
                 new DescriptionTooltipBehavior(codebook.getUiName(), codebook.getDescription()));
 
-        this.codebookAutomationPanelFooter.add(this.codebookAutomationForm);
+        this.codebookCorrectionPanelFooter.add(this.codebookCorrectionForm);
 
-        this.codebookAutomationPanel.add(codebookAutomationPanelFooter);
-        this.add(codebookAutomationPanel);
+        this.codebookCorrectionPanel.add(codebookCorrectionPanelFooter);
+        this.add(codebookCorrectionPanel);
     }
 
     private List<PredictionPojo> buildPredictionList()
@@ -284,7 +280,7 @@ public class CodebookAutomationNodePanel
     private List<CodebookTag> getPossibleTagChoices()
     {
         // get the possible tag choices for the current node
-        CodebookAutomationNodePanel parentPanel = this.parentTreePanel.getNodePanels()
+        CodebookCorrectionNodePanel parentPanel = this.parentTreePanel.getNodePanels()
                 .get(this.node.getParent());
         if (parentPanel == null)
             return codebookService.listTags(this.node.getCodebook());
@@ -305,7 +301,7 @@ public class CodebookAutomationNodePanel
 
     public CodebookTag getCurrentlySelectedTag()
     {
-        String tagString = this.codebookAutomationComboBox.getModelObject();
+        String tagString = this.codebookCorrectionComboBox.getModelObject();
         if (tagString == null || tagString.isEmpty())
             return null;
         List<CodebookTag> tags = codebookService.listTags(this.node.getCodebook());
@@ -333,7 +329,7 @@ public class CodebookAutomationNodePanel
     {
         // TODO how to update the combo boxes without an AjaxRequestTarget?!
         if (changedEvent.getNewState().equals(SourceDocumentState.CURATION_FINISHED)) {
-            this.codebookAutomationComboBox.setEnabled(false);
+            this.codebookCorrectionComboBox.setEnabled(false);
         }
     }
 

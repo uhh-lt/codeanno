@@ -41,8 +41,8 @@ public class CodebookCurationTreePanel
 {
     private static final long serialVersionUID = -8329270688665288003L;
 
-    private CodebookCurationPage parentPage;
-    private Map<CodebookNode, CodebookCurationNodePanel> nodePanels;
+    private final CodebookCurationPage parentPage;
+    private final Map<CodebookNode, CodebookCurationNodePanel> nodePanels;
     private transient Map<Codebook, List<CodebookUserSuggestion>> userSuggestions;
 
     public CodebookCurationTreePanel(String aId, CodebookCurationPage parentPage)

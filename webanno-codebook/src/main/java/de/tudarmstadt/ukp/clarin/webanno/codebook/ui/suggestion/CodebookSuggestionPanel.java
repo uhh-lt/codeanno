@@ -71,8 +71,8 @@ public class CodebookSuggestionPanel
     private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
 
     private CodebookCurationModel cModel;
-    private WebMarkupContainer codebooksGroup;
-    private PageableListView<CodebookSuggestion> suggestions;
+    private final WebMarkupContainer codebooksGroup;
+    private final PageableListView<CodebookSuggestion> suggestions;
 
     public CodebookSuggestionPanel(String id, IModel<CodebookCurationModel> aModel)
     {
@@ -223,9 +223,8 @@ public class CodebookSuggestionPanel
     private boolean isDiffs(Codebook codebook, List<Codebook> types, Map<String, CAS> jCases)
     {
         DiffResult diff = CodebookDiff.doCodebookDiff(codebookService, codebook.getProject(),
-               // CurationUtil.getCodebookTypes(jCases.get(CurationUtil.CURATION_USER), types),
-                null,
-                jCases, 0, 0);
+                // CurationUtil.getCodebookTypes(jCases.get(CurationUtil.CURATION_USER), types),
+                null, jCases, 0, 0);
         if (diff.getIncompleteConfigurationSets().size() > 0) {
             return true;
         }

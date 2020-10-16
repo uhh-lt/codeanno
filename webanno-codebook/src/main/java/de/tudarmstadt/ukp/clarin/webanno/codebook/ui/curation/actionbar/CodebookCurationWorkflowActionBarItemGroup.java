@@ -47,16 +47,14 @@ public class CodebookCurationWorkflowActionBarItemGroup
     extends Panel
 {
     private static final long serialVersionUID = 8596786586955459711L;
-
+    protected final ConfirmationDialog finishDocumentDialog;
+    private final AnnotationPageBase page;
+    private final LambdaAjaxLink finishDocumentLink;
+    private final MergeDialog resetDocumentDialog;
+    private final LambdaAjaxLink resetDocumentLink;
     private @SpringBean DocumentService documentService;
     private @SpringBean CurationDocumentService curationDocumentService;
     private @SpringBean UserDao userRepository;
-
-    private final AnnotationPageBase page;
-    protected final ConfirmationDialog finishDocumentDialog;
-    private final LambdaAjaxLink finishDocumentLink;
-    private MergeDialog resetDocumentDialog;
-    private LambdaAjaxLink resetDocumentLink;
 
     public CodebookCurationWorkflowActionBarItemGroup(String aId, AnnotationPageBase aPage)
     {

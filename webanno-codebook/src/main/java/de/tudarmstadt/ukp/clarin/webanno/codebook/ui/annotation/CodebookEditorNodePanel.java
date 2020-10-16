@@ -21,11 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
-import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
-import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -34,24 +29,30 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 
-public class CodebookEditorNodePanel extends CodebookNodePanel {
+public class CodebookEditorNodePanel
+    extends CodebookNodePanel
+{
     private static final long serialVersionUID = 5875644822389693657L;
-
-    private CodebookTagSelectionComboBox tagSelectionComboBox;
-    private @SpringBean CodebookSchemaService codebookService;
     protected @SpringBean DocumentService documentService;
-    private CodebookEditorPanel parentEditor;
-    private Form<CodebookTag> tagSelectionForm;
+    private final CodebookTagSelectionComboBox tagSelectionComboBox;
+    private @SpringBean CodebookSchemaService codebookService;
+    private final CodebookEditorPanel parentEditor;
+    private final Form<CodebookTag> tagSelectionForm;
 
     public CodebookEditorNodePanel(String id, IModel<CodebookNode> node,
-                                   CodebookEditorPanel parentEditor) {
+            CodebookEditorPanel parentEditor)
+    {
         super(id, new CompoundPropertyModel<>(node));
 
         this.node = node.getObject();
@@ -77,11 +78,11 @@ public class CodebookEditorNodePanel extends CodebookNodePanel {
         this.add(this.tagSelectionForm);
     }
 
-    private CodebookTagSelectionComboBox createTagSelectionComboBox() {
+    private CodebookTagSelectionComboBox createTagSelectionComboBox()
+    {
 
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
         String existingCode = this.parentEditor.getExistingCode(this.node.getCodebook());
-
 
         String userName = this.parentEditor.getModelObject().getUser().getUsername();
         CodebookTagSelectionComboBox tagSelection = new CodebookTagSelectionComboBox(this,
@@ -89,8 +90,7 @@ public class CodebookEditorNodePanel extends CodebookNodePanel {
 
         SourceDocument doc = parentEditor.getModelObject().getDocument();
 
-        tagSelection.setEnabled(doc !=null
-                && !documentService.isAnnotationFinished(
+        tagSelection.setEnabled(doc != null && !documentService.isAnnotationFinished(
                 parentEditor.getModelObject().getDocument(),
                 parentEditor.getModelObject().getUser()));
 
@@ -103,7 +103,8 @@ public class CodebookEditorNodePanel extends CodebookNodePanel {
         return tagSelection;
     }
 
-    private List<CodebookTag> getPossibleTagChoices() {
+    private List<CodebookTag> getPossibleTagChoices()
+    {
 
         // get the possible tag choices for the current node
         CodebookEditorNodePanel parentPanel = this.parentEditor.getNodePanels()
@@ -127,7 +128,8 @@ public class CodebookEditorNodePanel extends CodebookNodePanel {
         return validTags;
     }
 
-    public CodebookTag getCurrentlySelectedTag() {
+    public CodebookTag getCurrentlySelectedTag()
+    {
         String tagString = this.tagSelectionComboBox.getModelObject();
         if (tagString == null || tagString.isEmpty())
             return null;
@@ -139,29 +141,35 @@ public class CodebookEditorNodePanel extends CodebookNodePanel {
     }
 
     // package private by intention
-    void clearSelection() {
+    void clearSelection()
+    {
         this.tagSelectionComboBox.setModelObject(null);
     }
 
     // package private by intention
-    void updateTagSelectionCombobox() {
+    void updateTagSelectionCombobox()
+    {
         this.tagSelectionForm.addOrReplace(createTagSelectionComboBox());
     }
 
-    public CodebookSchemaService getCodebookService() {
+    public CodebookSchemaService getCodebookService()
+    {
         return codebookService;
     }
 
-    public CodebookEditorPanel getParentEditor() {
+    public CodebookEditorPanel getParentEditor()
+    {
         return parentEditor;
     }
 
-    public CodebookNode getNode() {
+    public CodebookNode getNode()
+    {
         return node;
     }
 
     @Override
-    public CodebookNodePanel getParentNodePanel() {
+    public CodebookNodePanel getParentNodePanel()
+    {
         return parentEditor.getParentNodePanel(node);
     }
 }

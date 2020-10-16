@@ -25,9 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.wicket.AttributeModifier;
@@ -53,6 +50,8 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookUserSuggestion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
 import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
@@ -65,17 +64,15 @@ public class CodebookCurationNodePanel
 
     private static final String HAS_DIFF = "bg-danger";
     private static final String HAS_NO_DIFF = "bg-success";
-
+    private final CodebookTagSelectionComboBox codebookTagSelectionComboBox;
+    private final CodebookCurationTreePanel parentTreePanel;
+    private final Form<CodebookTag> codebookCurationForm;
+    private final List<CodebookUserSuggestion> codebookUserSuggestions;
+    private final WebMarkupContainer codebookCurationPanelHeader;
+    private final WebMarkupContainer codebookCurationPanelFooter;
+    private final WebMarkupContainer codebookCurationPanel;
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean CurationDocumentService curationDocumentService;
-
-    private CodebookTagSelectionComboBox codebookTagSelectionComboBox;
-    private CodebookCurationTreePanel parentTreePanel;
-    private Form<CodebookTag> codebookCurationForm;
-    private List<CodebookUserSuggestion> codebookUserSuggestions;
-    private WebMarkupContainer codebookCurationPanelHeader;
-    private WebMarkupContainer codebookCurationPanelFooter;
-    private WebMarkupContainer codebookCurationPanel;
 
     public CodebookCurationNodePanel(String id, IModel<CodebookNode> node,
             CodebookCurationTreePanel parentTreePanel,
@@ -168,9 +165,7 @@ public class CodebookCurationNodePanel
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
 
         CodebookTagSelectionComboBox comboBox = new CodebookTagSelectionComboBox(this,
-                "codebookTagSelectionComboBox",
-                Model.of(existingValue),
-                tagChoices, node);
+                "codebookTagSelectionComboBox", Model.of(existingValue), tagChoices, node);
 
         // only enable if curation in progress
         comboBox.setEnabled(codebookUserSuggestions.get(0).getDocument().getState()
@@ -195,8 +190,7 @@ public class CodebookCurationNodePanel
                         writeCodebookCas(curationCas);
                     }
                     else {
-                        saveCodebookAnnotation(feature, comboBox.getModelObject(),
-                                curationCas);
+                        saveCodebookAnnotation(feature, comboBox.getModelObject(), curationCas);
                     }
                 }
                 catch (IOException | AnnotationException e) {
@@ -228,8 +222,8 @@ public class CodebookCurationNodePanel
 
     }
 
-    private void writeCodebookToCas(CodebookAdapter aAdapter, CodebookFeature feature, String value,
-            CAS aJCas)
+    private void writeCodebookToCas(CodebookAdapter aAdapter, CodebookFeature feature,
+            String tagValue, CAS aJCas)
         throws IOException, AnnotationException
     {
 
@@ -242,7 +236,7 @@ public class CodebookCurationNodePanel
         else {
             annoId = aAdapter.add(aJCas);
         }
-        aAdapter.setFeatureValue(aJCas, feature, annoId, value);
+        aAdapter.setFeatureValue(aJCas, feature, annoId, tagValue);
     }
 
     private void writeCodebookCas(CAS aCas) throws IOException
@@ -284,14 +278,15 @@ public class CodebookCurationNodePanel
         if (tagString == null || tagString.isEmpty())
             return null;
         List<CodebookTag> tags = codebookService.listTags(this.node.getCodebook());
-        Set<CodebookTag> tag = tags.stream()
-                .filter(t -> t.getName().equals(tagString)).collect(Collectors.toSet());
+        Set<CodebookTag> tag = tags.stream().filter(t -> t.getName().equals(tagString))
+                .collect(Collectors.toSet());
         assert tag.size() == 1; // TODO what to throw?
         return tag.iterator().next();
     }
 
     @Override
-    public CodebookNodePanel getParentNodePanel() {
+    public CodebookNodePanel getParentNodePanel()
+    {
         // TODO
         return null;
     }

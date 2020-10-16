@@ -17,7 +17,6 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.actionbar;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.springframework.core.annotation.Order;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Component;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.script.ScriptDirectionActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookCorrectionPage;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPage;
 
 @Order(500)
@@ -43,7 +43,7 @@ public class CodebookCurationScriptDirectionActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage || aPage instanceof CodebookAutomationPage;
+        return aPage instanceof CodebookCurationPage || aPage instanceof CodebookCorrectionPage;
     }
 
     @Override

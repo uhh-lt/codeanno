@@ -22,19 +22,19 @@
     <div class="flex-content flex-h-container flex-gutter">
 
       <!--            Project Selection        -->
-      <form wicket:id="projectSelectionForm" class="flex-sidebar flex-v-container flex-gutter">
+      <form class="flex-sidebar flex-v-container flex-gutter" wicket:id="projectSelectionForm">
         <div class="flex-content card">
           <div class="card-header">
             <wicket:message key="projects"/>
           </div>
           <div class="scrolling card-body fit-child-snug" >
-            <select wicket:id="project" size="20" class="form-control"></select>
+            <select class="form-control" size="20" wicket:id="project"></select>
           </div>
         </div>
       </form>
 
       <div class="flex-content flex-v-container">
-        <form wicket:id="agreementForm" class="flex-v-container flex-gutter">
+        <form class="flex-v-container flex-gutter" wicket:id="agreementForm">
           <div class="row">
 
               <div class="col-md-4">
@@ -63,23 +63,23 @@
                   <div class="card-body">
                     <div wicket:enclosure="measure">
                       <div class="form-group col-md-12 form-row">
-                        <label wicket:for="measure" class="col-sm-4 col-form-label">
+                        <label class="col-sm-4 col-form-label" wicket:for="measure">
                           <wicket:label key="measure"/>
                         </label>
                         <div class="col-sm-8">
-                          <select wicket:id="measure" class="form-control"></select>
+                          <select class="form-control" wicket:id="measure"></select>
                         </div>
                       </div>
                     </div>
 
-                    <div wicket:id="traitsContainer" class="flex-content">
+                    <div class="flex-content" wicket:id="traitsContainer">
                       <div wicket:id="traits"></div>
                     </div>
                   </div>
 
                   <div class="card-footer flex-h-container">
                     <div class="flex-content text-right">
-                      <input type="submit" wicket:id="run" class="btn btn-primary"
+                      <input class="btn btn-primary" type="submit" wicket:id="run"
                              wicket:message="value:run"/>
                     </div>
                   </div>
@@ -88,8 +88,8 @@
               </div>
 
               <!--            Results Container        -->
-              <div wicket:id="resultsContainer" class="col-md-8 flex-content flex-v-container">
-                <div wicket:id="codebookName" class="alert alert-success text-center">
+              <div class="col-md-8 flex-content flex-v-container" wicket:id="resultsContainer">
+                <div class="alert alert-success text-center" wicket:id="codebookName">
                   <i>Selected Codebook:</i><strong><span wicket:id="codebookNameLabel"></span></strong>
                 </div>
                 <div class="flex-content flex-h-container" wicket:id="results"></div>

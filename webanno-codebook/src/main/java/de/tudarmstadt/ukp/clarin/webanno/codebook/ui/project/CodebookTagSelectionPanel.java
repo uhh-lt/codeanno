@@ -41,9 +41,9 @@ public class CodebookTagSelectionPanel
 
     private @SpringBean CodebookSchemaService codebookSchemaService;
 
-    private OverviewListChoice<CodebookTag> overviewList;
-    private IModel<Codebook> selectedCodebook;
-    private IModel<CodebookTag> selectedTag;
+    private final OverviewListChoice<CodebookTag> overviewList;
+    private final IModel<Codebook> selectedCodebook;
+    private final IModel<CodebookTag> selectedTag;
 
     public CodebookTagSelectionPanel(String id, IModel<Codebook> aCodebook,
             IModel<CodebookTag> aTag)

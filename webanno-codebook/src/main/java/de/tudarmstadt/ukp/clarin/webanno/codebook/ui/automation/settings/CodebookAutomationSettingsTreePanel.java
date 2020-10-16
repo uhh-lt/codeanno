@@ -31,9 +31,6 @@ import org.apache.wicket.model.Model;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookTagEditorPanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookTagSelectionPanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.ProjectCodebookPanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
@@ -49,10 +46,8 @@ public class CodebookAutomationSettingsTreePanel
     private final CodebookAutomationSettingsPanel.CodebookSelectionForm codebookSelectionForm;
 
     public CodebookAutomationSettingsTreePanel(String aId, IModel<?> aModel,
-                                               CodebookAutomationSettingsPanel
-                                                       codebookAutomationSettingsPanel,
-                                               CodebookAutomationSettingsPanel.CodebookSelectionForm
-                                                       codebookSelectionForm)
+            CodebookAutomationSettingsPanel codebookAutomationSettingsPanel,
+            CodebookAutomationSettingsPanel.CodebookSelectionForm codebookSelectionForm)
     {
         super(aId, aModel);
         this.codebookAutomationSettingsPanel = codebookAutomationSettingsPanel;
@@ -92,7 +87,8 @@ public class CodebookAutomationSettingsTreePanel
                 if (!CodebookNodeExpansion.get().contains(this.getModelObject())) {
                     CodebookNodeExpansion.get().add(this.getModelObject());
                     tree.expand(this.getModelObject());
-                } else {
+                }
+                else {
                     CodebookNodeExpansion.get().remove(this.getModelObject());
                     tree.collapse(this.getModelObject());
                 }

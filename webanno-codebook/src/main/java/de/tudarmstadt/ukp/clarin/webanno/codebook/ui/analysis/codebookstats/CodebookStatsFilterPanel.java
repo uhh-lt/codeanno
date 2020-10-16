@@ -26,8 +26,8 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.analysis.UpdateListViewCall
 public class CodebookStatsFilterPanel
     extends ListViewPanelFilterForm
 {
-    private CheckBox annotators;
-    private CheckBox curators;
+    private final CheckBox annotators;
+    private final CheckBox curators;
 
     public CodebookStatsFilterPanel(String id, UpdateListViewCallback updateListViewCallBack)
     {

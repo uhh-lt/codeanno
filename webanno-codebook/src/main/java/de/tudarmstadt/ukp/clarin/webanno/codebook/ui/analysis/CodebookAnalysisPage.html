@@ -23,27 +23,27 @@
         <!--          Left        -->
         <div class="flex-v-container" style="flex-basis: 20%">
             <!--            Project Selection        -->
-            <div wicket:id="projectSelectionForm" class="flex-v-container flex-content"></div>
+            <div class="flex-v-container flex-content" wicket:id="projectSelectionForm"></div>
             <!--            Document Selection        -->
-            <div wicket:id="documentSelectionForm" class="flex-v-container flex-gutter flex-content"></div>
+            <div class="flex-v-container flex-gutter flex-content" wicket:id="documentSelectionForm"></div>
             <!--            Export Stats Button                -->
-            <button wicket:id="export" class="btn btn-primary btn-sm btn-action" type="button" style="justify-self: center">
+            <button class="btn btn-primary btn-sm btn-action" style="justify-self: center" type="button" wicket:id="export">
                 <i class="fas fa-download"></i>&nbsp;
                 <wicket:message key="export.stats"/>
             </button>
         </div>
 
         <!--          statsPlaceholder       -->
-        <div wicket:id="statsPlaceholder" class="alert alert-danger flex-content text-center align-self-start">
+        <div class="alert alert-danger flex-content text-center align-self-start" wicket:id="statsPlaceholder">
             Please select a Project and/or a Document so show analysis insights!
         </div>
 
         <!--          projectStatsContainer       -->
-        <div wicket:id="projectStatsContainer" class="flex-content flex-h-container">
+        <div class="flex-content flex-h-container" wicket:id="projectStatsContainer">
         </div>
 
         <!--          documentStatsContainer       -->
-        <div wicket:id="documentStatsContainer" class="flex-content flex-h-container">
+        <div class="flex-content flex-h-container" wicket:id="documentStatsContainer">
         </div>
 
     </div>

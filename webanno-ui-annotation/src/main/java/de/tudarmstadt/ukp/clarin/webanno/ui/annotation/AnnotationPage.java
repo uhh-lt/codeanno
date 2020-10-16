@@ -336,8 +336,7 @@ public class AnnotationPage
 
     private CodebookEditorPanel createCodebookEditorPanel(AjaxRequestTarget aTarget)
     {
-        CodebookEditorPanel editorPanel
-                = new CodebookEditorPanel("codebookEditorPanel",
+        CodebookEditorPanel editorPanel = new CodebookEditorPanel("codebookEditorPanel",
                 Model.of(getCodebookEditorModel()))
         {
             private static final long serialVersionUID = 2857345299480098279L;

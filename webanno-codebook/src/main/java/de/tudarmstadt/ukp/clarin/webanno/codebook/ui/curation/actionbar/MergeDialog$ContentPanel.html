@@ -19,7 +19,7 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
   <wicket:panel>
-    <form wicket:id="form" class="w_flex_container">
+    <form class="w_flex_container" wicket:id="form">
       <div class="w_flex_content">
         <div class="fluid-container">
           <div class="row">
@@ -28,7 +28,7 @@
                 <wicket:container wicket:id="challenge" />
               </p>
               <div>
-                <input wicket:id="response" class="form-control"/>
+                <input class="form-control" wicket:id="response"/>
               </div>
               <p>
                 <span wicket:id="feedback"></span>
@@ -39,8 +39,8 @@
             <div class="form-group" wicket:enclosure="mergeIncompleteAnnotations">
               <div class="col-sm-12">
                 <div class="form-check">
-                  <input wicket:id="mergeIncompleteAnnotations" class="form-check-input" type="checkbox"/>
-                  <label wicket:for="mergeIncompleteAnnotations" class="form-check-label">
+                  <input class="form-check-input" type="checkbox" wicket:id="mergeIncompleteAnnotations"/>
+                  <label class="form-check-label" wicket:for="mergeIncompleteAnnotations">
                     Merge incomplete annotations
                   </label>
                 </div>
@@ -51,11 +51,11 @@
       </div>
       <div class="w_flex_footer card-footer text-right">
       <div class="form-group text-right">
-        <button wicket:id="confirm" class="btn btn-primary">
+        <button class="btn btn-primary" wicket:id="confirm">
           <i class="fas fa-check"></i>&nbsp;
           <wicket:message key="confirm.label"/>
         </button>
-        <button wicket:id="cancel" class="btn btn-secondary">
+        <button class="btn btn-secondary" wicket:id="cancel">
           <i class="fas fa-times"></i>&nbsp;
           <wicket:message key="cancel.label"/>
         </button>

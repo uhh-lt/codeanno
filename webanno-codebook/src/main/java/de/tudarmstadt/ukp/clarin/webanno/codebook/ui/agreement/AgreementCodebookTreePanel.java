@@ -57,7 +57,7 @@ public class AgreementCodebookTreePanel
     private static final long serialVersionUID = -3054236611676847524L;
 
     private Project project;
-    private CodebookAgreementPage parentPage;
+    private final CodebookAgreementPage parentPage;
     private CodebookNode selected;
 
     public AgreementCodebookTreePanel(String aId, IModel<?> aModel, Project project,

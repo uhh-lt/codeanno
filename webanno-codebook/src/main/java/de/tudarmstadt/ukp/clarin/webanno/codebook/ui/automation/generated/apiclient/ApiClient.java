@@ -81,9 +81,9 @@ import okio.Okio;
 public class ApiClient
 {
 
+    private final Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String basePath = "/";
     private boolean debugging = false;
-    private final Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String tempFolderPath = null;
 
     private Map<String, Authentication> authentications;

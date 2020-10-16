@@ -17,88 +17,54 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.uima.UIMAException;
+import org.apache.uima.cas.CAS;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
+import com.squareup.okhttp.Call;
+
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.GeneralApi;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.ModelApi;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.PredictionApi;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionRequest;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 
-public abstract class CodebookAutomationService
+public interface CodebookAutomationService
 {
-    public static final String SERVICE_NAME = "codebookAutomationService";
 
-    private static final String CBA_API_HOST_ENV_VAR = "CBA_API_HOST";
-    private static final String CBA_API_PORT_ENV_VAR = "CBA_API_PORT";
+    String SERVICE_NAME = "codebookAutomationService";
 
-    protected final PredictionApi predictionApi;
-    protected final ModelApi modelApi;
-    protected final GeneralApi generalApi;
+    String CBA_API_HOST_ENV_VAR = "CBA_API_HOST";
+    String CBA_API_PORT_ENV_VAR = "CBA_API_PORT";
 
-    protected boolean heartbeat;
+    boolean performHeartbeatCheck();
 
-    protected Map<Codebook, Boolean> availabilityCache;
+    void updateTagLabelMapping(Codebook cb, String tag, String label);
 
-    protected @Autowired DocumentService documentService;
-    protected @Autowired ProjectService projectService;
-    protected @Autowired CodebookSchemaService codebookService;
+    boolean isPredictionInProgress(Codebook cb);
 
-    public CodebookAutomationService() throws MalformedURLException
-    {
-        predictionApi = new PredictionApi();
-        predictionApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
+    Integer getPredictionInProgress(Codebook cb);
 
-        modelApi = new ModelApi();
-        modelApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
+    Double getPredictionInProgressFraction(Codebook cb);
 
-        generalApi = new GeneralApi();
-        generalApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
+    void addToPredictionProgress(Codebook cb, SourceDocument sdoc);
 
-        this.availabilityCache = new HashMap<>();
+    void removeFromPredictionProgress(PredictionResult result);
 
-        this.performHeartbeatCheck();
-    }
+    boolean isAutomationAvailable(Codebook cb, boolean updateCache) throws ApiException;
 
-    private URL getApiBaseURL() throws MalformedURLException
-    {
-        String host = System.getProperty(CBA_API_HOST_ENV_VAR);
-        int port = Integer.parseInt(System.getProperty(CBA_API_PORT_ENV_VAR));
-        return new URL("http", host, port, "");
-    }
-
-    public boolean performHeartbeatCheck()
-    {
-        try {
-            this.heartbeat = generalApi.heartbeatHeartbeatGet().isValue();
-        }
-        catch (ApiException exception) {
-            this.heartbeat = false;
-        }
-        return this.heartbeat;
-    }
-
-    protected abstract PredictionRequest buildPredictionRequest(Codebook cb, Project proj,
-            SourceDocument doc);
-
-    public abstract boolean automationIsAvailable(Codebook cb, boolean updateCache)
+    Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName)
         throws ApiException;
 
-    public abstract PredictionResult predictTag(Codebook cb, Project proj, SourceDocument doc)
-        throws ApiException;
+    ModelMetadata getModelMetadata(Codebook cb) throws ApiException;
 
-    public abstract ModelMetadata getModelMetadata(Codebook cb) throws ApiException;
+    void writePredictedTagToCorrectionCas(PredictionResult result, String userName)
+        throws IOException, UIMAException, AnnotationException;
+
+    CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
+        throws IOException, UIMAException;
 }

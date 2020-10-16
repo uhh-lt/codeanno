@@ -53,10 +53,12 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookFeatureState;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 
-public abstract class CodebookEditorPanel extends Panel {
+public abstract class CodebookEditorPanel
+    extends Panel
+{
     /**
-     * Function to return tooltip using jquery Docs for the JQuery tooltip widget
-     * that we configure below: https://api.jqueryui.com/tooltip/
+     * Function to return tooltip using jquery Docs for the JQuery tooltip widget that we configure
+     * below: https://api.jqueryui.com/tooltip/
      */
     protected static final String FUNCTION_FOR_TOOLTIP = "function() { return "
             + "'<div class=\"tooltip-title\">'+($(this).text() "
@@ -73,9 +75,10 @@ public abstract class CodebookEditorPanel extends Panel {
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
 
-    private CodebookEditorTreePanel codebookEditorTreePanel;
+    private final CodebookEditorTreePanel codebookEditorTreePanel;
 
-    public CodebookEditorPanel(String id, IModel<CodebookEditorModel> aModel) {
+    public CodebookEditorPanel(String id, IModel<CodebookEditorModel> aModel)
+    {
         super(id, aModel);
 
         setOutputMarkupId(true);
@@ -92,17 +95,20 @@ public abstract class CodebookEditorPanel extends Panel {
         addOrReplace(codebookEditorTreePanel);
     }
 
-    public CodebookEditorModel getModelObject() {
+    public CodebookEditorModel getModelObject()
+    {
         return (CodebookEditorModel) getDefaultModelObject();
     }
 
-    public String getExistingCode(Codebook codebook) {
+    public String getExistingCode(Codebook codebook)
+    {
         CodebookAdapter adapter = new CodebookAdapter(codebook);
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         CAS cas = null;
         try {
             cas = getCodebookCas();
-        } catch (IOException e1) {
+        }
+        catch (IOException e1) {
             // TODO why it is here??
         }
 
@@ -110,12 +116,15 @@ public abstract class CodebookEditorPanel extends Panel {
     }
 
     public AjaxFormComponentUpdatingBehavior createOnChangeSaveUpdatingBehavior(
-            ComboBox<CodebookTag> comboBox, Codebook codebook, CodebookFeature feature) {
-        return new AjaxFormComponentUpdatingBehavior("change") {
+            ComboBox<CodebookTag> comboBox, Codebook codebook, CodebookFeature feature)
+    {
+        return new AjaxFormComponentUpdatingBehavior("change")
+        {
             private static final long serialVersionUID = 5179816588460867471L;
 
             @Override
-            public void onUpdate(AjaxRequestTarget aTarget) {
+            public void onUpdate(AjaxRequestTarget aTarget)
+            {
                 try { // to persist the changes made to the codebook
                     CAS jcas = getCodebookCas();
                     if (comboBox.getModelObject() == null) {
@@ -123,13 +132,15 @@ public abstract class CodebookEditorPanel extends Panel {
                         CodebookAdapter adapter = new CodebookAdapter(codebook);
                         adapter.delete(jcas, feature);
                         writeCodebookCas(jcas);
-                    } else {
+                    }
+                    else {
                         CodebookEditorModel state = CodebookEditorPanel.this.getModelObject();
                         state.getCodebookFeatureStates()
                                 .add(new CodebookFeatureState(feature, comboBox.getModelObject()));
                         saveCodebookAnnotation(feature, jcas);
                     }
-                } catch (IOException | AnnotationException e) {
+                }
+                catch (IOException | AnnotationException e) {
                     error("Unable to update" + e.getMessage());
                 }
                 // update the tag selection combo boxes of the child nodes so that they offer
@@ -152,7 +163,8 @@ public abstract class CodebookEditorPanel extends Panel {
         };
     }
 
-    public void setModel(AjaxRequestTarget aTarget, CodebookEditorModel aState) {
+    public void setModel(AjaxRequestTarget aTarget, CodebookEditorModel aState)
+    {
         setDefaultModelObject(aState);
         setDefaultModel(Model.of(aState));
 
@@ -164,7 +176,8 @@ public abstract class CodebookEditorPanel extends Panel {
     }
 
     private void saveCodebookAnnotation(CodebookFeature aCodebookFeature, CAS aJCas)
-            throws AnnotationException, IOException {
+        throws AnnotationException, IOException
+    {
         CodebookAdapter adapter = new CodebookAdapter(aCodebookFeature.getCodebook());
         writeCodebookFeatureModelsToCas(adapter, aJCas);
 
@@ -174,7 +187,8 @@ public abstract class CodebookEditorPanel extends Panel {
     }
 
     private void writeCodebookFeatureModelsToCas(CodebookAdapter aAdapter, CAS aJCas)
-            throws IOException, AnnotationException {
+        throws IOException, AnnotationException
+    {
         CodebookEditorModel state = getModelObject();
         List<CodebookFeatureState> featureStates = state.getCodebookFeatureStates();
 
@@ -187,14 +201,16 @@ public abstract class CodebookEditorPanel extends Panel {
 
             if (existingFs != null) {
                 annoId = getAddr(existingFs);
-            } else {
+            }
+            else {
                 annoId = aAdapter.add(aJCas);
             }
             aAdapter.setFeatureValue(aJCas, featureState.feature, annoId, featureState.value);
         }
     }
 
-    private CAS getCodebookCas() throws IOException {
+    private CAS getCodebookCas() throws IOException
+    {
         CodebookEditorModel state = getModelObject();
 
         if (state.getDocument() == null) {
@@ -203,7 +219,8 @@ public abstract class CodebookEditorPanel extends Panel {
         return (onGetJCas());
     }
 
-    private void writeCodebookCas(CAS aJCas) throws IOException {
+    private void writeCodebookCas(CAS aJCas) throws IOException
+    {
 
         CodebookEditorModel state = getModelObject();
         documentService.writeAnnotationCas(aJCas, state.getDocument(), state.getUser(), true);
@@ -217,15 +234,18 @@ public abstract class CodebookEditorPanel extends Panel {
     }
 
     // package private by intention
-    Map<CodebookNode, CodebookEditorNodePanel> getNodePanels() {
+    Map<CodebookNode, CodebookEditorNodePanel> getNodePanels()
+    {
         return this.codebookEditorTreePanel.getNodePanels();
     }
 
-    public CodebookEditorNodePanel getParentNodePanel(CodebookNode node) {
+    public CodebookEditorNodePanel getParentNodePanel(CodebookNode node)
+    {
         return this.codebookEditorTreePanel.getNodePanels().get(node.getParent());
     }
 
-    private Set<CodebookEditorNodePanel> getChildNodePanels(CodebookNode node) {
+    private Set<CodebookEditorNodePanel> getChildNodePanels(CodebookNode node)
+    {
         Set<CodebookEditorNodePanel> childNodePanels = new HashSet<>();
         Map<CodebookNode, CodebookEditorNodePanel> nodePanels = this.codebookEditorTreePanel
                 .getNodePanels();

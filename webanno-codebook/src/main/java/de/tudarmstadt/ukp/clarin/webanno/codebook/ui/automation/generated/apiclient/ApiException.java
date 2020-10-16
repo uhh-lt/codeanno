@@ -21,8 +21,7 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicl
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
-        date = "2020-10-02T09:35:39.209Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-02T09:35:39.209Z[GMT]")
 public class ApiException
     extends Exception
 {

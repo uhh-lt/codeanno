@@ -20,7 +20,7 @@
 <wicket:panel>
     <div class="flex-v-container">
         <!-- Filter Form -->
-        <div wicket:id="filterFormPanel" style="flex: .2"></div>
+        <div style="flex: .2" wicket:id="filterFormPanel"></div>
 
         <!-- NGram Freqs-->
         <div class="card flex-content mt-1">
@@ -32,21 +32,21 @@
 
                 <div class="flex-content flex-h-container flex-no-gutter justify-content-between">
                     <div class="flex-content">Total</div>
-                    <label wicket:id="total" class="flex-content text-right"></label>
+                    <label class="flex-content text-right" wicket:id="total"></label>
                 </div>
 
                 <div class="flex-content flex-h-container flex-no-gutter justify-content-between">
                     <div class="flex-content">Distinct</div>
-                    <label wicket:id="distinct" class="flex-content text-right"></label>
+                    <label class="flex-content text-right" wicket:id="distinct"></label>
                 </div>
 
                 <hr/>
 
-                <div wicket:id="freqs" class="flex-content flex-h-container flex-no-gutter justify-content-between" style="border-bottom : 1px dotted !important;">
-                    <div wicket:id="ngram" class="flex-content" style="overflow-wrap: break-word;">
+                <div class="flex-content flex-h-container flex-no-gutter justify-content-between" style="border-bottom : 1px dotted !important;" wicket:id="freqs">
+                    <div class="flex-content" style="overflow-wrap: break-word;" wicket:id="ngram">
                         [nGram]
                     </div>
-                    <div wicket:id="count" class="flex-content text-right">
+                    <div class="flex-content text-right" wicket:id="count">
                         [Count]
                     </div>
                 </div>

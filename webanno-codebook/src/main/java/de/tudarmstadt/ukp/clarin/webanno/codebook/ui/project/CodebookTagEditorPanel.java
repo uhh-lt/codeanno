@@ -41,7 +41,6 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
-import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaPanel;
 
 public class CodebookTagEditorPanel
     extends Panel
@@ -50,10 +49,10 @@ public class CodebookTagEditorPanel
 
     private @SpringBean CodebookSchemaService codebookSchemaService;
 
-    private IModel<Codebook> selectedCodebook;
-    private IModel<CodebookTag> selectedTag;
+    private final IModel<Codebook> selectedCodebook;
+    private final IModel<CodebookTag> selectedTag;
 
-    private ParentSelectionWrapper<CodebookTag> codebookTagParentSelection;
+    private final ParentSelectionWrapper<CodebookTag> codebookTagParentSelection;
 
     public CodebookTagEditorPanel(String aId, IModel<Codebook> aCodebook, IModel<CodebookTag> aTag)
     {
@@ -81,15 +80,12 @@ public class CodebookTagEditorPanel
         List<CodebookTag> parentTags = new ArrayList<>();
         if (selectedCodebook.getObject() != null) {
             // TODO is this correct now?
-            parentTags = codebookSchemaService
-                    .listTags(selectedCodebook.getObject().getParent());
+            parentTags = codebookSchemaService.listTags(selectedCodebook.getObject().getParent());
         }
         this.codebookTagParentSelection = new ParentSelectionWrapper<>("parent", "name",
                 parentTags);
-        form.add(this.codebookTagParentSelection.getDropdown()
-                .setOutputMarkupPlaceholderTag(true));
-        form.add(new Label("parentTagLabel", "Parent Tag")
-                .setOutputMarkupPlaceholderTag(true));
+        form.add(this.codebookTagParentSelection.getDropdown().setOutputMarkupPlaceholderTag(true));
+        form.add(new Label("parentTagLabel", "Parent Tag").setOutputMarkupPlaceholderTag(true));
 
         form.add(new LambdaAjaxButton<>("save", this::actionSave));
         form.add(new LambdaAjaxLink("delete", this::actionDelete)
@@ -99,13 +95,13 @@ public class CodebookTagEditorPanel
     }
 
     @Override
-    protected void onConfigure() {
+    protected void onConfigure()
+    {
         super.onConfigure();
         this.setVisible(selectedTag != null && selectedTag.getObject() != null);
         List<CodebookTag> parentTags = new ArrayList<>();
         if (selectedCodebook.getObject() != null) {
-            parentTags = codebookSchemaService
-                    .listTags(selectedCodebook.getObject().getParent());
+            parentTags = codebookSchemaService.listTags(selectedCodebook.getObject().getParent());
         }
         this.codebookTagParentSelection.updateParents(parentTags);
     }

@@ -34,22 +34,11 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 public interface NGramStatsFactory
 {
 
-    public static class NGramStats
-        extends Stats<Integer, NGram>
-    {
-        private static final long serialVersionUID = -2851283249817671545L;
-
-        public NGramStats(Map<Integer, List<Pair<NGram, Integer>>> sortedFrequencies)
-        {
-            super(sortedFrequencies);
-        }
-    };
-
-    public static final Integer MAX_N_GRAM = 3;
-    public static final Integer TSV_RECORD_SIZE = 2;
-    public static final Character TSV_DELIMITER = '\t';
-    public static final String NGRAM_STATS_PARENT_DIR = "stats";
-    public static final String NGRAM_STATS_FILE = "ngrams.tsv";
+    Integer MAX_N_GRAM = 3;
+    Integer TSV_RECORD_SIZE = 2;
+    Character TSV_DELIMITER = '\t';
+    String NGRAM_STATS_PARENT_DIR = "stats";
+    String NGRAM_STATS_FILE = "ngrams.tsv";
 
     NGramStats create(Collection<Token> tokens);
 
@@ -62,4 +51,15 @@ public interface NGramStatsFactory
     NGramStats createOrLoad(SourceDocument document) throws IOException, CASException;
 
     NGramStats merge(List<NGramStats> stats);
+
+    class NGramStats
+        extends Stats<Integer, NGram>
+    {
+        private static final long serialVersionUID = -2851283249817671545L;
+
+        public NGramStats(Map<Integer, List<Pair<NGram, Integer>>> sortedFrequencies)
+        {
+            super(sortedFrequencies);
+        }
+    }
 }

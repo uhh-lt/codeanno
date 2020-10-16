@@ -34,11 +34,11 @@ public class CodebookCurationModel
 {
     private static final long serialVersionUID = -7826210722492638188L;
     private final List<CodebookFeatureState> codebookFeatureStates = new ArrayList<>();
+    private final List<CodebookCurations> codebookCurations = new ArrayList<>();
+    private final List<CodebookSuggestion> codebookSuggestions = new ArrayList<>();
     private List<Codebook> codebooks;
     private SourceDocument document;
     private Project project;
-    private List<CodebookCurations> codebookCurations = new ArrayList<>();
-    private List<CodebookSuggestion> codebookSuggestions = new ArrayList<>();
 
     public CodebookCurationModel()
     {

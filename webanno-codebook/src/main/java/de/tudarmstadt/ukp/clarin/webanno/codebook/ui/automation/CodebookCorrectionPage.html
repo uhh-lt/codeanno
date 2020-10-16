@@ -17,32 +17,26 @@
 #limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
 <wicket:extend>
     <div class="container-fluid">
         <div class="row">
             <!--        Left Panel          -->
             <div class="col-md-6" wicket:id="leftPanelContainer">
-                <div wicket:id="codebookAutomationTreePanel">[codebookAutomationTreePanel]</div>
+                <div wicket:id="codebookCorrectionTreePanel">[codebookCorrectionTreePanel]</div>
             </div>
 
             <!-- Right Panel -->
-            <div wicket:id="rightPanelContainer" class="scrolling col-md-6">
+            <div class="scrolling col-md-6" wicket:id="rightPanelContainer">
                 <div class="flex-content flex-v-container flex-gutter">
                     <div class="flex-content card">
                         <div class="card-header border-bottom-0">
                             <span wicket:id="documentNamePanel"/>
-                            <nav wicket:id="actionBar" class="action-bar float-right"/>
+                            <nav class="action-bar float-right" wicket:id="actionBar"/>
                         </div>
 
                         <div class="card-body flex-content flex-v-container"
-                             wicket:id="documentContentContainer"
-                             style="max-height: 250px; overflow-y: scroll">
+                             style="max-height: 250px; overflow-y: scroll"
+                             wicket:id="documentContentContainer">
                             <span class="text-left" wicket:id="documentContent"></span>
                         </div>
                     </div>
@@ -51,5 +45,4 @@
         </div>
     </div>
 </wicket:extend>
-</body>
 </html>

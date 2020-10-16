@@ -89,31 +89,43 @@ public class CodebookAgreementPage
     private static final long serialVersionUID = 5333662917247971912L;
 
     private static final Logger LOG = LoggerFactory.getLogger(CodebookAgreementPage.class);
-
+    private static final String MID_TRAITS_CONTAINER = "traitsContainer";
+    private static final String MID_TRAITS = "traits";
+    private static final String MID_RESULTS = "results";
+    /* package private by intention */ CodebookAgreementForm agreementForm;
     private @SpringBean DocumentService documentService;
     private @SpringBean ProjectService projectService;
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean UserDao userRepository;
     private @SpringBean AgreementMeasureSupportRegistry agreementRegistry;
-
-    private static final String MID_TRAITS_CONTAINER = "traitsContainer";
-    private static final String MID_TRAITS = "traits";
-    private static final String MID_RESULTS = "results";
-
     private ProjectSelectionForm projectSelectionForm;
-    /* package private by intention */ CodebookAgreementForm agreementForm;
+    Model<Project> projectModel = new Model<Project>()
+    {
+        private static final long serialVersionUID = -6394439155356911110L;
+
+        @Override
+        public Project getObject()
+        {
+            return projectSelectionForm.getModelObject().project;
+        }
+    };
     private WebMarkupContainer resultsContainer;
     private WebMarkupContainer cbName;
     private AgreementCodebookTreePanel agreementCodebookTreePanel;
-
+    // The CASes cannot be serialized, so we make them transient here. However, it does not matter
+    // as we do not access the field directly but via getCases() which will re-load them if
+    // necessary, e.g. if the transient field is empty after a session is restored from a
+    // persisted state.
+    private transient Map<String, List<CAS>> cachedCASes;
+    private transient Project cachedProject;
+    private transient boolean cachedLimitToFinishedDocuments;
     public CodebookAgreementPage()
     {
         super();
 
         commonInit();
     }
-
     public CodebookAgreementPage(final PageParameters aPageParameters)
     {
         super(aPageParameters);
@@ -165,14 +177,6 @@ public class CodebookAgreementPage
         resultsContainer.add(new EmptyPanel(MID_RESULTS));
         agreementForm.add(resultsContainer);
     }
-
-    // The CASes cannot be serialized, so we make them transient here. However, it does not matter
-    // as we do not access the field directly but via getCases() which will re-load them if
-    // necessary, e.g. if the transient field is empty after a session is restored from a
-    // persisted state.
-    private transient Map<String, List<CAS>> cachedCASes;
-    private transient Project cachedProject;
-    private transient boolean cachedLimitToFinishedDocuments;
 
     /**
      * Get the finished CASes used to compute agreement.
@@ -274,6 +278,40 @@ public class CodebookAgreementPage
         return cachedCASes;
     }
 
+    private Optional<Project> getProjectFromParameters(StringValue projectParam)
+    {
+        if (projectParam == null || projectParam.isEmpty()) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(projectService.getProject(projectParam.toLong()));
+        }
+        catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    static class CodebookAgreementFormModel
+        implements Serializable
+    {
+        private static final long serialVersionUID = -1L;
+
+        AnnotationFeature feature;
+
+        Pair<String, String> measure;
+    }
+
+    static public class ProjectSelectionModel
+        implements Serializable
+    {
+        private static final long serialVersionUID = -1L;
+        public Project project;
+        public Map<String, Integer> annotatorsProgress = new TreeMap<>();
+        public Map<String, Integer> annotatorsProgressInPercent = new TreeMap<>();
+        protected int totalDocuments;
+    }
+
     class CodebookAgreementForm
         extends Form<CodebookAgreementFormModel>
     {
@@ -370,8 +408,7 @@ public class CodebookAgreementPage
             measureDropDown.setChoices(this::listMeasures);
 
             // update cbName
-            cbName.addOrReplace(
-                    new Label("codebookNameLabel", selected.getUiName()));
+            cbName.addOrReplace(new Label("codebookNameLabel", selected.getUiName()));
             cbName.setVisible(true);
 
             // clear results
@@ -438,16 +475,6 @@ public class CodebookAgreementPage
         }
     }
 
-    static class CodebookAgreementFormModel
-        implements Serializable
-    {
-        private static final long serialVersionUID = -1L;
-
-        AnnotationFeature feature;
-
-        Pair<String, String> measure;
-    }
-
     private class ProjectSelectionForm
         extends Form<ProjectSelectionModel>
     {
@@ -485,48 +512,11 @@ public class CodebookAgreementPage
             for (Project project : allProjects) {
                 if (!codebookService.listCodebook(project).isEmpty()
                         && (projectService.isManager(project, user)
-                        || projectService.isCurator(project, user))) {
+                                || projectService.isCurator(project, user))) {
                     allowedProject.add(project);
                 }
             }
             return allowedProject;
-        }
-    }
-
-    Model<Project> projectModel = new Model<Project>()
-    {
-        private static final long serialVersionUID = -6394439155356911110L;
-
-        @Override
-        public Project getObject()
-        {
-            return projectSelectionForm.getModelObject().project;
-        }
-    };
-
-    static public class ProjectSelectionModel
-        implements Serializable
-    {
-        protected int totalDocuments;
-
-        private static final long serialVersionUID = -1L;
-
-        public Project project;
-        public Map<String, Integer> annotatorsProgress = new TreeMap<>();
-        public Map<String, Integer> annotatorsProgressInPercent = new TreeMap<>();
-    }
-
-    private Optional<Project> getProjectFromParameters(StringValue projectParam)
-    {
-        if (projectParam == null || projectParam.isEmpty()) {
-            return Optional.empty();
-        }
-
-        try {
-            return Optional.of(projectService.getProject(projectParam.toLong()));
-        }
-        catch (NoResultException e) {
-            return Optional.empty();
         }
     }
 }

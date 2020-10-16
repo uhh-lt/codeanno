@@ -20,7 +20,6 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree;
 import java.util.List;
 import java.util.Optional;
 
-import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,6 +41,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.annotation.CodebookEditorPanel;
+import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.support.StyledComboBox;
 
@@ -62,8 +62,8 @@ public class CodebookTagSelectionComboBox
 
     private static final long serialVersionUID = -6038478625103441332L;
 
-    private CodebookNodePanel parentPanel;
-    private CodebookNode node;
+    private final CodebookNodePanel parentPanel;
+    private final CodebookNode node;
 
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean UserDao userRepo;
@@ -88,9 +88,9 @@ public class CodebookTagSelectionComboBox
         });
 
         // FIXME for any reason the "blur" event gets not correctly handled by wicket..
-        //  blur should only be raise when the element loses focus, but here it gets raised two
-        //  when it gains focus and two times when it loses focus. This was tested on latest
-        //  versions of Chrome and Firefox under Ubuntu 18.04LTS.
+        // blur should only be raise when the element loses focus, but here it gets raised two
+        // when it gains focus and two times when it loses focus. This was tested on latest
+        // versions of Chrome and Firefox under Ubuntu 18.04LTS.
         this.add(new AjaxFormComponentUpdatingBehavior("blur")
         {
             private static final long serialVersionUID = 4047719831314013445L;
@@ -109,8 +109,8 @@ public class CodebookTagSelectionComboBox
                 newUserTag.setName(newTagValue);
                 newUserTag.setCodebook(node.getCodebook());
 
-                newUserTag.setDescription("This tag was created by "
-                        + userRepo.getCurrentUsername() + "!");
+                newUserTag.setDescription(
+                        "This tag was created by " + userRepo.getCurrentUsername() + "!");
 
                 // parent tag
                 CodebookNodePanel parentNodePanel = parentPanel.getParentNodePanel();

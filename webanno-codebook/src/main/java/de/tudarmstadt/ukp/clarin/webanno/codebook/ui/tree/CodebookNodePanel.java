@@ -26,22 +26,26 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 
 public abstract class CodebookNodePanel
-        extends Panel
-        implements Serializable {
+    extends Panel
+    implements Serializable
+{
 
     private static final long serialVersionUID = 7384823063396149797L;
 
     protected CodebookNode node;
 
-    public CodebookNodePanel(String id) {
+    public CodebookNodePanel(String id)
+    {
         super(id);
     }
 
-    public CodebookNodePanel(String id, IModel<?> model) {
+    public CodebookNodePanel(String id, IModel<?> model)
+    {
         super(id, model);
     }
 
-    public CodebookNode getNode() {
+    public CodebookNode getNode()
+    {
         return node;
     }
 

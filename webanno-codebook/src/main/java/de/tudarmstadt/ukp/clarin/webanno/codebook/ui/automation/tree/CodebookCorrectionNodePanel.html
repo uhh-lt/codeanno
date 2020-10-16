@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+#Copyright 2020
+#Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
+#and Language Technology Group  Universität Hamburg
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.3-strict.dtd">
+<body>
+<wicket:panel>
+    <div class="card mb-1" wicket:id="codebookCorrectionPanel">
+
+        <div class="card-header text-center" wicket:id="codebookCorrectionPanelHeader">
+            <strong><span wicket:id="codebookName"/></strong>
+        </div>
+
+<!--        <div class="card-body pt-0 pb-0" style="overflow-y: auto; overflow-x: hidden">-->
+<!--            <div class="row mt-1 mb-1">-->
+<!--                <div class="col-md-9">-->
+<!--                    <u>Suggested Codebook Tag</u>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <u>Probability</u>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row" wicket:id="suggestionsListView">-->
+<!--                <div class="col-md-9"><i><span wicket:id="tag">tag</span></i></div>-->
+<!--                <div class="col-md-3"><i><span wicket:id="probability">probability</span></i></div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="card-footer pb-0 mb-0" wicket:id="codebookCorrectionPanelFooter">
+            <form class="form-horizontal" wicket:id="codebookCorrectionForm">
+                <div class="form-row">
+                    <label class="col-sm-3 col-form-label">Automated Codebook-Tag:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" type="text" wicket:id="codebookTagSelectionComboBox"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</wicket:panel>
+</body>
+</html>
+

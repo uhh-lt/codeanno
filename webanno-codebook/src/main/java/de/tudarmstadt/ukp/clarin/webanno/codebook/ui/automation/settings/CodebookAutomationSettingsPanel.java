@@ -21,6 +21,8 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -33,40 +35,33 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
-import de.tudarmstadt.ukp.clarin.webanno.support.spring.ApplicationEventPublisherHolder;
+import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.settings.ProjectSettingsPanelBase;
 
 public class CodebookAutomationSettingsPanel
     extends ProjectSettingsPanelBase
 {
-    private static final Logger LOG = LoggerFactory.getLogger(
-            de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings.CodebookAutomationSettingsPanel.class);
-
     private static final long serialVersionUID = -7870526462864489252L;
 
-    private @SpringBean ProjectService projectService;
+    private static final String AUTOMATION_SERVICE_ALIVE = "btn-success";
+    private static final String AUTOMATION_SERVICE_DEAD = "btn-danger";
+    private final LambdaAjaxLink performHeartbeatCheckButton;
+    private final Model<String> deadOrAliveModel;
+    private final CodebookSelectionForm codebookSelectionForm;
+    private final AutomationSettingsPanel automationSettingsPanel;
+    private final CodebookAutomationSettingsTreePanel codebookAutomationSettingsTreePanel;
     private @SpringBean CodebookSchemaService codebookService;
-    private @SpringBean ApplicationEventPublisherHolder applicationEventPublisherHolder;
-    private @SpringBean UserDao userRepository;
-
-    private CodebookSelectionForm codebookSelectionForm;
-
+    private @SpringBean CodebookAutomationService codebookAutomationService;
     private WebMarkupContainer propertiesCard;
     private WebMarkupContainer tagsCard;
-    private AutomationSettingsPanel automationSettingsPanel;
-
-    private CodebookAutomationSettingsTreePanel codebookAutomationSettingsTreePanel;
 
     CodebookAutomationSettingsPanel(String id, final IModel<Project> aProjectModel)
     {
@@ -89,9 +84,33 @@ public class CodebookAutomationSettingsPanel
         codebookSelectionForm.add(codebookAutomationSettingsTreePanel);
 
         // cb automation settings panel
-        this.automationSettingsPanel = new AutomationSettingsPanel(Model.of());
+        this.automationSettingsPanel = new AutomationSettingsPanel(Model.of(), aProjectModel);
         this.addOrReplace(automationSettingsPanel);
 
+        // heartbeat check button
+        performHeartbeatCheckButton = new LambdaAjaxLink("performHeartbeatCheckButton",
+                this::actionPerformHeartbeatCheck);
+        deadOrAliveModel = new Model<>(
+                codebookAutomationService.performHeartbeatCheck() ? AUTOMATION_SERVICE_ALIVE
+                        : AUTOMATION_SERVICE_DEAD);
+        performHeartbeatCheckButton.add(AttributeModifier.append("class", deadOrAliveModel));
+        performHeartbeatCheckButton.setOutputMarkupId(true);
+        add(performHeartbeatCheckButton);
+
+    }
+
+    private void actionPerformHeartbeatCheck(AjaxRequestTarget target)
+    {
+        boolean alive = this.codebookAutomationService.performHeartbeatCheck();
+        this.deadOrAliveModel.setObject(alive ? AUTOMATION_SERVICE_ALIVE : AUTOMATION_SERVICE_DEAD);
+
+        if (!alive)
+            this.updateAutomationSettingsPanel(null);
+        else
+            this.updateAutomationSettingsPanel(codebookSelectionForm.getModelObject());
+
+        target.add(automationSettingsPanel);
+        target.add(performHeartbeatCheckButton);
     }
 
     private void createPropertiesCard(Codebook selectedCodebook)
@@ -160,9 +179,9 @@ public class CodebookAutomationSettingsPanel
     {
         super.onModelChanged();
 
+        codebookSelectionForm.setDefaultModel(null);
         createPropertiesCard(null);
         updateAutomationSettingsPanel(null);
-        // updateTree();
     }
 
     class CodebookSelectionForm

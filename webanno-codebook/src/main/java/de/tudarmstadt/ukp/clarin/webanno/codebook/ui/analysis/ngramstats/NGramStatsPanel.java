@@ -33,11 +33,9 @@ public class NGramStatsPanel
     extends Panel
 {
     private static final long serialVersionUID = -2579148294422897463L;
-
-    private ListViewPanelFilterForm listViewPanelFilterForm;
-
-    private int nGram;
     IModel<NGramStatsFactory.NGramStats> model;
+    private final ListViewPanelFilterForm listViewPanelFilterForm;
+    private final int nGram;
 
     public NGramStatsPanel(String id, IModel<NGramStatsFactory.NGramStats> model, int nGram)
     {

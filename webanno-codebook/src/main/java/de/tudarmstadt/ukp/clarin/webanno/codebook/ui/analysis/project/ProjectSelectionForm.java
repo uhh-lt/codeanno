@@ -42,15 +42,13 @@ public class ProjectSelectionForm
     extends Panel
 {
     private static final long serialVersionUID = -5771056978885429471L;
+    Project selectedProject;
     private @SpringBean ProjectService projectService;
     private @SpringBean CodebookSchemaService codebookSchemaService;
     private @SpringBean UserDao userRepository;
     private @SpringBean ApplicationEventPublisherHolder eventPublisherHolder;
-
-    private CodebookAnalysisPage analysisPage;
-    private ListChoice<Project> projectListChoice;
-
-    Project selectedProject;
+    private final CodebookAnalysisPage analysisPage;
+    private final ListChoice<Project> projectListChoice;
 
     public ProjectSelectionForm(String id, CodebookAnalysisPage analysisPage)
     {

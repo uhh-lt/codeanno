@@ -27,10 +27,10 @@ public class CodebookUserSuggestion
 {
     private static final long serialVersionUID = 2749434980944442163L;
 
-    private String user;
-    private Codebook codebook;
-    private String value;
-    private SourceDocument document;
+    private final String user;
+    private final Codebook codebook;
+    private final String value;
+    private final SourceDocument document;
     private boolean hasDiff;
 
     public CodebookUserSuggestion(String user, Codebook codebook, String value,

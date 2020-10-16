@@ -17,23 +17,24 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
-import de.tudarmstadt.ukp.clarin.webanno.api.SecurityUtil;
-import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPage;
-import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
-import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 import org.apache.wicket.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
+import de.tudarmstadt.ukp.clarin.webanno.api.SecurityUtil;
+import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.model.Project;
+import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
+import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
+
 @Component
 @Order(600)
-public class CodebookAutomationPageMenuItem
-        implements MenuItem {
+public class CodebookCorrectionPageMenuItem
+    implements MenuItem
+{
 
     private @Autowired UserDao userRepo;
     private @Autowired ProjectService projectService;
@@ -42,7 +43,7 @@ public class CodebookAutomationPageMenuItem
     @Override
     public String getPath()
     {
-        return "/codebookautomation";
+        return "/codebookcorrection";
     }
 
     @Override
@@ -54,17 +55,19 @@ public class CodebookAutomationPageMenuItem
     @Override
     public String getLabel()
     {
-        return "Codebook Automation";
+        return "Codebook Correction";
     }
 
     @Override
     public boolean applies()
     {
         for (Project project : projectService.listProjects()) {
-            if (!codebookService.listCodebook(project).isEmpty()
-                    && SecurityUtil.annotationEnabeled(projectService, userRepo.getCurrentUser(),
-                    WebAnnoConst.PROJECT_TYPE_AUTOMATION)) {
-                    return true;
+            boolean isAutoProj = SecurityUtil.annotationEnabeled(projectService,
+                    userRepo.getCurrentUser(), WebAnnoConst.PROJECT_TYPE_AUTOMATION);
+            boolean isCorrProj = SecurityUtil.annotationEnabeled(projectService,
+                    userRepo.getCurrentUser(), WebAnnoConst.PROJECT_TYPE_CORRECTION);
+            if (!codebookService.listCodebook(project).isEmpty() && (isAutoProj || isCorrProj)) {
+                return true;
             }
         }
         return false;
@@ -74,6 +77,6 @@ public class CodebookAutomationPageMenuItem
     @Override
     public Class<? extends Page> getPageClass()
     {
-        return CodebookAutomationPage.class;
+        return CodebookCorrectionPage.class;
     }
 }

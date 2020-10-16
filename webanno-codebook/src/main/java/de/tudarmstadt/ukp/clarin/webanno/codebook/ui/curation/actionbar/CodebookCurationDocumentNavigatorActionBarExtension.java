@@ -19,7 +19,6 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.actionbar;
 
 import static java.lang.Integer.MAX_VALUE;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

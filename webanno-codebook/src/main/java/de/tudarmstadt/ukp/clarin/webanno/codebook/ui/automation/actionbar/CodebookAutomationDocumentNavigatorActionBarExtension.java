@@ -19,14 +19,13 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.actionbar;
 
 import static java.lang.Integer.MAX_VALUE;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.docnav.DefaultDocumentNavigatorActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.open.OpenDocumentDialog;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPage;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookCorrectionPage;
 
 @Order(0)
 @Component
@@ -48,13 +47,13 @@ public class CodebookAutomationDocumentNavigatorActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookAutomationPage;
+        return aPage instanceof CodebookCorrectionPage;
     }
 
     @Override
     protected OpenDocumentDialog createOpenDocumentsDialog(String aId, AnnotationPageBase aPage)
     {
-        CodebookAutomationPage page = (CodebookAutomationPage) aPage;
+        CodebookCorrectionPage page = (CodebookCorrectionPage) aPage;
 
         return new OpenDocumentDialog(aId, aPage.getModel(), aPage.getAllowedProjects(),
                 page::listDocuments);

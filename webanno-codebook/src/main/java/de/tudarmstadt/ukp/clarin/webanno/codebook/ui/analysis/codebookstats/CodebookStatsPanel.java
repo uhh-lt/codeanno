@@ -44,7 +44,7 @@ public class CodebookStatsPanel<T>
     private @SpringBean CodebookSchemaService codebookSchemaService;
     private @SpringBean CodebookStatsFactory codebookStatsFactory;
 
-    private ListViewPanelFilterForm listViewPanelFilterForm;
+    private final ListViewPanelFilterForm listViewPanelFilterForm;
 
     public CodebookStatsPanel(String id, T analysisTarget)
     {

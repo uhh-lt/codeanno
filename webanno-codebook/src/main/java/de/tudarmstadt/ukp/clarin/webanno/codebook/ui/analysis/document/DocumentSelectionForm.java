@@ -48,15 +48,12 @@ public class DocumentSelectionForm
     extends Panel
 {
     private static final long serialVersionUID = 605801974123905091L;
-
+    private final CodebookAnalysisPage analysisPage;
+    private final ListChoice<SourceDocument> documentListChoice;
     private @SpringBean DocumentService documentService;
     private @SpringBean ProjectService projectService;
     private @SpringBean UserDao userRepository;
-
     private IModel<Project> projectModel;
-    private final CodebookAnalysisPage analysisPage;
-    private final ListChoice<SourceDocument> documentListChoice;
-
     private SourceDocument selectedDocument;
 
     public DocumentSelectionForm(String id, CodebookAnalysisPage analysisPage)

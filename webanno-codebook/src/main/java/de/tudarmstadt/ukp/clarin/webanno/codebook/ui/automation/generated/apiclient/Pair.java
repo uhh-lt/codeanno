@@ -18,8 +18,7 @@
 
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
-        date = "2020-10-02T09:35:39.209Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-02T09:35:39.209Z[GMT]")
 public class Pair
 {
     private String name = "";

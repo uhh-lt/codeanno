@@ -23,7 +23,6 @@ import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_FOCU
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_PROJECT_ID;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PROJECT_TYPE_AUTOMATION;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.updateDocumentTimestampAfterWrite;
-import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.verifyAndUpdateDocumentTimestamp;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.FocusPosition.TOP;
 import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS;
 import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.visibleWhen;
@@ -33,11 +32,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.persistence.NoResultException;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.uima.cas.CAS;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -54,7 +51,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.wicketstuff.annotation.mount.MountPath;
 import org.wicketstuff.event.annotation.OnEvent;
 
@@ -73,7 +69,8 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.SentenceOrientedPagingStrategy;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.SelectionChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree.CodebookAutomationTreePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree.CodebookCorrectionTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.DocumentNamePanel;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.ConstraintsService;
 import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
@@ -89,13 +86,13 @@ import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.DecoratedObject;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
 
-@MountPath("/codebookautomation.html")
-public class CodebookAutomationPage
+@MountPath("/codebookcorrection.html")
+public class CodebookCorrectionPage
     extends AnnotationPageBase
 {
 
     private static final long serialVersionUID = 7357170335776542934L;
-    private final static Logger LOG = LoggerFactory.getLogger(CodebookAutomationPage.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CodebookCorrectionPage.class);
 
     private @SpringBean ProjectService projectService;
     private @SpringBean UserDao userRepository;
@@ -107,16 +104,17 @@ public class CodebookAutomationPage
     private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
     private @SpringBean ConstraintsService constraintsService;
     private @SpringBean CasStorageService casStorageService;
+    private @SpringBean CodebookAutomationService codebookAutomationService;
 
     private long currentProjectId;
 
     private WebMarkupContainer actionBar;
     private WebMarkupContainer leftPanelContainer;
     private WebMarkupContainer rightPanelContainer;
-    private CodebookAutomationTreePanel codebookAutomationTreePanel;
+    private CodebookCorrectionTreePanel codebookCorrectionTreePanel;
     private boolean firstLoad;
 
-    public CodebookAutomationPage()
+    public CodebookCorrectionPage()
     {
         super();
         LOG.debug("Setting up codebook automation page without parameters");
@@ -136,7 +134,7 @@ public class CodebookAutomationPage
         }
     }
 
-    public CodebookAutomationPage(final PageParameters aPageParameters)
+    public CodebookCorrectionPage(final PageParameters aPageParameters)
     {
         super(aPageParameters);
         LOG.debug("Setting up codebook automation page with parameters: {}", aPageParameters);
@@ -159,12 +157,12 @@ public class CodebookAutomationPage
         // init left panel -> codebook tree
         leftPanelContainer = new WebMarkupContainer("leftPanelContainer");
         leftPanelContainer.setOutputMarkupPlaceholderTag(true);
-        codebookAutomationTreePanel = new CodebookAutomationTreePanel("codebookAutomationTreePanel",
+        codebookCorrectionTreePanel = new CodebookCorrectionTreePanel("codebookCorrectionTreePanel",
                 this);
-        codebookAutomationTreePanel.setOutputMarkupPlaceholderTag(true);
-        codebookAutomationTreePanel.initTree();
+        codebookCorrectionTreePanel.setOutputMarkupPlaceholderTag(true);
+        codebookCorrectionTreePanel.initTree();
 
-        leftPanelContainer.add(codebookAutomationTreePanel);
+        leftPanelContainer.add(codebookCorrectionTreePanel);
         leftPanelContainer.add(visibleWhen(() -> getModelObject().getDocument() != null));
         add(leftPanelContainer);
 
@@ -348,26 +346,18 @@ public class CodebookAutomationPage
             throw new IllegalStateException("Please open a document first!");
         }
 
-        // If we have a timestamp, then use it to detect if there was a concurrent access
-        verifyAndUpdateDocumentTimestamp(state, documentService
-                .getAnnotationCasTimestamp(state.getDocument(), state.getUser().getUsername()));
-
-        return documentService.readAnnotationCas(getModelObject().getDocument(),
-                state.getUser().getUsername());
+        // return the correction cas!
+        return correctionDocumentService.readCorrectionCas(state.getDocument());
     }
 
     @Override
     public void writeEditorCas(CAS aCas) throws IOException, AnnotationException
     {
+        // TODO do we need this methods or better: do we really want to extend AnnotationPage?!
         ensureIsEditable();
 
         AnnotatorState state = getModelObject();
-        documentService.writeAnnotationCas(aCas, state.getDocument(), state.getUser(), true);
-
-        // Update timestamp in state
-        Optional<Long> diskTimestamp = documentService
-                .getAnnotationCasTimestamp(state.getDocument(), state.getUser().getUsername());
-        diskTimestamp.ifPresent(state::setAnnotationDocumentTimestamp);
+        correctionDocumentService.writeCorrectionCas(aCas, state.getDocument());
     }
 
     @Override
@@ -400,50 +390,6 @@ public class CodebookAutomationPage
         actionRefreshDocument(aEvent.getRequestHandler());
     }
 
-    private void onDocumentSelected(AjaxRequestTarget aTarget)
-    {
-        AnnotatorState state = getModelObject();
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        /*
-         * Changed for #152, getDocument was returning null even after opening a document Also,
-         * surrounded following code into if block to avoid error.
-         */
-        if (state.getProject() == null) {
-            setResponsePage(getApplication().getHomePage());
-            return;
-        }
-        if (state.getDocument() != null) {
-            try {
-                documentService.createSourceDocument(state.getDocument());
-                upgradeCasAndSave(state.getDocument(), username);
-
-                actionLoadDocument(aTarget);
-            }
-            catch (Exception e) {
-                LOG.error("Unable to load data", e);
-                error("Unable to load data: " + ExceptionUtils.getRootCauseMessage(e));
-            }
-        }
-    }
-
-    public void upgradeCasAndSave(SourceDocument aDocument, String aUsername) throws IOException
-    {
-        User user = userRepository.get(aUsername);
-        if (documentService.existsAnnotationDocument(aDocument, user)) {
-            AnnotationDocument annotationDocument = documentService.getAnnotationDocument(aDocument,
-                    user);
-            try {
-                CAS cas = documentService.readAnnotationCas(annotationDocument);
-                annotationService.upgradeCas(cas, annotationDocument);
-                documentService.writeAnnotationCas(cas, annotationDocument, false);
-            }
-            catch (Exception e) {
-                // no need to catch, it is acceptable that no curation document
-                // exists to be upgraded while there are annotation documents
-            }
-        }
-    }
-
     @Override
     public void actionLoadDocument(AjaxRequestTarget aTarget)
     {
@@ -464,9 +410,10 @@ public class CodebookAutomationPage
         state.setDocument(state.getDocument(), getListOfDocs());
 
         // re-init tree since now the current project is set
-        codebookAutomationTreePanel.initTree();
-        aTarget.add(codebookAutomationTreePanel);
+        codebookCorrectionTreePanel.initTree();
+        aTarget.add(codebookCorrectionTreePanel);
 
+        // FIXME what do we actually need here?!
         try {
             // Check if there is an annotation document entry in the database. If there is none,
             // create one.
@@ -474,26 +421,15 @@ public class CodebookAutomationPage
                     .createOrGetAnnotationDocument(state.getDocument(), state.getUser());
 
             // Read the correction CAS - if it does not exist yet, from the initial CAS
-            CAS correctionCas;
-            if (correctionDocumentService.existsCorrectionCas(state.getDocument())) {
-                correctionCas = correctionDocumentService.readCorrectionCas(state.getDocument());
-            }
-            else {
-                correctionCas = documentService.createOrReadInitialCas(state.getDocument());
-            }
+            CAS correctionCas = codebookAutomationService.readOrCreateCorrectionCas(state, true);
 
             // Read the annotation CAS or create an annotation CAS from the initial CAS by stripping
             // annotations
             CAS editorCas = documentService.readAnnotationCas(annotationDocument,
                     FORCE_CAS_UPGRADE);
-
-            // Update the CASes
-            correctionDocumentService.upgradeCorrectionCas(correctionCas, state.getDocument());
-
             // After creating an new CAS or upgrading the CAS, we need to save it
             documentService.writeAnnotationCas(editorCas, annotationDocument.getDocument(),
                     state.getUser(), false);
-            correctionDocumentService.writeCorrectionCas(correctionCas, state.getDocument());
 
             // Initialize timestamp in state
             updateDocumentTimestampAfterWrite(state, documentService
@@ -516,6 +452,7 @@ public class CodebookAutomationPage
 
             // Update document state
             if (state.getDocument().getState().equals(SourceDocumentState.NEW)) {
+                // TODO we should introduce a new SourceDocumentState that reflects correction
                 documentService.transitionSourceDocumentState(state.getDocument(),
                         NEW_TO_ANNOTATION_IN_PROGRESS);
             }

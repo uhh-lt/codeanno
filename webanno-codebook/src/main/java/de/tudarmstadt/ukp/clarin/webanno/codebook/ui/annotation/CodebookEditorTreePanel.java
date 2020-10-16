@@ -40,10 +40,11 @@ public class CodebookEditorTreePanel
 {
     private static final long serialVersionUID = -8329270688665288003L;
 
-    private CodebookEditorPanel parentEditor;
-    private Map<CodebookNode, CodebookEditorNodePanel> nodePanels;
+    private final CodebookEditorPanel parentEditor;
+    private final Map<CodebookNode, CodebookEditorNodePanel> nodePanels;
 
-    public CodebookEditorTreePanel(String aId, IModel<CodebookEditorModel> aModel, CodebookEditorPanel parentEditor)
+    public CodebookEditorTreePanel(String aId, IModel<CodebookEditorModel> aModel,
+            CodebookEditorPanel parentEditor)
     {
         super(aId, aModel);
 
@@ -99,7 +100,8 @@ public class CodebookEditorTreePanel
             {
                 // we save the nodes and their panels to get 'easy' access to the panels since
                 // we have need them later
-                CodebookEditorNodePanel nodePanel = new CodebookEditorNodePanel(id, model, parentEditor);
+                CodebookEditorNodePanel nodePanel = new CodebookEditorNodePanel(id, model,
+                        parentEditor);
                 CodebookEditorTreePanel.this.nodePanels.put(model.getObject(), nodePanel);
                 return nodePanel;
             }
@@ -109,10 +111,9 @@ public class CodebookEditorTreePanel
 
         tree.setOutputMarkupId(true);
 
-        tree.add(enabledWhen(() ->
-                parentEditor.getModelObject() != null && !documentService.isAnnotationFinished(
-                parentEditor.getModelObject().getDocument(),
-                parentEditor.getModelObject().getUser())));
+        tree.add(enabledWhen(() -> parentEditor.getModelObject() != null && !documentService
+                .isAnnotationFinished(parentEditor.getModelObject().getDocument(),
+                        parentEditor.getModelObject().getUser())));
 
         this.addOrReplace(tree);
     }

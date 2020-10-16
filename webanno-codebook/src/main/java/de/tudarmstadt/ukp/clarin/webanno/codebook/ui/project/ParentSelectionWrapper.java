@@ -32,7 +32,7 @@ public class ParentSelectionWrapper<T>
 {
 
     private static final long serialVersionUID = 7597507351396638287L;
-    private DropDownChoice<T> parentSelection;
+    private final DropDownChoice<T> parentSelection;
     private Set<T> allParentTags;
 
     /**

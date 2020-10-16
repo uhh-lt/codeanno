@@ -20,41 +20,41 @@
 <body>
 <wicket:panel>
     <!-- Filter Form -->
-    <form wicket:id="filterForm" class="card mt-1">
+    <form class="card mt-1" wicket:id="filterForm">
         <div class="card-header">Filters</div>
 
         <div class="card-body">
             <div class="form-row">
-                <label wicket:id="maxCountLabel" class="col-md-7 col-form-label pull-left"
-                       style="overflow-wrap: break-word;"></label>
+                <label class="col-md-7 col-form-label pull-left" style="overflow-wrap: break-word;"
+                       wicket:id="maxCountLabel"></label>
                 <div class="col-md-5">
-                    <input wicket:id="maxCount" type="text" class="form-control"/>
+                    <input class="form-control" type="text" wicket:id="maxCount"/>
                 </div>
             </div>
 
             <div class="form-row">
-                <label wicket:id="minCountLabel" class="col-md-7 col-form-label pull-left"
-                       style="overflow-wrap: break-word;"></label>
+                <label class="col-md-7 col-form-label pull-left" style="overflow-wrap: break-word;"
+                       wicket:id="minCountLabel"></label>
                 <div class="col-md-5">
-                    <input wicket:id="minCount" type="text" class="form-control"/>
+                    <input class="form-control" type="text" wicket:id="minCount"/>
                 </div>
             </div>
 
             <div class="form-row">
-                <label wicket:id="startsWithFilterLabel"
-                       class="col-md-7 col-form-label pull-left"
-                       style="overflow-wrap: break-word;"></label>
+                <label class="col-md-7 col-form-label pull-left"
+                       style="overflow-wrap: break-word;"
+                       wicket:id="startsWithFilterLabel"></label>
                 <div class="col-md-5">
-                    <input wicket:id="startsWithFilter" type="text" class="form-control"/>
+                    <input class="form-control" type="text" wicket:id="startsWithFilter"/>
                 </div>
             </div>
 
             <div class="form-row">
-                <label wicket:id="containsFilterLabel"
-                       class="col-md-7 col-form-label pull-left"
-                       style="overflow-wrap: break-word;"></label>
+                <label class="col-md-7 col-form-label pull-left"
+                       style="overflow-wrap: break-word;"
+                       wicket:id="containsFilterLabel"></label>
                 <div class="col-md-5">
-                    <input wicket:id="containsFilter" type="text" class="form-control"/>
+                    <input class="form-control" type="text" wicket:id="containsFilter"/>
                 </div>
             </div>
 
@@ -63,11 +63,11 @@
 
         </div>
         <div class="card-footer">
-            <input wicket:id="applyFilters" type="submit" class="btn btn-primary btn-sm"
-                   value="Apply filters!"/>
-            <input wicket:id="resetFilters" type="button"
-                   class="btn btn-secondary btn-sm float-right"
-                   value="Reset filters!"/>
+            <input class="btn btn-primary btn-sm" type="submit" value="Apply filters!"
+                   wicket:id="applyFilters"/>
+            <input class="btn btn-secondary btn-sm float-right" type="button"
+                   value="Reset filters!"
+                   wicket:id="resetFilters"/>
         </div>
     </form>
 </wicket:panel>

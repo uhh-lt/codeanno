@@ -17,6 +17,7 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,28 +32,25 @@ import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookAutomationPage;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookCorrectionPage;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
-import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 
-public class CodebookAutomationTreePanel
+public class CodebookCorrectionTreePanel
     extends CodebookTreePanel
 {
     private static final long serialVersionUID = -8329270688665288003L;
 
-    private CodebookAutomationPage parentPage;
-    private transient Map<CodebookNode, CodebookAutomationNodePanel> nodePanels;
+    private transient final CodebookCorrectionPage parentPage;
+    private transient final Map<CodebookNode, CodebookCorrectionNodePanel> nodePanels;
     private transient Map<Codebook, PredictionResult> automationSuggestions;
 
     private @SpringBean CodebookAutomationService codebookAutomationService;
 
-    public CodebookAutomationTreePanel(String aId, CodebookAutomationPage parentPage)
+    public CodebookCorrectionTreePanel(String aId, CodebookCorrectionPage parentPage)
     {
         super(aId, new Model<>(null));
 
@@ -95,15 +93,9 @@ public class CodebookAutomationTreePanel
     {
         this.initCodebookTreeProvider();
 
-        try {
-            this.automationSuggestions = this.fetchSuggestions();
-        }
-        catch (ApiException e) {
-            // TODO
-            e.printStackTrace();
-        }
+        this.automationSuggestions = Collections.emptyMap(); // this.fetchSuggestions();
 
-        tree = new NestedTree<CodebookNode>("codebookAutomationTree", this.provider,
+        tree = new NestedTree<CodebookNode>("codebookCorrectionTree", this.provider,
                 new CodebookNodeExpansionModel())
         {
             private static final long serialVersionUID = 2285250157811357702L;
@@ -113,10 +105,10 @@ public class CodebookAutomationTreePanel
             {
                 // we save the nodes and their panels to get 'easy' access to the panels since
                 // we need them later
-                CodebookAutomationNodePanel nodePanel = new CodebookAutomationNodePanel(id, model,
+                CodebookCorrectionNodePanel nodePanel = new CodebookCorrectionNodePanel(id, model,
                         automationSuggestions.get(provider.getCodebook(model.getObject())),
-                        CodebookAutomationTreePanel.this);
-                CodebookAutomationTreePanel.this.nodePanels.put(model.getObject(), nodePanel);
+                        CodebookCorrectionTreePanel.this);
+                CodebookCorrectionTreePanel.this.nodePanels.put(model.getObject(), nodePanel);
                 return nodePanel;
             }
         };
@@ -127,30 +119,12 @@ public class CodebookAutomationTreePanel
         this.addOrReplace(tree);
     }
 
-    private Map<Codebook, PredictionResult> fetchSuggestions() throws ApiException
-    {
-        Project project = parentPage.getModelObject().getProject();
-        SourceDocument sdoc = parentPage.getModelObject().getDocument();
-        List<Codebook> codebooks = this.codebookService.listCodebook(project);
-
-        Map<Codebook, PredictionResult> suggestions = new HashMap<>();
-
-        for (Codebook cb : codebooks) {
-            if (codebookAutomationService.automationIsAvailable(cb, true)) {
-                PredictionResult res = codebookAutomationService.predictTag(cb, project, sdoc);
-                suggestions.put(cb, res);
-            }
-        }
-
-        return suggestions;
-    }
-
-    public Map<CodebookNode, CodebookAutomationNodePanel> getNodePanels()
+    public Map<CodebookNode, CodebookCorrectionNodePanel> getNodePanels()
     {
         return nodePanels;
     }
 
-    public CodebookAutomationPage getParentPage()
+    public CodebookCorrectionPage getParentPage()
     {
         return parentPage;
     }

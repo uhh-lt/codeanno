@@ -17,20 +17,20 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.ProjectCodebookPanel;
-import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.tudarmstadt.ukp.clarin.webanno.ui.core.settings.ProjectSettingsPanelFactory;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
+import de.tudarmstadt.ukp.clarin.webanno.model.Project;
+import de.tudarmstadt.ukp.clarin.webanno.ui.core.settings.ProjectSettingsPanelFactory;
 
 @Component
 @Order(251)
 public class CodebookAutomationSettingsPanelFactory
-        implements ProjectSettingsPanelFactory {
+    implements ProjectSettingsPanelFactory
+{
 
     @Override
     public String getPath()

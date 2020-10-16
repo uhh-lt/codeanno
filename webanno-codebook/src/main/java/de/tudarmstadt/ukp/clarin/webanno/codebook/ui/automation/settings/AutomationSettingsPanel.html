@@ -26,32 +26,32 @@
         </div>
 
         <!-- Main Container -->
-        <div class="card-body flex-v-container">
-            <div wicket:id="automationAvailableAlert" class="alert text-center d-block p-0"></div>
-
+        <div class="card-body flex-v-container flex-gutter">
+            <!-- Available Alert -->
+            <div class="alert text-center d-block p-0 m-0" wicket:id="automationAvailableAlert"></div>
 
             <!-- Metadata panel-->
-            <div wicket:id="modelMetadataPanel" class="card flex-content">
+            <div class="card flex-content" wicket:id="modelMetadataPanel">
                 <div class="card-header small">
                     <wicket:message key="modelMetadataPanel.header"/>
                 </div>
                 <div class="card-body flex-v-container">
 
                     <div class="form-group form-row">
-                        <label wicket:for="modelType" class="col-sm-4 col-form-label">
+                        <label class="col-sm-4 col-form-label" wicket:for="modelType">
                             <wicket:message key="metadata.modelType"/>
                         </label>
                         <div class="col-sm-8">
-                            <input wicket:id="modelType" class="form-control form-control-sm" readonly/>
+                            <input class="form-control form-control-sm" readonly wicket:id="modelType"/>
                         </div>
                     </div>
 
                     <div class="form-group form-row">
-                        <label wicket:for="embeddings" class="col-sm-4 col-form-label">
+                        <label class="col-sm-4 col-form-label" wicket:for="embeddings">
                             <wicket:message key="metadata.embeddings"/>
                         </label>
                         <div class="col-sm-8">
-                            <input wicket:id="embeddings" class="form-control form-control-sm" readonly/>
+                            <input class="form-control form-control-sm" readonly wicket:id="embeddings"/>
                         </div>
                     </div>
 
@@ -84,7 +84,7 @@
                             <wicket:message key="metadata.timestamp"/>
                         </label>
                         <div class="col-sm-8">
-                            <input wicket:id="timestamp" class="form-control form-control-sm" readonly/>
+                            <input class="form-control form-control-sm" readonly wicket:id="timestamp"/>
                         </div>
                     </div>
 
@@ -92,6 +92,45 @@
                 </div>
 
             </div>
+
+            <!-- Tag Label Mapping panel-->
+            <div class="card flex-content" wicket:id="tagLabelMappingPanel">
+                <div class="card-header small">
+                    <wicket:message key="tagLabelMappingPanel.header"/>
+                </div>
+
+                <div class="card-body flex-v-container">
+                    <form wicket:id="tagLabelMappingForm">
+                        <div class="row mt-1 mb-1">
+                            <div class="col-md-4">
+                                Codebook Tag
+                            </div>
+                            <div class="col-md-8">
+                                mapped to Class
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="form-group form-row" wicket:id="tagsListView">
+                            <div class="col-md-4"><i><span wicket:id="name">name</span></i></div>
+                            <div class="col-md-8">
+                                <select class="form-control form-control-sm" wicket:id="labelSelection"></select>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- start prediction button-->
+            <button class="flex-content btn btn-sm btn-primary" type="button" wicket:id="startPredictionsButton">
+                <span wicket:id="startPredictionsButtonLabel"></span>&nbsp;
+                <i class="fas fa-robot"></i>
+            </button>
+
+            <!-- prediction progress bar-->
+            <form wicket:id="predictionProgressBarForm">
+                <div wicket:id="predictionProgressBar"></div>
+            </form>
 
         </div>
     </div>
