@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
@@ -29,7 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * DocumentModel
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-02T09:35:39.209Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
 public class DocumentModel
     implements Serializable
 {

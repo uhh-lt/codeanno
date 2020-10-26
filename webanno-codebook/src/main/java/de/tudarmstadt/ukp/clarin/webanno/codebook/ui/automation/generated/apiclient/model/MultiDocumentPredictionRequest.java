@@ -18,6 +18,8 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
@@ -25,15 +27,15 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * PredictionRequest
+ * MultiDocumentPredictionRequest
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
-public class PredictionRequest
+public class MultiDocumentPredictionRequest
     implements Serializable
 {
-    @SerializedName("doc")
-    private DocumentModel doc = null;
+    @SerializedName("docs")
+    private List<DocumentModel> docs = new ArrayList<DocumentModel>();
 
     @SerializedName("codebook")
     private CodebookModel codebook = null;
@@ -41,29 +43,35 @@ public class PredictionRequest
     @SerializedName("mapping")
     private TagLabelMapping mapping = null;
 
-    public PredictionRequest doc(DocumentModel doc)
+    public MultiDocumentPredictionRequest docs(List<DocumentModel> docs)
     {
-        this.doc = doc;
+        this.docs = docs;
+        return this;
+    }
+
+    public MultiDocumentPredictionRequest addDocsItem(DocumentModel docsItem)
+    {
+        this.docs.add(docsItem);
         return this;
     }
 
     /**
-     * Get doc
+     * Get docs
      * 
-     * @return doc
+     * @return docs
      **/
     @Schema(required = true, description = "")
-    public DocumentModel getDoc()
+    public List<DocumentModel> getDocs()
     {
-        return doc;
+        return docs;
     }
 
-    public void setDoc(DocumentModel doc)
+    public void setDocs(List<DocumentModel> docs)
     {
-        this.doc = doc;
+        this.docs = docs;
     }
 
-    public PredictionRequest codebook(CodebookModel codebook)
+    public MultiDocumentPredictionRequest codebook(CodebookModel codebook)
     {
         this.codebook = codebook;
         return this;
@@ -85,7 +93,7 @@ public class PredictionRequest
         this.codebook = codebook;
     }
 
-    public PredictionRequest mapping(TagLabelMapping mapping)
+    public MultiDocumentPredictionRequest mapping(TagLabelMapping mapping)
     {
         this.mapping = mapping;
         return this;
@@ -116,25 +124,26 @@ public class PredictionRequest
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PredictionRequest predictionRequest = (PredictionRequest) o;
-        return Objects.equals(this.doc, predictionRequest.doc)
-                && Objects.equals(this.codebook, predictionRequest.codebook)
-                && Objects.equals(this.mapping, predictionRequest.mapping);
+        MultiDocumentPredictionRequest multiDocumentPredictionRequest =
+                (MultiDocumentPredictionRequest) o;
+        return Objects.equals(this.docs, multiDocumentPredictionRequest.docs)
+                && Objects.equals(this.codebook, multiDocumentPredictionRequest.codebook)
+                && Objects.equals(this.mapping, multiDocumentPredictionRequest.mapping);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(doc, codebook, mapping);
+        return Objects.hash(docs, codebook, mapping);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class PredictionRequest {\n");
+        sb.append("class MultiDocumentPredictionRequest {\n");
 
-        sb.append("    doc: ").append(toIndentedString(doc)).append("\n");
+        sb.append("    docs: ").append(toIndentedString(docs)).append("\n");
         sb.append("    codebook: ").append(toIndentedString(codebook)).append("\n");
         sb.append("    mapping: ").append(toIndentedString(mapping)).append("\n");
         sb.append("}");

@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient;
 
 import java.util.List;
@@ -71,7 +70,7 @@ public interface ApiCallback<T>
      * @param bytesRead
      *            bytes Read
      * @param contentLength
-     *            content lenngth of the response
+     *            content length of the response
      * @param done
      *            Read end
      */

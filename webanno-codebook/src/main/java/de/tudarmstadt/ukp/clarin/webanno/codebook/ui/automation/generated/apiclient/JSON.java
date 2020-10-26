@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient;
 
 import java.io.IOException;
@@ -46,8 +45,8 @@ public class JSON
 {
     private final DateTypeAdapter dateTypeAdapter = new DateTypeAdapter();
     private final SqlDateTypeAdapter sqlDateTypeAdapter = new SqlDateTypeAdapter();
-    private final OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter =
-            new OffsetDateTimeTypeAdapter();
+    private final OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter
+            = new OffsetDateTimeTypeAdapter();
     private final LocalDateTypeAdapter localDateTypeAdapter = new LocalDateTypeAdapter();
     private Gson gson;
     private boolean isLenientOnJson = false;

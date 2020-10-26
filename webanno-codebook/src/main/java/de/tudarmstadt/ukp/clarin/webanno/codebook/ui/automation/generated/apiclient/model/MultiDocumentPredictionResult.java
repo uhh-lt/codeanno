@@ -28,51 +28,27 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * PredictionResult
+ * MultiDocumentPredictionResult
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
-public class PredictionResult
+public class MultiDocumentPredictionResult
     implements Serializable
 {
-    @SerializedName("doc_id")
-    private Integer docId = null;
-
     @SerializedName("proj_id")
     private Integer projId = null;
 
     @SerializedName("codebook_name")
     private String codebookName = null;
 
-    @SerializedName("predicted_tag")
-    private String predictedTag = null;
+    @SerializedName("predicted_tags")
+    private Map<String, String> predictedTags = new HashMap<String, String>();
 
     @SerializedName("probabilities")
-    private Map<String, BigDecimal> probabilities = new HashMap<String, BigDecimal>();
+    private Map<String, Map<String, BigDecimal>> probabilities =
+            new HashMap<String, Map<String, BigDecimal>>();
 
-    public PredictionResult docId(Integer docId)
-    {
-        this.docId = docId;
-        return this;
-    }
-
-    /**
-     * Get docId
-     * 
-     * @return docId
-     **/
-    @Schema(required = true, description = "")
-    public Integer getDocId()
-    {
-        return docId;
-    }
-
-    public void setDocId(Integer docId)
-    {
-        this.docId = docId;
-    }
-
-    public PredictionResult projId(Integer projId)
+    public MultiDocumentPredictionResult projId(Integer projId)
     {
         this.projId = projId;
         return this;
@@ -94,7 +70,7 @@ public class PredictionResult
         this.projId = projId;
     }
 
-    public PredictionResult codebookName(String codebookName)
+    public MultiDocumentPredictionResult codebookName(String codebookName)
     {
         this.codebookName = codebookName;
         return this;
@@ -116,35 +92,43 @@ public class PredictionResult
         this.codebookName = codebookName;
     }
 
-    public PredictionResult predictedTag(String predictedTag)
+    public MultiDocumentPredictionResult predictedTags(Map<String, String> predictedTags)
     {
-        this.predictedTag = predictedTag;
+        this.predictedTags = predictedTags;
+        return this;
+    }
+
+    public MultiDocumentPredictionResult putPredictedTagsItem(String key, String predictedTagsItem)
+    {
+        this.predictedTags.put(key, predictedTagsItem);
         return this;
     }
 
     /**
-     * Get predictedTag
+     * Get predictedTags
      * 
-     * @return predictedTag
+     * @return predictedTags
      **/
     @Schema(required = true, description = "")
-    public String getPredictedTag()
+    public Map<String, String> getPredictedTags()
     {
-        return predictedTag;
+        return predictedTags;
     }
 
-    public void setPredictedTag(String predictedTag)
+    public void setPredictedTags(Map<String, String> predictedTags)
     {
-        this.predictedTag = predictedTag;
+        this.predictedTags = predictedTags;
     }
 
-    public PredictionResult probabilities(Map<String, BigDecimal> probabilities)
+    public MultiDocumentPredictionResult probabilities(
+            Map<String, Map<String, BigDecimal>> probabilities)
     {
         this.probabilities = probabilities;
         return this;
     }
 
-    public PredictionResult putProbabilitiesItem(String key, BigDecimal probabilitiesItem)
+    public MultiDocumentPredictionResult putProbabilitiesItem(String key,
+            Map<String, BigDecimal> probabilitiesItem)
     {
         this.probabilities.put(key, probabilitiesItem);
         return this;
@@ -156,12 +140,12 @@ public class PredictionResult
      * @return probabilities
      **/
     @Schema(required = true, description = "")
-    public Map<String, BigDecimal> getProbabilities()
+    public Map<String, Map<String, BigDecimal>> getProbabilities()
     {
         return probabilities;
     }
 
-    public void setProbabilities(Map<String, BigDecimal> probabilities)
+    public void setProbabilities(Map<String, Map<String, BigDecimal>> probabilities)
     {
         this.probabilities = probabilities;
     }
@@ -175,30 +159,29 @@ public class PredictionResult
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PredictionResult predictionResult = (PredictionResult) o;
-        return Objects.equals(this.docId, predictionResult.docId)
-                && Objects.equals(this.projId, predictionResult.projId)
-                && Objects.equals(this.codebookName, predictionResult.codebookName)
-                && Objects.equals(this.predictedTag, predictionResult.predictedTag)
-                && Objects.equals(this.probabilities, predictionResult.probabilities);
+        MultiDocumentPredictionResult multiDocumentPredictionResult =
+                (MultiDocumentPredictionResult) o;
+        return Objects.equals(this.projId, multiDocumentPredictionResult.projId)
+                && Objects.equals(this.codebookName, multiDocumentPredictionResult.codebookName)
+                && Objects.equals(this.predictedTags, multiDocumentPredictionResult.predictedTags)
+                && Objects.equals(this.probabilities, multiDocumentPredictionResult.probabilities);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(docId, projId, codebookName, predictedTag, probabilities);
+        return Objects.hash(projId, codebookName, predictedTags, probabilities);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class PredictionResult {\n");
+        sb.append("class MultiDocumentPredictionResult {\n");
 
-        sb.append("    docId: ").append(toIndentedString(docId)).append("\n");
         sb.append("    projId: ").append(toIndentedString(projId)).append("\n");
         sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
-        sb.append("    predictedTag: ").append(toIndentedString(predictedTag)).append("\n");
+        sb.append("    predictedTags: ").append(toIndentedString(predictedTags)).append("\n");
         sb.append("    probabilities: ").append(toIndentedString(probabilities)).append("\n");
         sb.append("}");
         return sb.toString();
