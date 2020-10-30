@@ -23,10 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -42,12 +40,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.time.Duration;
-
-import com.googlecode.wicket.jquery.ui.widget.progressbar.ProgressBar;
 
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.select.BootstrapSelect;
-import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
@@ -55,7 +49,6 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior;
@@ -63,27 +56,27 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior;
 public class AutomationSettingsPanel
     extends Panel
 {
+    private static final long serialVersionUID = -685340838123105638L;
 
     public static final String MID = "automationSettingsPanel";
     public static final String METADATA_PANEL_MID = "modelMetadataPanel";
     public static final String TAG_LABEL_MAPPING_PANEL_MID = "tagLabelMappingPanel";
     public static final String TAG_LABEL_MAPPING_FORM_MID = "tagLabelMappingForm";
-    private static final long serialVersionUID = -685340838123105638L;
+
     private static final String AUTOMATION_AVAILABLE = "alert-success";
     private static final String AUTOMATION_UNAVAILABLE = "alert-danger";
+
     private final IModel<Project> projectModel;
     private boolean automationAvailable;
-    private boolean predictionStarted;
+    private boolean predictionInProgress;
+
     private WebMarkupContainer metadataPanel;
     private WebMarkupContainer tagLabelMappingPanel;
     private Form<TagLabelMappingFormModel> tagLabelMappingForm;
     private LambdaAjaxLink startPredictionsButton;
-    private Form<Void> predictionProgressBarForm;
-    private ProgressBar predictionProgressBar;
-    private AbstractAjaxTimerBehavior progressPollTimer;
     private IModel<ModelMetadata> metadata;
+
     private @SpringBean UserDao userService;
-    private @SpringBean DocumentService documentService;
     private @SpringBean CodebookSchemaService codebookSchemaService;
     private @SpringBean CodebookAutomationService codebookAutomationService;
 
@@ -92,7 +85,8 @@ public class AutomationSettingsPanel
         super(MID, model);
         this.projectModel = aProjectModel;
 
-        this.predictionStarted = false;
+        this.predictionInProgress = codebookAutomationService
+                .isPredictionInProgress(this.getModelObject());
 
         // automation available message
         checkAutomationAvailable();
@@ -106,9 +100,6 @@ public class AutomationSettingsPanel
 
         // start predictions button
         createOrUpdateStartPredictionsButton();
-
-        // prediction progress bar
-        createPredictionProgressBar();
 
         this.setVisible(model.getObject() != null);
         this.setOutputMarkupPlaceholderTag(true);
@@ -124,73 +115,11 @@ public class AutomationSettingsPanel
 
         startPredictionsButton.setOutputMarkupId(true);
 
-        Codebook cb = getModelObject();
-        startPredictionsButton
-                .add(LambdaBehavior.enabledWhen(() -> automationAvailable && !predictionStarted));
+        startPredictionsButton.add(LambdaBehavior.enabledWhen(() -> automationAvailable
+                && !codebookAutomationService.isPredictionInProgress(this.getModelObject())));
         startPredictionsButton.add(LambdaBehavior.visibleWhen(() -> automationAvailable));
 
         this.addOrReplace(startPredictionsButton);
-    }
-
-    private void createPredictionProgressBar()
-    {
-        // poll timer
-        progressPollTimer = new AbstractAjaxTimerBehavior(Duration.ONE_SECOND)
-        {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onTimer(AjaxRequestTarget target)
-            {
-                // get the progress from the service
-                if (!codebookAutomationService.isPredictionInProgress(getModelObject())) {
-                    predictionProgressBar.forward(target, 100);
-                    this.stop(target);
-                }
-
-                predictionProgressBar.forward(target,
-                        100 * (int) Math.floor(1 - codebookAutomationService
-                                .getPredictionInProgressFraction(getModelObject())));
-            }
-        };
-        progressPollTimer.stop(null);
-
-        // ProgressBar
-        this.predictionProgressBar = new ProgressBar("predictionProgressBar", Model.of(0))
-        {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onValueChanged(IPartialPageRequestHandler handler)
-            {
-                super.onValueChanged(handler);
-            }
-
-            @Override
-            protected void onComplete(AjaxRequestTarget target)
-            {
-                super.onComplete(target);
-                // stop timer and flag
-                progressPollTimer.stop(target);
-                predictionStarted = false;
-
-                // update the button text and enable it
-                startPredictionsButton.addOrReplace(new Label("startPredictionsButtonLabel",
-                        new StringResourceModel("startPredictionsButtonLabel.start")));
-                startPredictionsButton.setEnabled(true);
-
-                target.add(startPredictionsButton, predictionProgressBarForm,
-                        predictionProgressBar);
-            }
-        };
-        predictionProgressBar.setOutputMarkupId(true);
-
-        predictionProgressBarForm = new Form<>("predictionProgressBarForm");
-        predictionProgressBarForm.add(progressPollTimer);
-        predictionProgressBarForm.addOrReplace(predictionProgressBar);
-        predictionProgressBarForm.add(LambdaBehavior.visibleWhen(() -> predictionStarted));
-
-        this.addOrReplace(predictionProgressBarForm);
     }
 
     protected void actionStartPredictions(AjaxRequestTarget aTarget)
@@ -200,25 +129,19 @@ public class AutomationSettingsPanel
         String userName = userService.getCurrentUsername();
 
         // start async prediction for all docs in the project
-        for (SourceDocument sdoc : documentService.listSourceDocuments(project)) {
-            try {
-                // FIXME
-                Thread.sleep(5);
-                codebookAutomationService.predictTagAsync(cb, project, sdoc, userName);
-            }
-            catch (ApiException | InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            predictionInProgress = true;
+            codebookAutomationService.predictTagsAsync(cb, project, userName);
         }
-
-        // start the poll timer
-        progressPollTimer.restart(aTarget);
+        catch (ApiException exception) {
+            exception.printStackTrace();
+        }
 
         // update the button (enabled flag handled by the lambda behaviour)
         startPredictionsButton.addOrReplace(new Label("startPredictionsButtonLabel",
                 new StringResourceModel("startPredictionsButtonLabel.started")));
 
-        aTarget.add(startPredictionsButton, predictionProgressBarForm);
+        aTarget.add(startPredictionsButton);
     }
 
     private void createOrUpdateModelMetadataPanel()

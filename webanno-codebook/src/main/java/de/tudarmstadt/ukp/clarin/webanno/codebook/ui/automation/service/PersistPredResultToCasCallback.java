@@ -26,27 +26,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
-import de.tudarmstadt.ukp.clarin.webanno.api.casstorage.CasSessionException;
-import de.tudarmstadt.ukp.clarin.webanno.api.dao.casstorage.CasStorageSession;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiCallback;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 
-public class PersistToCasCallback
-    implements ApiCallback<PredictionResult>
+public class PersistPredResultToCasCallback
+    extends PersistResultToCasCallback<PredictionResult>
 {
 
-    private final static Logger logger = LoggerFactory.getLogger(PersistToCasCallback.class);
+    private final static Logger logger = LoggerFactory
+            .getLogger(PersistPredResultToCasCallback.class);
 
-    private final CodebookAutomationService codebookAutomationService;
-    private final String userName;
-    private CasStorageSession casStorageSession;
-
-    public PersistToCasCallback(CodebookAutomationService codebookAutomationService,
-            String userName)
+    public PersistPredResultToCasCallback(CodebookAutomationService codebookAutomationService,
+                                          String userName)
     {
-        this.codebookAutomationService = codebookAutomationService;
-        this.userName = userName;
+        super(codebookAutomationService, userName);
     }
 
     @Override
@@ -71,7 +64,6 @@ public class PersistToCasCallback
 
             this.initCasStorageSession();
             codebookAutomationService.writePredictedTagToCorrectionCas(result, userName);
-            codebookAutomationService.removeFromPredictionProgress(result);
         }
         catch (IOException | UIMAException | AnnotationException e) {
             e.printStackTrace();
@@ -94,22 +86,4 @@ public class PersistToCasCallback
         // Do nothing (maybe log the progress?)
     }
 
-    public synchronized void initCasStorageSession()
-    {
-        try {
-            if (this.casStorageSession == null)
-                this.casStorageSession = CasStorageSession.open();
-        }
-        catch (CasSessionException e) {
-            this.casStorageSession = CasStorageSession.get();
-        }
-    }
-
-    public synchronized void closeCasStorageSession()
-    {
-        if (this.casStorageSession != null && !this.casStorageSession.isClosed())
-            this.casStorageSession.close();
-
-        this.casStorageSession = null;
-    }
 }

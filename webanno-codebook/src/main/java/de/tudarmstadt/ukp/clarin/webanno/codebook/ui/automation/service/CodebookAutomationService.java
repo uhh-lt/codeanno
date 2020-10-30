@@ -18,6 +18,7 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
@@ -29,6 +30,9 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionRequest;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionResult;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionRequest;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
@@ -47,23 +51,30 @@ public interface CodebookAutomationService
 
     boolean isPredictionInProgress(Codebook cb);
 
-    Integer getPredictionInProgress(Codebook cb);
+    void addToPredictionInProgress(PredictionRequest req);
 
-    Double getPredictionInProgressFraction(Codebook cb);
+    void addToPredictionInProgress(MultiDocumentPredictionRequest req);
 
-    void addToPredictionProgress(Codebook cb, SourceDocument sdoc);
+    void removeFromPredictionInProgress(PredictionResult result);
 
-    void removeFromPredictionProgress(PredictionResult result);
+    void removeFromPredictionInProgress(MultiDocumentPredictionResult result);
 
     boolean isAutomationAvailable(Codebook cb, boolean updateCache) throws ApiException;
 
     Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName)
         throws ApiException;
 
+    Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName)
+        throws ApiException;
+
     ModelMetadata getModelMetadata(Codebook cb) throws ApiException;
 
     void writePredictedTagToCorrectionCas(PredictionResult result, String userName)
         throws IOException, UIMAException, AnnotationException;
+
+    void writePredictedTagsToCorrectionCas(MultiDocumentPredictionResult result, String userName);
 
     CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
         throws IOException, UIMAException;

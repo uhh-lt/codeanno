@@ -108,6 +108,7 @@ public class DocumentSelectionForm
     public void onEvent(final ProjectSelectionChangedEvent e)
     {
         // FIXME Due to strange reasons this gets called never
+        // https://www.baeldung.com/spring-events -> Section 2.3!
         this.projectModel = Model.of(e.getSelected());
     }
 
