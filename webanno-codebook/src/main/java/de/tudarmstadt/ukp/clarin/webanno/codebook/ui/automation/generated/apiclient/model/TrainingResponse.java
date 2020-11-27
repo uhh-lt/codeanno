@@ -18,8 +18,6 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
@@ -27,42 +25,36 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * TagLabelMapping
+ * id for a training to check if its done or not (or even progress), get log etc
  */
-
+@Schema(description = "id for a training to check if its done or not (or even progress), get log etc")
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TagLabelMapping
+public class TrainingResponse
     implements Serializable
 {
-    @SerializedName("map")
-    private Map<String, String> map = new HashMap<String, String>();
+    @SerializedName("model_id")
+    private String modelId = null;
 
-    public TagLabelMapping map(Map<String, String> map)
+    public TrainingResponse modelId(String modelId)
     {
-        this.map = map;
-        return this;
-    }
-
-    public TagLabelMapping putMapItem(String key, String mapItem)
-    {
-        this.map.put(key, mapItem);
+        this.modelId = modelId;
         return this;
     }
 
     /**
-     * Get map
+     * Use this ID to get info about the status of the model!
      *
-     * @return map
+     * @return modelId
      **/
-    @Schema(required = true, description = "")
-    public Map<String, String> getMap()
+    @Schema(required = true, description = "Use this ID to get info about the status of the model!")
+    public String getModelId()
     {
-        return map;
+        return modelId;
     }
 
-    public void setMap(Map<String, String> map)
+    public void setModelId(String modelId)
     {
-        this.map = map;
+        this.modelId = modelId;
     }
 
     @Override
@@ -74,23 +66,23 @@ public class TagLabelMapping
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TagLabelMapping tagLabelMapping = (TagLabelMapping) o;
-        return Objects.equals(this.map, tagLabelMapping.map);
+        TrainingResponse trainingResponse = (TrainingResponse) o;
+        return Objects.equals(this.modelId, trainingResponse.modelId);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(map);
+        return Objects.hash(modelId);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class TagLabelMapping {\n");
+        sb.append("class TrainingResponse {\n");
 
-        sb.append("    map: ").append(toIndentedString(map)).append("\n");
+        sb.append("    modelId: ").append(toIndentedString(modelId)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -65,7 +65,7 @@ public class PredictionApi
 
     /**
      * Build call for predictMultiPredictionPredictMultiPost
-     * 
+     *
      * @param body
      *            (required)
      * @param progressListener
@@ -149,7 +149,7 @@ public class PredictionApi
 
     /**
      * Predict Multi
-     * 
+     *
      * @param body
      *            (required)
      * @return MultiDocumentPredictionResult
@@ -168,7 +168,7 @@ public class PredictionApi
 
     /**
      * Predict Multi
-     * 
+     *
      * @param body
      *            (required)
      * @return ApiResponse&lt;MultiDocumentPredictionResult&gt;
@@ -190,7 +190,7 @@ public class PredictionApi
 
     /**
      * Predict Multi (asynchronously)
-     * 
+     *
      * @param body
      *            (required)
      * @param callback
@@ -239,7 +239,7 @@ public class PredictionApi
 
     /**
      * Build call for predictPredictionPredictPost
-     * 
+     *
      * @param body
      *            (required)
      * @param progressListener
@@ -321,7 +321,7 @@ public class PredictionApi
 
     /**
      * Predict
-     * 
+     *
      * @param body
      *            (required)
      * @return PredictionResult
@@ -337,7 +337,7 @@ public class PredictionApi
 
     /**
      * Predict
-     * 
+     *
      * @param body
      *            (required)
      * @return ApiResponse&lt;PredictionResult&gt;
@@ -359,7 +359,7 @@ public class PredictionApi
 
     /**
      * Predict (asynchronously)
-     * 
+     *
      * @param body
      *            (required)
      * @param callback

@@ -100,6 +100,8 @@ public class CodebookAutomationServiceImpl
     private final UserDao userService;
     private final ApplicationEventPublisher eventPublisher;
 
+    private static final String DEFAULT_VERSION = "default";
+
     private boolean heartbeat;
 
     @Autowired
@@ -203,7 +205,8 @@ public class CodebookAutomationServiceImpl
 
         if (updateCache) {
             CodebookModel cbm = buildCodebookModel(cb);
-            boolean available = modelApi.isAvailableModelIsAvailablePost(cbm).isValue();
+            boolean available = modelApi.isAvailableModelIsAvailablePost(cbm,
+                                                                         DEFAULT_VERSION).isValue();
             this.availabilityCache.put(cb, available);
         }
         if (this.availabilityCache.get(cb) == null)
@@ -267,7 +270,7 @@ public class CodebookAutomationServiceImpl
             return null;
 
         CodebookModel cbm = buildCodebookModel(cb);
-        return modelApi.getMetadataModelGetMetadataPost(cbm);
+        return modelApi.getMetadataModelGetMetadataPost(cbm, DEFAULT_VERSION);
     }
 
     private DocumentModel buildDocumentModel(Project proj, SourceDocument sdoc)

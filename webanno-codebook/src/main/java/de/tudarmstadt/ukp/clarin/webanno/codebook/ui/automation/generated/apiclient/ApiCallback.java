@@ -70,7 +70,7 @@ public interface ApiCallback<T>
      * @param bytesRead
      *            bytes Read
      * @param contentLength
-     *            content length of the response
+     *            content lenngth of the response
      * @param done
      *            Read end
      */

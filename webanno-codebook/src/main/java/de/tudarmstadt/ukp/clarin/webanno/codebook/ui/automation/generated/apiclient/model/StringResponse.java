@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * StringResponse
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
 public class StringResponse
     implements Serializable
 {
@@ -43,7 +43,7 @@ public class StringResponse
 
     /**
      * Get value
-     * 
+     *
      * @return value
      **/
     @Schema(required = true, description = "")

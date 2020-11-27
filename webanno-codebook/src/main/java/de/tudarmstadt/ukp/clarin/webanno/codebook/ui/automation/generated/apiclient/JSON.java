@@ -45,8 +45,8 @@ public class JSON
 {
     private final DateTypeAdapter dateTypeAdapter = new DateTypeAdapter();
     private final SqlDateTypeAdapter sqlDateTypeAdapter = new SqlDateTypeAdapter();
-    private final OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter
-            = new OffsetDateTimeTypeAdapter();
+    private final OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter =
+            new OffsetDateTimeTypeAdapter();
     private final LocalDateTypeAdapter localDateTypeAdapter = new LocalDateTypeAdapter();
     private Gson gson;
     private boolean isLenientOnJson = false;

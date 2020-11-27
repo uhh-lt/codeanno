@@ -18,8 +18,6 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
@@ -27,42 +25,61 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * TagLabelMapping
+ * TrainingStatus
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TagLabelMapping
+public class TrainingStatus
     implements Serializable
 {
-    @SerializedName("map")
-    private Map<String, String> map = new HashMap<String, String>();
+    @SerializedName("state")
+    private String state = "unknown";
 
-    public TagLabelMapping map(Map<String, String> map)
-    {
-        this.map = map;
-        return this;
-    }
+    @SerializedName("process_status")
+    private String processStatus = "unknown";
 
-    public TagLabelMapping putMapItem(String key, String mapItem)
+    public TrainingStatus state(String state)
     {
-        this.map.put(key, mapItem);
+        this.state = state;
         return this;
     }
 
     /**
-     * Get map
+     * Get state
      *
-     * @return map
+     * @return state
      **/
-    @Schema(required = true, description = "")
-    public Map<String, String> getMap()
+    @Schema(description = "")
+    public String getState()
     {
-        return map;
+        return state;
     }
 
-    public void setMap(Map<String, String> map)
+    public void setState(String state)
     {
-        this.map = map;
+        this.state = state;
+    }
+
+    public TrainingStatus processStatus(String processStatus)
+    {
+        this.processStatus = processStatus;
+        return this;
+    }
+
+    /**
+     * Get processStatus
+     *
+     * @return processStatus
+     **/
+    @Schema(description = "")
+    public String getProcessStatus()
+    {
+        return processStatus;
+    }
+
+    public void setProcessStatus(String processStatus)
+    {
+        this.processStatus = processStatus;
     }
 
     @Override
@@ -74,23 +91,25 @@ public class TagLabelMapping
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TagLabelMapping tagLabelMapping = (TagLabelMapping) o;
-        return Objects.equals(this.map, tagLabelMapping.map);
+        TrainingStatus trainingStatus = (TrainingStatus) o;
+        return Objects.equals(this.state, trainingStatus.state)
+                && Objects.equals(this.processStatus, trainingStatus.processStatus);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(map);
+        return Objects.hash(state, processStatus);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class TagLabelMapping {\n");
+        sb.append("class TrainingStatus {\n");
 
-        sb.append("    map: ").append(toIndentedString(map)).append("\n");
+        sb.append("    state: ").append(toIndentedString(state)).append("\n");
+        sb.append("    processStatus: ").append(toIndentedString(processStatus)).append("\n");
         sb.append("}");
         return sb.toString();
     }

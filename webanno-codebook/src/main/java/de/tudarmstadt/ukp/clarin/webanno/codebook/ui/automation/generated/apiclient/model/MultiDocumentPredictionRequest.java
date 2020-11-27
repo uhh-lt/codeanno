@@ -30,7 +30,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * MultiDocumentPredictionRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
+                            date = "2020-11-27T12:05:41.274Z[GMT]")
 public class MultiDocumentPredictionRequest
     implements Serializable
 {
@@ -42,6 +43,9 @@ public class MultiDocumentPredictionRequest
 
     @SerializedName("mapping")
     private TagLabelMapping mapping = null;
+
+    @SerializedName("model_version")
+    private String modelVersion = "default";
 
     public MultiDocumentPredictionRequest docs(List<DocumentModel> docs)
     {
@@ -57,7 +61,7 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get docs
-     * 
+     *
      * @return docs
      **/
     @Schema(required = true, description = "")
@@ -79,7 +83,7 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get codebook
-     * 
+     *
      * @return codebook
      **/
     @Schema(required = true, description = "")
@@ -101,7 +105,7 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get mapping
-     * 
+     *
      * @return mapping
      **/
     @Schema(description = "")
@@ -113,6 +117,28 @@ public class MultiDocumentPredictionRequest
     public void setMapping(TagLabelMapping mapping)
     {
         this.mapping = mapping;
+    }
+
+    public MultiDocumentPredictionRequest modelVersion(String modelVersion)
+    {
+        this.modelVersion = modelVersion;
+        return this;
+    }
+
+    /**
+     * Get modelVersion
+     *
+     * @return modelVersion
+     **/
+    @Schema(description = "")
+    public String getModelVersion()
+    {
+        return modelVersion;
+    }
+
+    public void setModelVersion(String modelVersion)
+    {
+        this.modelVersion = modelVersion;
     }
 
     @Override
@@ -128,13 +154,14 @@ public class MultiDocumentPredictionRequest
                 (MultiDocumentPredictionRequest) o;
         return Objects.equals(this.docs, multiDocumentPredictionRequest.docs)
                 && Objects.equals(this.codebook, multiDocumentPredictionRequest.codebook)
-                && Objects.equals(this.mapping, multiDocumentPredictionRequest.mapping);
+                && Objects.equals(this.mapping, multiDocumentPredictionRequest.mapping)
+                && Objects.equals(this.modelVersion, multiDocumentPredictionRequest.modelVersion);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(docs, codebook, mapping);
+        return Objects.hash(docs, codebook, mapping, modelVersion);
     }
 
     @Override
@@ -146,6 +173,7 @@ public class MultiDocumentPredictionRequest
         sb.append("    docs: ").append(toIndentedString(docs)).append("\n");
         sb.append("    codebook: ").append(toIndentedString(codebook)).append("\n");
         sb.append("    mapping: ").append(toIndentedString(mapping)).append("\n");
+        sb.append("    modelVersion: ").append(toIndentedString(modelVersion)).append("\n");
         sb.append("}");
         return sb.toString();
     }

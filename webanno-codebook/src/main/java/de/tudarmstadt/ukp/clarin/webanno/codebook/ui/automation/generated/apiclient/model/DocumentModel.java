@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * DocumentModel
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
 public class DocumentModel
     implements Serializable
 {
@@ -49,7 +49,7 @@ public class DocumentModel
 
     /**
      * Get docId
-     * 
+     *
      * @return docId
      **/
     @Schema(description = "")
@@ -71,7 +71,7 @@ public class DocumentModel
 
     /**
      * Get projId
-     * 
+     *
      * @return projId
      **/
     @Schema(description = "")
@@ -93,7 +93,7 @@ public class DocumentModel
 
     /**
      * Get text
-     * 
+     *
      * @return text
      **/
     @Schema(description = "")

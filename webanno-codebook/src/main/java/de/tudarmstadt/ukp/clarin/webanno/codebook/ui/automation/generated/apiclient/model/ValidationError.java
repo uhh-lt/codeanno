@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ValidationError
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
 public class ValidationError
     implements Serializable
 {
@@ -57,7 +57,7 @@ public class ValidationError
 
     /**
      * Get loc
-     * 
+     *
      * @return loc
      **/
     @Schema(required = true, description = "")
@@ -79,7 +79,7 @@ public class ValidationError
 
     /**
      * Get msg
-     * 
+     *
      * @return msg
      **/
     @Schema(required = true, description = "")
@@ -101,7 +101,7 @@ public class ValidationError
 
     /**
      * Get type
-     * 
+     *
      * @return type
      **/
     @Schema(required = true, description = "")

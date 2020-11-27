@@ -18,8 +18,6 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
@@ -27,42 +25,61 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * TagLabelMapping
+ * DatasetInfoRequest
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TagLabelMapping
+public class DatasetInfoRequest
     implements Serializable
 {
-    @SerializedName("map")
-    private Map<String, String> map = new HashMap<String, String>();
+    @SerializedName("cb")
+    private CodebookModel cb = null;
 
-    public TagLabelMapping map(Map<String, String> map)
-    {
-        this.map = map;
-        return this;
-    }
+    @SerializedName("dataset_version_tag")
+    private String datasetVersionTag = null;
 
-    public TagLabelMapping putMapItem(String key, String mapItem)
+    public DatasetInfoRequest cb(CodebookModel cb)
     {
-        this.map.put(key, mapItem);
+        this.cb = cb;
         return this;
     }
 
     /**
-     * Get map
+     * Get cb
      *
-     * @return map
+     * @return cb
      **/
     @Schema(required = true, description = "")
-    public Map<String, String> getMap()
+    public CodebookModel getCb()
     {
-        return map;
+        return cb;
     }
 
-    public void setMap(Map<String, String> map)
+    public void setCb(CodebookModel cb)
     {
-        this.map = map;
+        this.cb = cb;
+    }
+
+    public DatasetInfoRequest datasetVersionTag(String datasetVersionTag)
+    {
+        this.datasetVersionTag = datasetVersionTag;
+        return this;
+    }
+
+    /**
+     * Get datasetVersionTag
+     *
+     * @return datasetVersionTag
+     **/
+    @Schema(required = true, description = "")
+    public String getDatasetVersionTag()
+    {
+        return datasetVersionTag;
+    }
+
+    public void setDatasetVersionTag(String datasetVersionTag)
+    {
+        this.datasetVersionTag = datasetVersionTag;
     }
 
     @Override
@@ -74,23 +91,26 @@ public class TagLabelMapping
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TagLabelMapping tagLabelMapping = (TagLabelMapping) o;
-        return Objects.equals(this.map, tagLabelMapping.map);
+        DatasetInfoRequest datasetInfoRequest = (DatasetInfoRequest) o;
+        return Objects.equals(this.cb, datasetInfoRequest.cb)
+                && Objects.equals(this.datasetVersionTag, datasetInfoRequest.datasetVersionTag);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(map);
+        return Objects.hash(cb, datasetVersionTag);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class TagLabelMapping {\n");
+        sb.append("class DatasetInfoRequest {\n");
 
-        sb.append("    map: ").append(toIndentedString(map)).append("\n");
+        sb.append("    cb: ").append(toIndentedString(cb)).append("\n");
+        sb.append("    datasetVersionTag: ").append(toIndentedString(datasetVersionTag))
+                .append("\n");
         sb.append("}");
         return sb.toString();
     }

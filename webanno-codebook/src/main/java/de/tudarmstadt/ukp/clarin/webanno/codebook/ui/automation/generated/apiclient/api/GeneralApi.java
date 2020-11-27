@@ -62,7 +62,7 @@ public class GeneralApi
 
     /**
      * Build call for heartbeatHeartbeatGet
-     * 
+     *
      * @param progressListener
      *            Progress listener
      * @param progressRequestListener
@@ -139,7 +139,7 @@ public class GeneralApi
 
     /**
      * Heartbeat
-     * 
+     *
      * @return BooleanResponse
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
@@ -153,7 +153,7 @@ public class GeneralApi
 
     /**
      * Heartbeat
-     * 
+     *
      * @return ApiResponse&lt;BooleanResponse&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
@@ -170,7 +170,7 @@ public class GeneralApi
 
     /**
      * Heartbeat (asynchronously)
-     * 
+     *
      * @param callback
      *            The callback to be executed when the API call finishes
      * @return The request call
@@ -216,7 +216,7 @@ public class GeneralApi
 
     /**
      * Build call for rootToDocsGet
-     * 
+     *
      * @param progressListener
      *            Progress listener
      * @param progressRequestListener
@@ -293,7 +293,7 @@ public class GeneralApi
 
     /**
      * Root To Docs Redirection to /docs
-     * 
+     *
      * @return Object
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
@@ -307,7 +307,7 @@ public class GeneralApi
 
     /**
      * Root To Docs Redirection to /docs
-     * 
+     *
      * @return ApiResponse&lt;Object&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
@@ -324,7 +324,7 @@ public class GeneralApi
 
     /**
      * Root To Docs (asynchronously) Redirection to /docs
-     * 
+     *
      * @param callback
      *            The callback to be executed when the API call finishes
      * @return The request call

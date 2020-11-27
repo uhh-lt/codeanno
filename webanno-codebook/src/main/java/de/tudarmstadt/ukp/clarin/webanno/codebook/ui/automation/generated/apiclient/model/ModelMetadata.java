@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ModelMetadata
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-10-26T16:49:00.408Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
 public class ModelMetadata
     implements Serializable
 {
@@ -41,11 +41,11 @@ public class ModelMetadata
     @SerializedName("model_type")
     private String modelType = null;
 
-    @SerializedName("embeddings")
-    private String embeddings = null;
-
     @SerializedName("evaluation")
     private Map<String, BigDecimal> evaluation = new HashMap<String, BigDecimal>();
+
+    @SerializedName("model_config")
+    private Object modelConfig = null;
 
     @SerializedName("timestamp")
     private String timestamp = null;
@@ -64,7 +64,7 @@ public class ModelMetadata
 
     /**
      * Get labels
-     * 
+     *
      * @return labels
      **/
     @Schema(required = true, description = "")
@@ -86,7 +86,7 @@ public class ModelMetadata
 
     /**
      * Get modelType
-     * 
+     *
      * @return modelType
      **/
     @Schema(required = true, description = "")
@@ -98,28 +98,6 @@ public class ModelMetadata
     public void setModelType(String modelType)
     {
         this.modelType = modelType;
-    }
-
-    public ModelMetadata embeddings(String embeddings)
-    {
-        this.embeddings = embeddings;
-        return this;
-    }
-
-    /**
-     * Get embeddings
-     * 
-     * @return embeddings
-     **/
-    @Schema(description = "")
-    public String getEmbeddings()
-    {
-        return embeddings;
-    }
-
-    public void setEmbeddings(String embeddings)
-    {
-        this.embeddings = embeddings;
     }
 
     public ModelMetadata evaluation(Map<String, BigDecimal> evaluation)
@@ -136,7 +114,7 @@ public class ModelMetadata
 
     /**
      * Get evaluation
-     * 
+     *
      * @return evaluation
      **/
     @Schema(required = true, description = "")
@@ -150,6 +128,28 @@ public class ModelMetadata
         this.evaluation = evaluation;
     }
 
+    public ModelMetadata modelConfig(Object modelConfig)
+    {
+        this.modelConfig = modelConfig;
+        return this;
+    }
+
+    /**
+     * Get modelConfig
+     *
+     * @return modelConfig
+     **/
+    @Schema(required = true, description = "")
+    public Object getModelConfig()
+    {
+        return modelConfig;
+    }
+
+    public void setModelConfig(Object modelConfig)
+    {
+        this.modelConfig = modelConfig;
+    }
+
     public ModelMetadata timestamp(String timestamp)
     {
         this.timestamp = timestamp;
@@ -158,7 +158,7 @@ public class ModelMetadata
 
     /**
      * Get timestamp
-     * 
+     *
      * @return timestamp
      **/
     @Schema(required = true, description = "")
@@ -184,15 +184,15 @@ public class ModelMetadata
         ModelMetadata modelMetadata = (ModelMetadata) o;
         return Objects.equals(this.labels, modelMetadata.labels)
                 && Objects.equals(this.modelType, modelMetadata.modelType)
-                && Objects.equals(this.embeddings, modelMetadata.embeddings)
                 && Objects.equals(this.evaluation, modelMetadata.evaluation)
+                && Objects.equals(this.modelConfig, modelMetadata.modelConfig)
                 && Objects.equals(this.timestamp, modelMetadata.timestamp);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(labels, modelType, embeddings, evaluation, timestamp);
+        return Objects.hash(labels, modelType, evaluation, modelConfig, timestamp);
     }
 
     @Override
@@ -203,8 +203,8 @@ public class ModelMetadata
 
         sb.append("    labels: ").append(toIndentedString(labels)).append("\n");
         sb.append("    modelType: ").append(toIndentedString(modelType)).append("\n");
-        sb.append("    embeddings: ").append(toIndentedString(embeddings)).append("\n");
         sb.append("    evaluation: ").append(toIndentedString(evaluation)).append("\n");
+        sb.append("    modelConfig: ").append(toIndentedString(modelConfig)).append("\n");
         sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
         sb.append("}");
         return sb.toString();
