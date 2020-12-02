@@ -47,11 +47,64 @@
                     </div>
 
                     <div class="form-group form-row">
-                        <label class="col-sm-4 col-form-label" wicket:for="embeddings">
-                            <wicket:message key="metadata.embeddings"/>
+                        <label class="col-sm-4 col-form-label"
+                               wicket:for="modelConfig.embeddingType">
+                            <wicket:message key="metadata.modelConfig.embeddingType"/>
                         </label>
                         <div class="col-sm-8">
-                            <input class="form-control form-control-sm" readonly wicket:id="embeddings"/>
+                            <input class="form-control form-control-sm" readonly
+                                   wicket:id="modelConfig.embeddingType"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label">
+                            <wicket:message key="metadata.modelConfig.hiddenUnits"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="row" wicket:id="hiddenUnitsListView">
+                                <i>FC-Layer <span wicket:id="layerNumber">
+                                    layerNumber</span>  with <span wicket:id="value">
+                                    value</span> hidden units</i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label" wicket:for="modelConfig.dropout">
+                            <wicket:message key="metadata.modelConfig.dropout"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly wicket:id="modelConfig.dropout"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label" wicket:for="modelConfig.optimizer">
+                            <wicket:message key="metadata.modelConfig.optimizer"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly wicket:id="modelConfig.optimizer"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label" wicket:for="modelConfig.earlyStopping">
+                            <wicket:message key="metadata.modelConfig.earlyStopping"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly wicket:id="modelConfig.earlyStopping"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label"
+                               wicket:for="modelConfig.activationFn">
+                            <wicket:message key="metadata.modelConfig.activation"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly
+                                   wicket:id="modelConfig.activationFn"/>
                         </div>
                     </div>
 

@@ -152,15 +152,30 @@ public class AutomationSettingsPanel
 
             TextField<String> modelType = new TextField<>("modelType");
             modelType.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(modelType);
 
-            TextField<String> embeddings = new TextField<>("embeddings");
-            embeddings.setEnabled(false).setOutputMarkupId(true);
+            TextField<String> embeddingType = new TextField<>("modelConfig.embeddingType");
+            embeddingType.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(embeddingType);
+
+            TextField<String> dropout = new TextField<>("modelConfig.dropout");
+            dropout.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(dropout);
+
+            TextField<String> activationFn = new TextField<>("modelConfig.activationFn");
+            activationFn.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(activationFn);
+
+            TextField<String> optimizer = new TextField<>("modelConfig.optimizer");
+            optimizer.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(optimizer);
+
+            TextField<String> earlyStopping = new TextField<>("modelConfig.earlyStopping");
+            earlyStopping.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(earlyStopping);
 
             TextField<String> timestamp = new TextField<>("timestamp");
             timestamp.setEnabled(false).setOutputMarkupId(true);
-
-            metadataPanel.add(modelType);
-            metadataPanel.add(embeddings);
             metadataPanel.add(timestamp);
 
             metadataPanel.setOutputMarkupPlaceholderTag(true);
@@ -192,6 +207,26 @@ public class AutomationSettingsPanel
             protected void populateItem(ListItem<PairPojo> item)
             {
                 item.add(new Label("key", item.getModelObject().key));
+                item.add(new Label("value", item.getModelObject().value));
+            }
+        }.setReuseItems(true));
+
+        // labels
+        List<PairPojo> hiddenUnits = new ArrayList<>();
+        if (metadata != null) {
+            List<Integer> hidden = metadata.getModelConfig().getHiddenUnits();
+            for (int i = 0; i < hidden.size(); i++)
+                labels.add(new PairPojo(Integer.toString(i), hidden.get(i).toString()));
+        }
+        metadataPanel.addOrReplace(new PropertyListView<PairPojo>("hiddenUnitsListView",
+                                                                  hiddenUnits)
+        {
+            private static final long serialVersionUID = 9206487155367441591L;
+
+            @Override
+            protected void populateItem(ListItem<PairPojo> item)
+            {
+                item.add(new Label("layerNumber", item.getModelObject().key));
                 item.add(new Label("value", item.getModelObject().value));
             }
         }.setReuseItems(true));

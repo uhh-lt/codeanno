@@ -45,7 +45,7 @@ public class ModelMetadata
     private Map<String, BigDecimal> evaluation = new HashMap<String, BigDecimal>();
 
     @SerializedName("model_config")
-    private Object modelConfig = null;
+    private ModelConfig modelConfig = null;
 
     @SerializedName("timestamp")
     private String timestamp = null;
@@ -128,7 +128,7 @@ public class ModelMetadata
         this.evaluation = evaluation;
     }
 
-    public ModelMetadata modelConfig(Object modelConfig)
+    public ModelMetadata modelConfig(ModelConfig modelConfig)
     {
         this.modelConfig = modelConfig;
         return this;
@@ -140,12 +140,12 @@ public class ModelMetadata
      * @return modelConfig
      **/
     @Schema(required = true, description = "")
-    public Object getModelConfig()
+    public ModelConfig getModelConfig()
     {
         return modelConfig;
     }
 
-    public void setModelConfig(Object modelConfig)
+    public void setModelConfig(ModelConfig modelConfig)
     {
         this.modelConfig = modelConfig;
     }
