@@ -199,7 +199,7 @@ public class AutomationSettingsPanel
         if (metadata != null)
             for (Map.Entry<String, String> e : metadata.getLabels().entrySet())
                 labels.add(new PairPojo(e.getKey(), e.getValue()));
-        metadataPanel.addOrReplace(new PropertyListView<PairPojo>("labelsListView", labels)
+        metadataPanel.addOrReplace(new PropertyListView<>("labelsListView", labels)
         {
             private static final long serialVersionUID = 9206487155367441591L;
 
@@ -211,15 +211,14 @@ public class AutomationSettingsPanel
             }
         }.setReuseItems(true));
 
-        // labels
+        // hidden units
         List<PairPojo> hiddenUnits = new ArrayList<>();
         if (metadata != null) {
             List<Integer> hidden = metadata.getModelConfig().getHiddenUnits();
             for (int i = 0; i < hidden.size(); i++)
-                labels.add(new PairPojo(Integer.toString(i), hidden.get(i).toString()));
+                hiddenUnits.add(new PairPojo(Integer.toString(i), hidden.get(i).toString()));
         }
-        metadataPanel.addOrReplace(new PropertyListView<PairPojo>("hiddenUnitsListView",
-                                                                  hiddenUnits)
+        metadataPanel.addOrReplace(new PropertyListView<>("hiddenUnitsListView", hiddenUnits)
         {
             private static final long serialVersionUID = 9206487155367441591L;
 
