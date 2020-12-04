@@ -70,7 +70,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.CasStorageService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.api.SessionMetaData;
-import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.AnnotationEditorExtensionRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBar;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
@@ -79,7 +78,7 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateImpl
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.SentenceOrientedPagingStrategy;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.SelectionChangedEvent;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookCasMerge;
@@ -613,7 +612,7 @@ public class CodebookCurationPage
                     continue;
 
                 CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
-                CodebookAdapter adapter = new CodebookAdapter(codebook);
+                CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
                 String value = (String) adapter.getExistingCodeValue(entry.getValue(), feature);
 
                 userSuggestions.putIfAbsent(codebook, new ArrayList<>());

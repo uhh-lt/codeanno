@@ -55,7 +55,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.event.BulkAnnotationEvent;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.CasDiff.Configuration;
@@ -317,7 +317,7 @@ public class CodebookCasMerge
 
     }
 
-    private void copyFeatures(SourceDocument aDocument, String aUsername, CodebookAdapter aAdapter,
+    private void copyFeatures(SourceDocument aDocument, String aUsername, CodebookCasAdapter aAdapter,
             Codebook aCodebook, FeatureStructure aTargetFS, FeatureStructure aSourceFs)
     {
 
@@ -350,7 +350,7 @@ public class CodebookCasMerge
                     "The annotation already exists in the target document.");
         }
 
-        CodebookAdapter adapter = new CodebookAdapter(aCodebook);
+        CodebookCasAdapter adapter = new CodebookCasAdapter(aCodebook);
         // AnnotationFS existingAnnos = CasUtil.selectSingleAt(aTargetCas,
         // aSourceFs.getType(),
         // aSourceFs.getBegin(), aSourceFs.getEnd());

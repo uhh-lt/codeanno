@@ -51,7 +51,7 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateImpl;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConst;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
@@ -372,7 +372,7 @@ public class CodebookAutomationServiceImpl
             // FIXME we really need to get rid of the cb features to increase code
             // understandability a lot
             CodebookFeature feature = codebookService.listCodebookFeature(cb).get(0);
-            CodebookAdapter adapter = new CodebookAdapter(cb);
+            CodebookCasAdapter adapter = new CodebookCasAdapter(cb);
             AnnotationFS existingFs = adapter.getExistingFs(correctionCas);
             int annoId = existingFs != null ? WebAnnoCasUtil.getAddr(existingFs)
                     : adapter.add(correctionCas);

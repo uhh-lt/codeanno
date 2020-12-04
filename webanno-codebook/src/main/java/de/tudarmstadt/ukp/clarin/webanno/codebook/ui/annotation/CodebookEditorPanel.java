@@ -44,7 +44,7 @@ import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.AnnotationEditorExtensionRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.config.CodebookLayoutCssResourceBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
@@ -102,7 +102,7 @@ public abstract class CodebookEditorPanel
 
     public String getExistingCode(Codebook codebook)
     {
-        CodebookAdapter adapter = new CodebookAdapter(codebook);
+        CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         CAS cas = null;
         try {
@@ -129,7 +129,7 @@ public abstract class CodebookEditorPanel
                     CAS jcas = getCodebookCas();
                     if (comboBox.getModelObject() == null) {
                         // combo box got cleared or NONE was selected
-                        CodebookAdapter adapter = new CodebookAdapter(codebook);
+                        CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
                         adapter.delete(jcas, feature);
                         writeCodebookCas(jcas);
                     }
@@ -178,7 +178,7 @@ public abstract class CodebookEditorPanel
     private void saveCodebookAnnotation(CodebookFeature aCodebookFeature, CAS aJCas)
         throws AnnotationException, IOException
     {
-        CodebookAdapter adapter = new CodebookAdapter(aCodebookFeature.getCodebook());
+        CodebookCasAdapter adapter = new CodebookCasAdapter(aCodebookFeature.getCodebook());
         writeCodebookFeatureModelsToCas(adapter, aJCas);
 
         // persist changes
@@ -186,7 +186,7 @@ public abstract class CodebookEditorPanel
 
     }
 
-    private void writeCodebookFeatureModelsToCas(CodebookAdapter aAdapter, CAS aJCas)
+    private void writeCodebookFeatureModelsToCas(CodebookCasAdapter aAdapter, CAS aJCas)
         throws IOException, AnnotationException
     {
         CodebookEditorModel state = getModelObject();

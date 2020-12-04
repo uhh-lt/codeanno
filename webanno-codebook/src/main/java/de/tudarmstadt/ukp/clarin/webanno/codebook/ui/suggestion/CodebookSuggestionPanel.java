@@ -44,7 +44,7 @@ import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.AnnotationEditorExtensionRegistry;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.api.coloring.ColoringStrategy;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
@@ -168,7 +168,7 @@ public class CodebookSuggestionPanel
         Map<String, CAS> jCases = getSuggestionCases();
         List<Codebook> types = new ArrayList<>();
         types.add(feature.getCodebook());
-        CodebookAdapter adapter = new CodebookAdapter(feature.getCodebook());
+        CodebookCasAdapter adapter = new CodebookCasAdapter(feature.getCodebook());
         List<CodebookSuggestion> suggestions = new ArrayList<>();
 
         for (String username : jCases.keySet()) {

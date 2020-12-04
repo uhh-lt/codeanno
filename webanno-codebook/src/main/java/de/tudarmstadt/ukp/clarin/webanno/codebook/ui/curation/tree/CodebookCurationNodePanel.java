@@ -43,7 +43,7 @@ import org.springframework.context.event.EventListener;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.api.event.DocumentStateChangedEvent;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
@@ -159,7 +159,7 @@ public class CodebookCurationNodePanel
         }
         Codebook codebook = this.node.getCodebook();
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
-        CodebookAdapter adapter = new CodebookAdapter(feature.getCodebook());
+        CodebookCasAdapter adapter = new CodebookCasAdapter(feature.getCodebook());
 
         String existingValue = (String) adapter.getExistingCodeValue(curationCas, feature);
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
@@ -185,7 +185,7 @@ public class CodebookCurationNodePanel
 
                     if (comboBox.getModelObject() == null) {
                         // combo box got cleared or NONE was selected
-                        CodebookAdapter adapter = new CodebookAdapter(codebook);
+                        CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
                         adapter.delete(curationCas, feature);
                         writeCodebookCas(curationCas);
                     }
@@ -208,7 +208,7 @@ public class CodebookCurationNodePanel
         throws AnnotationException, IOException
     {
 
-        CodebookAdapter adapter = new CodebookAdapter(feature.getCodebook());
+        CodebookCasAdapter adapter = new CodebookCasAdapter(feature.getCodebook());
         if (value == null) {
             adapter.delete(curationCas, feature);
             writeCodebookCas(curationCas);
@@ -222,7 +222,8 @@ public class CodebookCurationNodePanel
 
     }
 
-    private void writeCodebookToCas(CodebookAdapter aAdapter, CodebookFeature feature,
+    private void writeCodebookToCas(
+            CodebookCasAdapter aAdapter, CodebookFeature feature,
             String tagValue, CAS aJCas)
         throws IOException, AnnotationException
     {

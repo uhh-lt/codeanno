@@ -38,11 +38,11 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 /**
  * A class that is used to create Brat Span to CAS and vice-versa.
  */
-public class CodebookAdapter {
+public class CodebookCasAdapter {
 
     private Codebook codebook;
 
-    public CodebookAdapter(Codebook aCodebook) {
+    public CodebookCasAdapter(Codebook aCodebook) {
         this.codebook = aCodebook;
     }
 

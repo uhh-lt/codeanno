@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.Type;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 
 public class CurationUtil
@@ -36,7 +36,7 @@ public class CurationUtil
         List<Type> entryTypes = new LinkedList<>();
 
         for (Codebook codebook : aCodebooks) {
-            CodebookAdapter cA = new CodebookAdapter(codebook);
+            CodebookCasAdapter cA = new CodebookCasAdapter(codebook);
             entryTypes.add(cA.getAnnotationType(mergeJCas));
         }
         return entryTypes;

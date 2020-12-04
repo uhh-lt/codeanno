@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
@@ -87,7 +87,7 @@ public class CodebookStatsFactoryImpl
         Map<Codebook, Map<CodebookTag, Integer>> suggestions = new HashMap<>();
         for (Codebook codebook : codebooks) {
             for (CAS cas : CASes) {
-                CodebookAdapter adapter = new CodebookAdapter(codebook);
+                CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
 
                 // there is only 1 dummy feature at the moment!
                 CodebookFeature feature = codebookSchemaService.listCodebookFeature(codebook)
