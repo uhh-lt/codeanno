@@ -299,7 +299,6 @@ public class ImportExportServiceImpl
         // Convert the source document to CAS
         FormatSupport format = getReadableFormatById(aFormatId).orElseThrow(
             () -> new IOException("No reader available for format [" + aFormatId + "]"));
-
         CollectionReaderDescription readerDescription = format.getReaderDescription(tsd);
         addConfigurationParameters(readerDescription,
                 ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION,

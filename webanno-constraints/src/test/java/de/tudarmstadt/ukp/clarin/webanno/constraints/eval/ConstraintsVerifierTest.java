@@ -17,10 +17,11 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.constraints.eval;
 
+import static de.tudarmstadt.ukp.clarin.webanno.constraints.grammar.ConstraintsParser.parse;
 import static org.apache.uima.fit.util.JCasUtil.select;
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,23 +32,16 @@ import org.junit.Test;
 
 import de.tudarmstadt.ukp.clarin.webanno.constraints.evaluator.ConstraintsVerifier;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.evaluator.Verifiable;
-import de.tudarmstadt.ukp.clarin.webanno.constraints.grammar.ConstraintsGrammar;
-import de.tudarmstadt.ukp.clarin.webanno.constraints.grammar.syntaxtree.Parse;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.model.ParsedConstraints;
-import de.tudarmstadt.ukp.clarin.webanno.constraints.visitor.ParserVisitor;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma;
 
 @Ignore("Not fully implemented yet")
 public class ConstraintsVerifierTest
 {
     @Test
-    public void test()
-        throws Exception
+    public void test() throws Exception
     {
-        ConstraintsGrammar parser = new ConstraintsGrammar(new FileInputStream(
-                "src/test/resources/rules/6.rules"));
-        Parse p = parser.Parse();
-        ParsedConstraints constraints = p.accept(new ParserVisitor());
+        ParsedConstraints constraints = parse(new File("src/test/resources/rules/6.rules"));
 
         // Get imports
         Map<String, String> imports = new LinkedHashMap<>();

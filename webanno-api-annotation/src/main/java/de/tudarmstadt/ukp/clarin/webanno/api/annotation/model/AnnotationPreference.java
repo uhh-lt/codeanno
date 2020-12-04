@@ -50,7 +50,6 @@ public class AnnotationPreference
     //  this actually makes no sense here and needs to be refactored into the curations module
     //  where a own CurationPreference similar to AnnotationPreference needs to be implemented!
     private boolean showEditor = true;
-
     // Id of annotation layers, to be stored in the properties file comma separated: 12, 34,....
     @Deprecated
     private List<Long> annotationLayers;
@@ -87,6 +86,7 @@ public class AnnotationPreference
 
     /**
      * working with preferred layers is deprecated, use hidden layers instead
+     *
      * @return
      */
     @Deprecated

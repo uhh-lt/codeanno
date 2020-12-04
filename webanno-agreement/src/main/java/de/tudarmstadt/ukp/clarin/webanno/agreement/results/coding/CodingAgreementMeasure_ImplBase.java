@@ -37,7 +37,7 @@ public abstract class CodingAgreementMeasure_ImplBase<T extends DefaultAgreement
     {
         super(aFeature, aTraits);
     }
-    
+
     @Override
     public PairwiseAnnotationResult<CodingAgreementResult> getAgreement(
             Map<String, List<CAS>> aCasMap)
@@ -59,6 +59,6 @@ public abstract class CodingAgreementMeasure_ImplBase<T extends DefaultAgreement
         }
         return result;
     }
-    
+
     public abstract CodingAgreementResult calculatePairAgreement(Map<String, List<CAS>> aCasMap);
 }

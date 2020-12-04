@@ -83,17 +83,15 @@ public class AgreementMeasureSupportRegistryImpl
     @Override
     public AgreementMeasureSupport getAgreementMeasureSupport(String aId)
     {
-        return getAgreementMeasureSupports().stream()
-                .filter(fs -> fs.getId().equals(aId))
-                .findFirst()
-                .orElse(null);
+        return getAgreementMeasureSupports().stream().filter(fs -> fs.getId().equals(aId))
+                .findFirst().orElse(null);
     }
-    
+
     @Override
-    public List<AgreementMeasureSupport> getAgreementMeasureSupports(AnnotationFeature aFeature) {
-        return agreementMeasures.stream()
-            .filter(factory -> factory.accepts(aFeature))
-            .sorted(Comparator.comparing(AgreementMeasureSupport::getName))
-            .collect(Collectors.toList());
+    public List<AgreementMeasureSupport> getAgreementMeasureSupports(AnnotationFeature aFeature)
+    {
+        return agreementMeasures.stream().filter(factory -> factory.accepts(aFeature))
+                .sorted(Comparator.comparing(AgreementMeasureSupport::getName))
+                .collect(Collectors.toList());
     }
 }

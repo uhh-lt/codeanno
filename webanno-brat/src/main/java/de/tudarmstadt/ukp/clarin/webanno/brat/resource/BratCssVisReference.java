@@ -17,13 +17,13 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.brat.resource;
 
-import de.tudarmstadt.ukp.clarin.webanno.support.sass.SassResourceReference;
+import de.agilecoders.wicket.sass.SassResourceReference;
 
 public class BratCssVisReference
     extends SassResourceReference
 {
     private static final long serialVersionUID = 5755999000175373522L;
-    
+
     private static final BratCssVisReference INSTANCE = new BratCssVisReference();
 
     /**

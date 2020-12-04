@@ -74,7 +74,6 @@ public class CuratedDocumentsExporterTest
 
     private @Mock CodebookImportExportService codebookImportExportService;
     private @Mock CodebookSchemaService codebookService;
-
     private Project project;
     private File workFolder;
     private long nextDocId = 1;
@@ -103,7 +102,6 @@ public class CuratedDocumentsExporterTest
         importExportSerivce = new ImportExportServiceImpl(repositoryProperties,
                 asList(new XmiFormatSupport()), casStorageService, schemaService,
                 codebookImportExportService, codebookService);
-
         // documentService.getCasFile() is just a stupid wrapper around storageService.getCasFile()
         // and it is easiest we emulate it here
         when(documentService.getCasFile(any(), any())).thenAnswer(invocation -> {

@@ -87,7 +87,6 @@ public class CuratedDocumentsExporter
         return asList(SourceDocumentExporter.class);
     }
 
-
     /**
      * Copy, if exists, curation documents to a folder that will be exported as Zip file
      *
@@ -119,11 +118,9 @@ public class CuratedDocumentsExporter
 
             // If depending on aInProgress, include only the the curation documents that are
             // finished or also the ones that are in progress
-            if (
-                (aRequest.isIncludeInProgress() &&
-                    CURATION_IN_PROGRESS.equals(sourceDocument.getState())) ||
-                CURATION_FINISHED.equals(sourceDocument.getState())
-            ) {
+            if ((aRequest.isIncludeInProgress()
+                    && CURATION_IN_PROGRESS.equals(sourceDocument.getState()))
+                    || CURATION_FINISHED.equals(sourceDocument.getState())) {
                 File curationCasFile = documentService.getCasFile(sourceDocument, CURATION_USER);
                 if (curationCasFile.exists()) {
                     // Copy CAS - this is used when importing the project again
@@ -137,9 +134,11 @@ public class CuratedDocumentsExporter
                     FormatSupport format = importExportService.getWritableFormatById(formatId)
                             .orElseGet(() -> {
                                 FormatSupport fallbackFormat = new WebAnnoTsv3FormatSupport();
-                                aMonitor.addMessage(LogMessage.error(this,"Curation: [%s] No writer"
-                                        + " found for original format [%s] - exporting as [%s] "
-                                        + "instead.", sourceDocument.getName(), formatId,
+                                aMonitor.addMessage(LogMessage.error(this,
+                                        "Curation: [%s] No writer"
+                                                + " found for original format [%s] - exporting as [%s] "
+                                                + "instead.",
+                                        sourceDocument.getName(), formatId,
                                         fallbackFormat.getName()));
                                 return fallbackFormat;
                             });
@@ -202,23 +201,20 @@ public class CuratedDocumentsExporter
             // (anno1.ser)
             String username = FilenameUtils.getBaseName(fileName).replace(".ser", "");
 
-
             // COMPATIBILITY NOTE: One might ask oneself why we extract the filename when it should
             // always be CURATION_USER. The reason is compatibility:
             // - Util WebAnno 3.4.x, the CORRECTION_USER CAS was exported to 'curation' and
-            //   'curation_ser'. So for projects exported from this version, the
-            //   CuratedDocumentsExporter takes care of importing the CORRECTION_USER CASes.
+            // 'curation_ser'. So for projects exported from this version, the
+            // CuratedDocumentsExporter takes care of importing the CORRECTION_USER CASes.
             // - Since WebAnno 3.5.x, the CORRECTION_USER CAS is exported to 'annotation' and
-            //   'annotation_ser'. So for projects exported from this version, the
-            //   AnnotationDocumentExporter takes care of importing the CORRECTION_USER CASes!
-
+            // 'annotation_ser'. So for projects exported from this version, the
+            // AnnotationDocumentExporter takes care of importing the CORRECTION_USER CASes!
             // name of the annotation document
             fileName = fileName.replace(FilenameUtils.getName(fileName), "").replace("/", "");
             if (fileName.trim().isEmpty()) {
                 continue;
             }
-            SourceDocument sourceDocument = documentService.getSourceDocument(aProject,
-                    fileName);
+            SourceDocument sourceDocument = documentService.getSourceDocument(aProject, fileName);
             File annotationFilePath = documentService.getCasFile(sourceDocument, username);
 
             FileUtils.copyInputStreamToFile(aZip.getInputStream(entry), annotationFilePath);

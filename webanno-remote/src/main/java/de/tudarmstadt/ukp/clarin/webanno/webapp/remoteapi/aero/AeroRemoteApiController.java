@@ -210,28 +210,6 @@ public class AeroRemoteApiController
         }
     }
 
-    public static SourceDocumentState parseSourceDocumentState(String aState)
-    {
-        if (aState == null) {
-            return null;
-        }
-
-        switch (aState) {
-        case "NEW":
-            return SourceDocumentState.NEW;
-        case "ANNOTATION-IN-PROGRESS":
-            return SourceDocumentState.ANNOTATION_IN_PROGRESS;
-        case "ANNOTATION-COMPLETE":
-            return SourceDocumentState.ANNOTATION_FINISHED;
-        case "CURATION-COMPLETE":
-            return SourceDocumentState.CURATION_FINISHED;
-        case "CURATION-IN-PROGRESS":
-            return SourceDocumentState.CURATION_IN_PROGRESS;
-        default:
-            throw new IllegalArgumentException("Unknown source document state [" + aState + "]");
-        }
-    }
-
     public static String projectStateToString(ProjectState aState)
     {
         if (aState == null) {
@@ -510,7 +488,7 @@ public class AeroRemoteApiController
         return ResponseEntity.created(aUcb.path(API_BASE + "/" + PROJECTS + "/{id}")
                 .buildAndExpand(project.getId()).toUri()).body(response);
     }
-
+    
     @ApiOperation(value = "Delete an existing project")
     @RequestMapping(value = ("/" + PROJECTS + "/{" + PARAM_PROJECT_ID
             + "}"), method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8_VALUE)
@@ -527,8 +505,10 @@ public class AeroRemoteApiController
     }
 
     @ApiOperation(value = "Import a previously exported project")
-    @RequestMapping(value = ("/" + PROJECTS + "/"
-            + IMPORT), method = RequestMethod.POST, consumes = MULTIPART_FORM_DATA_VALUE,
+    @RequestMapping(//
+            value = ("/" + PROJECTS + "/" + IMPORT), //
+            method = RequestMethod.POST, //
+            consumes = MULTIPART_FORM_DATA_VALUE, //
             produces = APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RResponse<RProject>> projectImport(
             @RequestPart(PARAM_FILE) MultipartFile aFile)
@@ -636,12 +616,16 @@ public class AeroRemoteApiController
     }
 
     @ApiOperation(value = "Create a new document in a project")
-    @ApiImplicitParams({ @ApiImplicitParam(name = PARAM_NAME, paramType = "form", required = true),
-            @ApiImplicitParam(name = PARAM_FORMAT, paramType = "form", required = true),
-            @ApiImplicitParam(name = PARAM_STATE, paramType = "form", required = true), })
-    @RequestMapping(value = "/" + PROJECTS + "/{" + PARAM_PROJECT_ID + "}/"
-            + DOCUMENTS, method = RequestMethod.POST, consumes = MULTIPART_FORM_DATA_VALUE
-            , produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = PARAM_NAME, paramType = "form", required = true),
+        @ApiImplicitParam(name = PARAM_FORMAT, paramType = "form", required = true),
+        @ApiImplicitParam(name = PARAM_STATE, paramType = "form", required = true),
+    })
+    @RequestMapping(
+            value = "/" + PROJECTS + "/{" + PARAM_PROJECT_ID + "}/" + DOCUMENTS, 
+            method = RequestMethod.POST,
+            consumes = MULTIPART_FORM_DATA_VALUE,
+            produces = APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RResponse<RDocument>> documentCreate(
             @PathVariable(PARAM_PROJECT_ID) long aProjectId,
             @RequestParam(PARAM_CONTENT) MultipartFile aFile,
@@ -828,11 +812,14 @@ public class AeroRemoteApiController
 
     @ApiOperation(value = "Create annotations for a document in a project")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = PARAM_FORMAT, paramType = "form", required = true),
-            @ApiImplicitParam(name = PARAM_STATE, paramType = "form", required = true), })
-    @RequestMapping(value = "/" + PROJECTS + "/{" + PARAM_PROJECT_ID + "}/" + DOCUMENTS + "/{"
-            + PARAM_DOCUMENT_ID + "}/" + ANNOTATIONS + "/{" + PARAM_ANNOTATOR_ID
-            + "}", method = RequestMethod.POST, consumes = MULTIPART_FORM_DATA_VALUE,
+        @ApiImplicitParam(name = PARAM_FORMAT, paramType = "form", required = true),
+        @ApiImplicitParam(name = PARAM_STATE, paramType = "form", required = true),
+    })
+    @RequestMapping(
+            value = "/" + PROJECTS + "/{" + PARAM_PROJECT_ID + "}/" + DOCUMENTS + "/{"
+                    + PARAM_DOCUMENT_ID + "}/" + ANNOTATIONS + "/{" + PARAM_ANNOTATOR_ID + "}",
+            method = RequestMethod.POST,
+            consumes = MULTIPART_FORM_DATA_VALUE,
             produces = APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RResponse<RAnnotation>> annotationsCreate(
             @PathVariable(PARAM_PROJECT_ID) long aProjectId,
@@ -915,9 +902,11 @@ public class AeroRemoteApiController
     @ApiImplicitParams({
             @ApiImplicitParam(name = PARAM_FORMAT, paramType = "form", required = true),
             @ApiImplicitParam(name = PARAM_STATE, paramType = "form", required = true), })
-    @RequestMapping(value = "/" + PROJECTS + "/{" + PARAM_PROJECT_ID + "}/" + DOCUMENTS + "/{"
-            + PARAM_DOCUMENT_ID + "}/"
-            + CURATION, method = RequestMethod.POST, consumes = MULTIPART_FORM_DATA_VALUE,
+    @RequestMapping(//
+            value = "/" + PROJECTS + "/{" + PARAM_PROJECT_ID + "}/" + DOCUMENTS + //
+            "/{" + PARAM_DOCUMENT_ID + "}/"
+            + CURATION,// method = RequestMethod.POST,//
+            consumes = MULTIPART_FORM_DATA_VALUE, //
             produces = APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RResponse<RAnnotation>> curationCreate(
             @PathVariable(PARAM_PROJECT_ID) long aProjectId,
@@ -1156,5 +1145,27 @@ public class AeroRemoteApiController
         assertCompatibleOffsets(initialTokens, annotationTokens);
 
         return annotationCas;
+    }
+
+    public static SourceDocumentState parseSourceDocumentState(String aState)
+    {
+        if (aState == null) {
+            return null;
+        }
+
+        switch (aState) {
+        case "NEW":
+            return SourceDocumentState.NEW;
+        case "ANNOTATION-IN-PROGRESS":
+            return SourceDocumentState.ANNOTATION_IN_PROGRESS;
+        case "ANNOTATION-COMPLETE":
+            return SourceDocumentState.ANNOTATION_FINISHED;
+        case "CURATION-COMPLETE":
+            return SourceDocumentState.CURATION_FINISHED;
+        case "CURATION-IN-PROGRESS":
+            return SourceDocumentState.CURATION_IN_PROGRESS;
+        default:
+            throw new IllegalArgumentException("Unknown source document state [" + aState + "]");
+        }
     }
 }

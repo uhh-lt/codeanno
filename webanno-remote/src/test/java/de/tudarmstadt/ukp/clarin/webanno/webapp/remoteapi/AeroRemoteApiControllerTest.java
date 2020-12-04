@@ -96,11 +96,10 @@ import de.tudarmstadt.ukp.clarin.webanno.text.TextFormatSupport;
 import de.tudarmstadt.ukp.clarin.webanno.webapp.remoteapi.aero.AeroRemoteApiController;
 import de.tudarmstadt.ukp.clarin.webanno.webapp.remoteapi.aero.model.RProjectMode;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringRunner.class) 
 @EnableAutoConfiguration
-@SpringBootTest(
-        webEnvironment = WebEnvironment.MOCK, 
-        properties = { "repository.path=target/AeroRemoteApiControllerTest/repository" })
+@SpringBootTest(webEnvironment = WebEnvironment.MOCK, properties = {
+        "repository.path=target/AeroRemoteApiControllerTest/repository" })
 @EnableWebSecurity
 @EntityScan({
         "de.tudarmstadt.ukp.clarin.webanno.model",
@@ -111,7 +110,7 @@ public class AeroRemoteApiControllerTest
 {
     private @Autowired WebApplicationContext context;
     private @Autowired UserDao userRepository;
-    
+
     private MockMvc mvc;
 
     // If this is not static, for some reason the value is re-set to false before a
@@ -121,18 +120,21 @@ public class AeroRemoteApiControllerTest
     private static boolean initialized = false;
 
     @Before
-    public void setup() {
+    public void setup()
+    {
+        // @formatter:off
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .alwaysDo(print())
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilters(new OpenCasStorageSessionForRequestFilter())
                 .build();
-        
+        // @formatter:on
+
         if (!initialized) {
             userRepository.create(new User("admin", Role.ROLE_ADMIN));
             initialized = true;
-            
+
             FileSystemUtils.deleteRecursively(new File("target/RemoteApiController2Test"));
         }
     }
@@ -140,25 +142,32 @@ public class AeroRemoteApiControllerTest
     @Test
     public void t001_testProjectCreate() throws Exception
     {
-        mvc.perform(get(API_BASE + "/projects").with(csrf().asHeader())
-                .with(user("admin").roles("ADMIN"))).andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.messages").isEmpty());
+        // @formatter:off
+        mvc.perform(get(API_BASE + "/projects")
+                .with(csrf().asHeader())
+                .with(user("admin").roles("ADMIN")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(jsonPath("$.messages").isEmpty());
 
-        mvc.perform(post(API_BASE + "/projects").with(csrf().asHeader())
-                .with(user("admin").roles("ADMIN")).contentType(MediaType.MULTIPART_FORM_DATA)
-                .param("name", "project1")).andExpect(status().isCreated())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.body.id").value("1"))
-                .andExpect(jsonPath("$.body.name").value("project1"))
-                .andExpect(jsonPath("$.body.mode").value(RProjectMode.annotation.name()));
+        mvc.perform(post(API_BASE + "/projects")
+                .with(csrf().asHeader())
+                .with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .param("name", "project1"))
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(jsonPath("$.body.id").value("1"))
+            .andExpect(jsonPath("$.body.name").value("project1"))
+            .andExpect(jsonPath("$.body.mode").value(RProjectMode.annotation.name()));
 
-        mvc.perform(get(API_BASE + "/projects").with(csrf().asHeader())
-                .with(user("admin").roles("ADMIN"))).andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.body[0].id").value("1"))
-                .andExpect(jsonPath("$.body[0].name").value("project1"));
-
+        mvc.perform(get(API_BASE + "/projects")
+                .with(csrf().asHeader())
+                .with(user("admin").roles("ADMIN")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(jsonPath("$.body[0].id").value("1"))
+            .andExpect(jsonPath("$.body[0].name").value("project1"));
         /*
          * FIXME It's not possible to test the creation of projects for different project types
          * since the ProjectService injected at test time, does not know any project types..
@@ -174,6 +183,7 @@ public class AeroRemoteApiControllerTest
          * createProjectWithModeAndTest(RProjectMode.automation);
          */
 
+        // @formatter:on
     }
 
     /*
@@ -193,10 +203,10 @@ public class AeroRemoteApiControllerTest
      * .andExpect(jsonPath("$.body[0].name").value("project1"))
      * .andExpect(jsonPath("$.body[0].mode").value(mode.name())); }
      */
-
     @Test
     public void t002_testDocumentCreate() throws Exception
     {
+        // @formatter:off
         mvc.perform(get(API_BASE + "/projects/1/documents")
                 .with(csrf().asHeader())
                 .with(user("admin").roles("ADMIN")))
@@ -223,11 +233,13 @@ public class AeroRemoteApiControllerTest
             .andExpect(jsonPath("$.body[0].id").value("1"))
             .andExpect(jsonPath("$.body[0].name").value("test.txt"))
             .andExpect(jsonPath("$.body[0].state").value("NEW"));
+        // @formatter:on
     }
 
     @Test
     public void t003_testAnnotationCreate() throws Exception
     {
+        // @formatter:off
         mvc.perform(get(API_BASE + "/projects/1/documents/1/annotations")
                 .with(csrf().asHeader())
                 .with(user("admin").roles("ADMIN")))
@@ -256,11 +268,13 @@ public class AeroRemoteApiControllerTest
             .andExpect(jsonPath("$.body[0].user").value("admin"))
             .andExpect(jsonPath("$.body[0].state").value("IN-PROGRESS"))
             .andExpect(jsonPath("$.body[0].timestamp").doesNotExist());
+        // @formatter:on
     }
 
     @Test
     public void t004_testCurationCreate() throws Exception
     {
+        // @formatter:off
         mvc.perform(get(API_BASE + "/projects/1/documents")
                 .with(csrf().asHeader())
                 .with(user("admin").roles("ADMIN")))
@@ -291,11 +305,13 @@ public class AeroRemoteApiControllerTest
             .andExpect(jsonPath("$.body[0].id").value("1"))
             .andExpect(jsonPath("$.body[0].name").value("test.txt"))
             .andExpect(jsonPath("$.body[0].state").value("CURATION-COMPLETE"));
+        // @formatter:on
     }
 
     @Test
     public void t005_testCurationDelete() throws Exception
     {
+        // @formatter:off
         mvc.perform(delete(API_BASE + "/projects/1/documents/1/curation")
                 .with(csrf().asHeader())
                 .with(user("admin").roles("ADMIN"))
@@ -312,40 +328,42 @@ public class AeroRemoteApiControllerTest
             .andExpect(jsonPath("$.body[0].id").value("1"))
             .andExpect(jsonPath("$.body[0].name").value("test.txt"))
             .andExpect(jsonPath("$.body[0].state").value("ANNOTATION-IN-PROGRESS"));
+        // @formatter:on
     }
-    
+
     @Configuration
-    public static class TestContext {
+    public static class TestContext
+    {
         private @Autowired ApplicationEventPublisher applicationEventPublisher;
         private @Autowired EntityManager entityManager;
-        
+
         @Bean
         public AeroRemoteApiController remoteApiV2()
         {
             return new AeroRemoteApiController();
         }
-        
+
         @Bean
         public ProjectService projectService()
         {
-            return new ProjectServiceImpl(userRepository(), applicationEventPublisher, 
+            return new ProjectServiceImpl(userRepository(), applicationEventPublisher,
                     repositoryProperties(), null);
         }
-        
+
         @Bean
         public UserDao userRepository()
         {
             return new UserDaoImpl();
         }
-        
+
         @Bean
         public DocumentService documentService()
         {
-            return new DocumentServiceImpl(repositoryProperties(), userRepository(),
-                    casStorageService(), importExportService(), projectService(),
-                    applicationEventPublisher, entityManager);
+            return new DocumentServiceImpl(repositoryProperties(), casStorageService(),
+                    importExportService(), projectService(), applicationEventPublisher,
+                    entityManager);
         }
-        
+
         @Bean
         public AnnotationSchemaService annotationService()
         {
@@ -370,20 +388,19 @@ public class AeroRemoteApiControllerTest
         {
             return new CodebookFeatureSupportRegistryImpl(Collections.emptyList());
         }
-
         @Bean
         public FeatureSupportRegistry featureSupportRegistry()
         {
             return new FeatureSupportRegistryImpl(Collections.emptyList());
         }
-        
+
         @Bean
         public CasStorageService casStorageService()
         {
             return new CasStorageServiceImpl(null, null, repositoryProperties(),
                     backupProperties());
         }
-        
+
         @Bean
         public ImportExportService importExportService()
         {
@@ -391,7 +408,7 @@ public class AeroRemoteApiControllerTest
                     asList(new TextFormatSupport()), casStorageService(), annotationService(),
                     codebookImportExportService(), codebookSchemaService());
         }
-        
+
         @Bean
         public CurationDocumentService curationDocumentService()
         {
@@ -403,14 +420,14 @@ public class AeroRemoteApiControllerTest
         {
             return new ProjectExportServiceImpl(null, null, projectService());
         }
-        
+
         @Bean
         public RepositoryProperties repositoryProperties()
         {
             return new RepositoryProperties();
         }
 
-        @Bean 
+        @Bean
         public BackupProperties backupProperties()
         {
             return new BackupProperties();
@@ -421,14 +438,14 @@ public class AeroRemoteApiControllerTest
         {
             return new ApplicationContextProvider();
         }
-        
+
         @Bean
         public LayerSupportRegistry layerSupportRegistry()
         {
-            return new LayerSupportRegistryImpl(asList(
-                    new SpanLayerSupport(featureSupportRegistry(), null, null),
-                    new RelationLayerSupport(featureSupportRegistry(), null, null),
-                    new ChainLayerSupport(featureSupportRegistry(), null, null)));
+            return new LayerSupportRegistryImpl(
+                    asList(new SpanLayerSupport(featureSupportRegistry(), null, null),
+                            new RelationLayerSupport(featureSupportRegistry(), null, null),
+                            new ChainLayerSupport(featureSupportRegistry(), null, null)));
         }
     }
 }

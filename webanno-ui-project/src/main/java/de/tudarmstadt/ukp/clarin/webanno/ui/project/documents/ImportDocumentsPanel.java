@@ -18,6 +18,8 @@
 package de.tudarmstadt.ukp.clarin.webanno.ui.project.documents;
 
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -26,7 +28,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.uima.UIMAException;
@@ -67,7 +68,8 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaModel;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
 
-public class ImportDocumentsPanel extends Panel {
+public class ImportDocumentsPanel
+    extends Panel {
     private static final long serialVersionUID = 4927011191395114886L;
 
     private final static Logger LOG = LoggerFactory.getLogger(ImportDocumentsPanel.class);
@@ -76,7 +78,7 @@ public class ImportDocumentsPanel extends Panel {
     private @SpringBean ImportExportService importExportService;
     private @SpringBean UserDao userRepository;
     private @SpringBean AnnotationSchemaService annotationService;
-    
+
     private BootstrapFileInputField fileUpload;
 
     private IModel<String> format;
@@ -116,8 +118,10 @@ public class ImportDocumentsPanel extends Panel {
     }
 
     private List<String> listReadableFormats() {
-        return importExportService.getReadableFormats().stream().map(FormatSupport::getName)
-                .sorted().collect(Collectors.toList());
+        return importExportService.getReadableFormats().stream() //
+                .map(FormatSupport::getName) //
+                .sorted() //
+                .collect(toList());
     }
 
     private void actionImport(AjaxRequestTarget aTarget, Form<Void> aForm) {
@@ -158,8 +162,9 @@ public class ImportDocumentsPanel extends Panel {
             // Fetching all documents at once here is faster than calling
             // existsSourceDocument() for
             // every imported document
-            Set<String> existingDocuments = documentService.listSourceDocuments(project).stream()
-                    .map(SourceDocument::getName).collect(Collectors.toCollection(HashSet::new));
+            Set<String> existingDocuments = documentService.listSourceDocuments(project).stream()//
+                    .map(SourceDocument::getName)//
+                .collect(toCollection(HashSet::new));
 
             for (FileUpload documentToUpload : uploadedFiles) {
                 String fileName = documentToUpload.getClientFileName();
@@ -188,11 +193,12 @@ public class ImportDocumentsPanel extends Panel {
                     info("Document [" + fileName + "] has been imported successfully!");
                 } catch (Exception e) {
                     error("Error while uploading document " + fileName + ": "
-                            + ExceptionUtils.getRootCauseMessage(e));
+                            + getRootCauseMessage(e));
                     LOG.error(fileName + ": " + e.getMessage(), e);
                 }
             }
         }
+
         WicketUtil.refreshPage(aTarget, getPage());
     }
 

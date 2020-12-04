@@ -34,29 +34,29 @@ public class FleissKappaAgreementMeasureTest
     extends AgreementMeasureTestSuite_ImplBase
 {
     private AgreementMeasureSupport<
-                DefaultAgreementTraits,
+                DefaultAgreementTraits,//
                 PairwiseAnnotationResult<CodingAgreementResult>,
                 ICodingAnnotationStudy> sut;
     private DefaultAgreementTraits traits;
-    
+
     @Override
     @Before
     public void setup()
     {
         super.setup();
-        
+
         sut = new FleissKappaAgreementMeasureSupport(annotationService);
         traits = sut.createTraits();
     }
-    
+
     @Test
     public void multiLinkWithRoleLabelDifference() throws Exception
     {
-        PairwiseAnnotationResult<CodingAgreementResult> agreement = 
-                multiLinkWithRoleLabelDifferenceTest(sut);
-        
+        PairwiseAnnotationResult<CodingAgreementResult> agreement = multiLinkWithRoleLabelDifferenceTest(
+                sut);
+
         CodingAgreementResult result = agreement.getStudy("user1", "user2");
-        
+
         DiffResult diff = result.getDiff();
 
         diff.print(System.out);
@@ -64,19 +64,19 @@ public class FleissKappaAgreementMeasureTest
         assertEquals(3, diff.size());
         assertEquals(0, diff.getDifferingConfigurationSets().size());
         assertEquals(2, diff.getIncompleteConfigurationSets().size());
-    
+
         assertEquals(NaN, result.getAgreement(), 0.00001d);
     }
-    
+
     @Test
     public void twoEmptyCasTest() throws Exception
     {
         PairwiseAnnotationResult<CodingAgreementResult> agreement = twoEmptyCasTest(sut);
-        
+
         CodingAgreementResult result = agreement.getStudy("user1", "user2");
-        
+
         DiffResult diff = result.getDiff();
-        
+
         assertEquals(0, diff.size());
         assertEquals(0, diff.getDifferingConfigurationSets().size());
         assertEquals(0, diff.getIncompleteConfigurationSets().size());
@@ -84,12 +84,12 @@ public class FleissKappaAgreementMeasureTest
         assertEquals(NaN, result.getAgreement(), 0.000001d);
         assertEquals(0, result.getIncompleteSetsByPosition().size());
     }
-    
+
     @Test
     public void singleNoDifferencesWithAdditionalCasTest() throws Exception
     {
-        PairwiseAnnotationResult<CodingAgreementResult> agreement = 
-                singleNoDifferencesWithAdditionalCasTest(sut);
+        PairwiseAnnotationResult<CodingAgreementResult> agreement = singleNoDifferencesWithAdditionalCasTest(
+                sut);
 
         CodingAgreementResult result1 = agreement.getStudy("user1", "user2");
         assertEquals(0, result1.getTotalSetCount());

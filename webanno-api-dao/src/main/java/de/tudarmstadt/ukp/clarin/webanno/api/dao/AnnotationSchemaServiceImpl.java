@@ -17,11 +17,18 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.api.dao;
 
+import static de.tudarmstadt.ukp.clarin.webanno.api.AttachedAnnotation.Direction.INCOMING;
+import static de.tudarmstadt.ukp.clarin.webanno.api.AttachedAnnotation.Direction.LOOP;
+import static de.tudarmstadt.ukp.clarin.webanno.api.AttachedAnnotation.Direction.OUTGOING;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.RELATION_TYPE;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.getRealCas;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.isNativeUimaType;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.isSame;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.selectByAddr;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.stream.Collectors.toList;
 import static org.apache.uima.cas.impl.Serialization.deserializeCASComplete;
 import static org.apache.uima.cas.impl.Serialization.serializeCASComplete;
 import static org.apache.uima.cas.impl.Serialization.serializeWithCompression;
@@ -48,7 +55,9 @@ import org.apache.uima.cas.Type;
 import org.apache.uima.cas.TypeSystem;
 import org.apache.uima.cas.impl.CASCompleteSerializer;
 import org.apache.uima.cas.impl.CASImpl;
+import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.uima.fit.factory.CasFactory;
+import org.apache.uima.fit.util.CasUtil;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.metadata.FeatureDescription;
 import org.apache.uima.resource.metadata.TypeDescription;
@@ -63,13 +72,20 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+
 import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.api.AttachedAnnotation;
 import de.tudarmstadt.ukp.clarin.webanno.api.CasUpgradeMode;
 import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.adapter.RelationAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.adapter.SpanAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.adapter.TypeAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.feature.FeatureSupportRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.layer.LayerSupport;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.layer.LayerSupportRegistry;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.LinkWithRoleModel;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.TypeSystemAnalysis;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.TypeSystemAnalysis.RelationDetails;
 import de.tudarmstadt.ukp.clarin.webanno.api.dao.casstorage.CasStorageSession;
@@ -81,8 +97,11 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationLayer;
+import de.tudarmstadt.ukp.clarin.webanno.model.ImmutableTag;
 import de.tudarmstadt.ukp.clarin.webanno.model.LinkMode;
+import de.tudarmstadt.ukp.clarin.webanno.model.MultiValueMode;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
+import de.tudarmstadt.ukp.clarin.webanno.model.ReorderableTag;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Tag;
 import de.tudarmstadt.ukp.clarin.webanno.model.TagSet;
@@ -105,7 +124,7 @@ public class AnnotationSchemaServiceImpl
     private @Autowired CodebookSchemaService codebookService;
 
     private final FeatureSupportRegistry featureSupportRegistry;
-
+private final LoadingCache<TagSet, List<ImmutableTag>> immutableTagsCache;
     @Autowired
     public AnnotationSchemaServiceImpl(LayerSupportRegistry aLayerSupportRegistry,
             FeatureSupportRegistry aFeatureSupportRegistry,
@@ -114,6 +133,9 @@ public class AnnotationSchemaServiceImpl
         layerSupportRegistry = aLayerSupportRegistry;
         featureSupportRegistry = aFeatureSupportRegistry;
         applicationEventPublisher = aApplicationEventPublisher;
+
+        immutableTagsCache = Caffeine.newBuilder().expireAfterAccess(5, MINUTES)
+                .maximumSize(10 * 1024).build(this::loadImmutableTags);
     }
 
     public AnnotationSchemaServiceImpl()
@@ -132,12 +154,61 @@ public class AnnotationSchemaServiceImpl
     @Transactional
     public void createTag(Tag aTag)
     {
+        boolean created = createTagNoLog(aTag);
+
+        flushImmutableTagCache(aTag.getTagSet());
+
+        try (MDC.MDCCloseable closable = MDC.putCloseable(Logging.KEY_PROJECT_ID,
+                String.valueOf(aTag.getTagSet().getProject().getId()))) {
+            TagSet tagset = aTag.getTagSet();
+            Project project = tagset.getProject();
+            log.info("{} tag [{}]({}) in tagset [{}]({}) in project [{}]({})",
+                    created ? "Created" : "Updated", aTag.getName(), aTag.getId(), tagset.getName(),
+                    tagset.getId(), project.getName(), project.getId());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createTags(Tag... aTags)
+    {
+        if (aTags == null || aTags.length == 0) {
+            return;
+        }
+
+        TagSet tagset = aTags[0].getTagSet();
+        Project project = tagset.getProject();
+
+        int createdCount = 0;
+        int updatedCount = 0;
+        for (Tag tag : aTags) {
+            boolean created = createTagNoLog(tag);
+            if (created) {
+                createdCount++;
+            }
+            else {
+                updatedCount++;
+            }
+        }
+
+        try (MDC.MDCCloseable closable = MDC.putCloseable(Logging.KEY_PROJECT_ID,
+                String.valueOf(project.getId()))) {
+            log.info("Created {} tags and updated {} tags in tagset [{}]({}) in project [{}]({})",
+                    createdCount, updatedCount, tagset.getName(), tagset.getId(), project.getName(),
+                    project.getId());
+        }
+    }
+
+    private boolean createTagNoLog(Tag aTag)
+    {
         if (isNull(aTag.getId())) {
             entityManager.persist(aTag);
 
             if (applicationEventPublisher != null) {
                 applicationEventPublisher.publishEvent(new TagCreatedEvent(this, aTag));
             }
+
+            return true;
         }
         else {
             entityManager.merge(aTag);
@@ -145,15 +216,8 @@ public class AnnotationSchemaServiceImpl
             if (applicationEventPublisher != null) {
                 applicationEventPublisher.publishEvent(new TagUpdatedEvent(this, aTag));
             }
-        }
 
-        try (MDC.MDCCloseable closable = MDC.putCloseable(Logging.KEY_PROJECT_ID,
-                String.valueOf(aTag.getTagSet().getProject().getId()))) {
-            TagSet tagset = aTag.getTagSet();
-            Project project = tagset.getProject();
-            log.info("Created tag [{}]({}) in tagset [{}]({}) in project [{}]({})", aTag.getName(),
-                    aTag.getId(), tagset.getName(), tagset.getId(), project.getName(),
-                    project.getId());
+            return false;
         }
     }
 
@@ -504,16 +568,29 @@ public class AnnotationSchemaServiceImpl
 
         createTagSet(tagSet);
 
+        int createdCount = 0;
+        int updatedCount = 0;
         int i = 0;
         for (String tagName : aTags) {
             Tag tag = new Tag();
             tag.setTagSet(tagSet);
             tag.setDescription(aTagDescription[i]);
             tag.setName(tagName);
-            createTag(tag);
+            boolean created = createTagNoLog(tag);
+            if (created) {
+                createdCount++;
+            }
+            else {
+                updatedCount++;
+            }
             i++;
         }
-
+try (MDC.MDCCloseable closable = MDC.putCloseable(Logging.KEY_PROJECT_ID,
+                String.valueOf(aProject.getId()))) {
+            log.info("Created {} tags and updated {} tags in tagset [{}]({}) in project [{}]({})",
+                    createdCount, updatedCount, tagSet.getName(), tagSet.getId(),
+                    aProject.getName(), aProject.getId());
+        }
         return tagSet;
     }
 
@@ -597,18 +674,35 @@ public class AnnotationSchemaServiceImpl
 
     @Override
     @Transactional
-    public List<Tag> listTags()
-    {
-        return entityManager.createQuery("From Tag ORDER BY name", Tag.class).getResultList();
-    }
-
-    @Override
-    @Transactional
     public List<Tag> listTags(TagSet aTagSet)
     {
         return entityManager
                 .createQuery("FROM Tag WHERE tagSet = :tagSet ORDER BY name ASC", Tag.class)
                 .setParameter("tagSet", aTagSet).getResultList();
+    }
+
+    private List<ImmutableTag> loadImmutableTags(TagSet aTagSet)
+    {
+        return listTags(aTagSet).stream().map(ImmutableTag::new).collect(toList());
+    }
+
+    private void flushImmutableTagCache(TagSet aTagSet)
+    {
+        immutableTagsCache.asMap().keySet()
+                .removeIf(key -> Objects.equals(key.getId(), aTagSet.getId()));
+    }
+
+    @Override
+    public List<ImmutableTag> listTagsImmutable(TagSet aTagSet)
+    {
+        return immutableTagsCache.get(aTagSet);
+    }
+
+    @Override
+    @Transactional
+    public List<ReorderableTag> listTagsReorderable(TagSet aTagSet)
+    {
+        return listTagsImmutable(aTagSet).stream().map(ReorderableTag::new).collect(toList());
     }
 
     @Override
@@ -633,7 +727,7 @@ public class AnnotationSchemaServiceImpl
     public void removeTag(Tag aTag)
     {
         entityManager.remove(entityManager.contains(aTag) ? aTag : entityManager.merge(aTag));
-
+flushImmutableTagCache(aTag.getTagSet());
         if (applicationEventPublisher != null) {
             applicationEventPublisher.publishEvent(new TagDeletedEvent(this, aTag));
         }
@@ -647,7 +741,7 @@ public class AnnotationSchemaServiceImpl
         for (Tag tag : listTags(aTagSet)) {
             entityManager.remove(tag);
         }
-
+flushImmutableTagCache(aTagSet);
         entityManager
                 .remove(entityManager.contains(aTagSet) ? aTagSet : entityManager.merge(aTagSet));
     }
@@ -674,6 +768,8 @@ public class AnnotationSchemaServiceImpl
         for (Tag tag : listTags(aTagSet)) {
             entityManager.remove(tag);
         }
+
+        flushImmutableTagCache(aTagSet);
     }
 
     @Override
@@ -1091,12 +1187,17 @@ public class AnnotationSchemaServiceImpl
         return upgradeRequired;
     }
 
+    // NOTE: Using @Transactional here would significantly slow down things because getAdapter() is
+    // called rather often. It looks like listAnnotationFeature() works reasonably good also when
+    // not called within a transaction. Should it turn out that we would need a @Transactional here,
+    // then this should be refactored in some way. E.g. we keep the list of all project layers
+    // in the AnnotatorState now - maybe we can use it from there when calling relevant methods
+    // on the adapter.
     @Override
-    @Transactional
     public TypeAdapter getAdapter(AnnotationLayer aLayer)
     {
         return layerSupportRegistry.getLayerSupport(aLayer).createAdapter(aLayer,
-            () -> listAnnotationFeature(aLayer));
+                () -> listAnnotationFeature(aLayer));
     }
 
     @Override
@@ -1154,5 +1255,114 @@ public class AnnotationSchemaServiceImpl
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public List<AttachedAnnotation> getAttachedRels(AnnotationLayer aLayer, AnnotationFS aFs)
+    {
+        CAS cas = aFs.getCAS();
+        List<AttachedAnnotation> result = new ArrayList<>();
+        for (AnnotationLayer relationLayer : listAttachedRelationLayers(aLayer)) {
+            RelationAdapter relationAdapter = (RelationAdapter) getAdapter(relationLayer);
+            Type relationType = CasUtil.getType(cas, relationLayer.getName());
+            Feature sourceFeature = relationType
+                    .getFeatureByBaseName(relationAdapter.getSourceFeatureName());
+            Feature targetFeature = relationType
+                    .getFeatureByBaseName(relationAdapter.getTargetFeatureName());
+
+            // This code is already prepared for the day that relations can go between
+            // different layers and may have different attach features for the source and
+            // target layers.
+            Feature relationSourceAttachFeature = null;
+            Feature relationTargetAttachFeature = null;
+            if (relationAdapter.getAttachFeatureName() != null) {
+                relationSourceAttachFeature = sourceFeature.getRange()
+                        .getFeatureByBaseName(relationAdapter.getAttachFeatureName());
+                relationTargetAttachFeature = targetFeature.getRange()
+                        .getFeatureByBaseName(relationAdapter.getAttachFeatureName());
+            }
+
+            for (AnnotationFS relationFS : CasUtil.select(cas, relationType)) {
+                if (!(relationFS instanceof AnnotationFS)) {
+                    continue;
+                }
+
+                // Here we get the annotations that the relation is pointing to in the UI
+                AnnotationFS sourceFS;
+                if (relationSourceAttachFeature != null) {
+                    sourceFS = (AnnotationFS) relationFS.getFeatureValue(sourceFeature)
+                            .getFeatureValue(relationSourceAttachFeature);
+                }
+                else {
+                    sourceFS = (AnnotationFS) relationFS.getFeatureValue(sourceFeature);
+                }
+
+                AnnotationFS targetFS;
+                if (relationTargetAttachFeature != null) {
+                    targetFS = (AnnotationFS) relationFS.getFeatureValue(targetFeature)
+                            .getFeatureValue(relationTargetAttachFeature);
+                }
+                else {
+                    targetFS = (AnnotationFS) relationFS.getFeatureValue(targetFeature);
+                }
+
+                boolean isIncoming = isSame(targetFS, aFs);
+                boolean isOutgoing = isSame(sourceFS, aFs);
+
+                if (isIncoming && isOutgoing) {
+                    result.add(new AttachedAnnotation(relationLayer, relationFS, sourceFS, LOOP));
+                }
+                else if (isIncoming) {
+                    result.add(
+                            new AttachedAnnotation(relationLayer, relationFS, sourceFS, INCOMING));
+                }
+                else if (isOutgoing) {
+                    result.add(
+                            new AttachedAnnotation(relationLayer, relationFS, targetFS, OUTGOING));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public List<AttachedAnnotation> getAttachedLinks(AnnotationLayer aLayer, AnnotationFS aFs)
+    {
+        CAS cas = aFs.getCAS();
+        List<AttachedAnnotation> result = new ArrayList<>();
+        TypeAdapter adapter = getAdapter(aLayer);
+        if (adapter instanceof SpanAdapter) {
+            for (AnnotationFeature linkFeature : listAttachedLinkFeatures(aLayer)) {
+                if (MultiValueMode.ARRAY.equals(linkFeature.getMultiValueMode())
+                        && LinkMode.WITH_ROLE.equals(linkFeature.getLinkMode())) {
+                    // Fetch slot hosts that could link to the current FS and check if any of
+                    // them actually links to the current FS
+                    Type linkHost = CasUtil.getType(cas, linkFeature.getLayer().getName());
+                    for (FeatureStructure linkFS : CasUtil.selectFS(cas, linkHost)) {
+                        if (!(linkFS instanceof AnnotationFS)) {
+                            continue;
+                        }
+
+                        List<LinkWithRoleModel> links = adapter.getFeatureValue(linkFeature,
+                                linkFS);
+                        for (int li = 0; li < links.size(); li++) {
+                            LinkWithRoleModel link = links.get(li);
+                            AnnotationFS linkTarget = selectByAddr(cas, AnnotationFS.class,
+                                    link.targetAddr);
+                            // If the current annotation fills a slot, then add the slot host to
+                            // our list of attached links.
+                            if (isSame(linkTarget, aFs)) {
+                                result.add(new AttachedAnnotation(linkFeature.getLayer(),
+                                        (AnnotationFS) linkFS, INCOMING));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

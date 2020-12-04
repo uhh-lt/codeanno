@@ -95,7 +95,6 @@ public class Tsv3XCasDocumentBuilder
             }
         }
 
-
         // Build indexes over the token start and end positions such that we can quickly locate
         // tokens based on their offsets.
         NavigableMap<Integer, TsvToken> tokenBeginIndex = new TreeMap<>();
@@ -115,12 +114,11 @@ public class Tsv3XCasDocumentBuilder
             if (aSchema.getIgnoredTypes().contains(type)) {
                 continue;
             }
-            // TODO: check if getIgnoredTypes includes codebook types
+// TODO: check if getIgnoredTypes includes codebook types
             //exclude codebook types
             if (type.getName().startsWith("webanno.codebook")) {
                 continue;
             }
-
             LayerType layerType = aSchema.getLayerType(type);
 
             boolean addDisambiguationIdIfStacked = SPAN.equals(layerType);
@@ -151,12 +149,10 @@ public class Tsv3XCasDocumentBuilder
                         // found begin token but found the wrong one
                         (
                                 beginTokenEntry != null &&
-                                beginTokenEntry.getValue().getEnd() < begin &&
-                                tokenEndIndex.higherEntry(begin) != null
-                        ) ||
-                        // didn't find begin token because annotation starts before the first token
-                        beginTokenEntry == null
-                ) {
+                                beginTokenEntry.getValue().getEnd() < begin
+                               && tokenEndIndex.higherEntry(begin) != null) ||
+                // didn't find begin token because annotation starts before the first token
+                        beginTokenEntry == null) {
                     beginTokenEntry = tokenEndIndex.higherEntry(begin);
                 }
                 if (beginTokenEntry == null) {
@@ -174,12 +170,10 @@ public class Tsv3XCasDocumentBuilder
                         // found end token but found the wrong one
                         (
                                 endTokenEntry != null &&
-                                endTokenEntry.getValue().getBegin() > end &&
-                                tokenEndIndex.lowerEntry(end) != null
-                        ) ||
-                        // didn't find end token because annotation ends beyond the last token
-                        endTokenEntry == null
-                ) {
+                                endTokenEntry.getValue().getBegin() > end
+                        && tokenEndIndex.lowerEntry(end) != null) ||
+                // didn't find end token because annotation ends beyond the last token
+                        endTokenEntry == null) {
                     endTokenEntry = tokenEndIndex.lowerEntry(end);
                 }
                 if (endTokenEntry == null) {
@@ -324,7 +318,6 @@ public class Tsv3XCasDocumentBuilder
 //                    }
 //                }
 
-
                 if (!PLACEHOLDER.equals(col.featureType)) {
                     aUnit.getDocument().activateColumn(col);
                 }
@@ -363,9 +356,8 @@ public class Tsv3XCasDocumentBuilder
     }
 
     /**
-     * If a slot feature has the target type Annotation, then any kind of annotation can be
-     * used as slot filler. In this case, the targets are ambiguous and require an disambiguaton
-     * ID.
+     * If a slot feature has the target type Annotation, then any kind of annotation can be used as
+     * slot filler. In this case, the targets are ambiguous and require an disambiguaton ID.
      */
     private static void scanUnitForAmbiguousSlotReferences(TsvUnit aUnit)
     {

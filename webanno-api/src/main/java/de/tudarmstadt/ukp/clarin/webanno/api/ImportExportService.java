@@ -129,7 +129,7 @@ public interface ImportExportService
      */
     CAS importCasFromFile(File aFile, Project aProject, String aFormatId,
             TypeSystemDescription aFullProjectTypeSystem)
-                    throws UIMAException, IOException;
+        throws UIMAException, IOException;
 
     /**
      * Exports the given CAS to a file on disk.

@@ -23,8 +23,7 @@ public class RProject
 {
     public long id;
     public String name;
-    public RProjectMode mode;
-
+public RProjectMode mode;
     public RProject(Project aProject)
     {
         id = aProject.getId();

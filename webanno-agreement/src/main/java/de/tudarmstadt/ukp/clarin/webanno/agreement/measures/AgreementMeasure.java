@@ -28,8 +28,8 @@ import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 public interface AgreementMeasure<R extends Serializable>
 {
     R getAgreement(Map<String, List<CAS>> aCasMap);
-    
+
     AnnotationFeature getFeature();
-    
+
     DefaultAgreementTraits getTraits();
 }

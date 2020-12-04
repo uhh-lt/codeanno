@@ -76,7 +76,6 @@ public class AnnotationPreferencesDialogContent
 {
     private static final long serialVersionUID = -2102136855109258306L;
 
-
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean ProjectService projectService;
     private @SpringBean AnnotationEditorRegistry annotationEditorRegistry;
@@ -115,8 +114,7 @@ public class AnnotationPreferencesDialogContent
         form.add(fontZoomField);
 
         List<Pair<String, String>> editorChoices = annotationEditorRegistry.getEditorFactories()
-                .stream()
-                .map(f -> Pair.of(f.getBeanName(), f.getDisplayName()))
+                .stream().map(f -> Pair.of(f.getBeanName(), f.getDisplayName()))
                 .collect(Collectors.toList());
         DropDownChoice<Pair<String, String>> editor = new BootstrapSelect<>("editor");
         editor.setChoiceRenderer(new ChoiceRenderer<>("value"));
@@ -160,12 +158,11 @@ public class AnnotationPreferencesDialogContent
                 : "visibility:hidden;display:none"));
         CheckBox showEditor = new CheckBox("showEditor");
         form.add(showEditorCont.add(showEditor));
-
         add(form);
     }
 
     private void actionSave(AjaxRequestTarget aTarget, Form<Preferences> aForm)
-    {        
+    {
         try {
             AnnotatorState state = stateModel.getObject();
             Preferences model = form.getModelObject();
@@ -183,6 +180,7 @@ public class AnnotationPreferencesDialogContent
             prefs.setShowEditor(model.showEditor);
             prefs.setCollapseArcs(model.collapseArcs);
 
+            state.setAllAnnotationLayers(annotationService.listAnnotationLayer(state.getProject()));
             state.setAnnotationLayers(model.annotationLayers.stream()
                     .filter(l -> !prefs.getHiddenAnnotationLayerIds().contains(l.getId()))
                     .collect(Collectors.toList()));
@@ -274,8 +272,9 @@ public class AnnotationPreferencesDialogContent
                 layerColor.setModel(Model.of(prefs.colorPerLayer.get(layer.getId())));
                 layerColor.setChoiceRenderer(new ChoiceRenderer<>("descriptiveName"));
                 layerColor.setChoices(asList(ColoringStrategyType.values()));
-                layerColor.add(new LambdaAjaxFormComponentUpdatingBehavior("change", _target ->
-                        prefs.colorPerLayer.put(layer.getId(), layerColor.getModelObject())));
+                layerColor.add(new LambdaAjaxFormComponentUpdatingBehavior("change",
+                        _target -> prefs.colorPerLayer.put(layer.getId(),
+                                layerColor.getModelObject())));
                 aItem.add(layerColor);
 
                 // add label
