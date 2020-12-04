@@ -134,7 +134,7 @@ public class CodebookCurationWorkflowActionBarItemGroup
 
         // Initialize a new one ...
         ((CodebookCurationPage) page)
-                .prepareMergeCAS(aForm.getModelObject().isMergeIncompleteAnnotations());
+                .prepareMergeCAS(aForm.getModelObject().isMergeIncompleteAnnotations(), false);
         // ... and load it
         page.actionLoadDocument(aTarget);
 
