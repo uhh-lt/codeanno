@@ -17,15 +17,22 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation;
 
-import static de.tudarmstadt.ukp.clarin.webanno.api.CasUpgradeMode.FORCE_CAS_UPGRADE;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_DOCUMENT_ID;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_FOCUS;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_PROJECT_ID;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PROJECT_TYPE_AUTOMATION;
-import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.updateDocumentTimestampAfterWrite;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.FocusPosition.TOP;
-import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.copyDocumentMetadata;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.createSentence;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.createToken;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.exists;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.getRealCas;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.selectSentences;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.selectTokens;
 import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.visibleWhen;
+import static org.apache.uima.cas.impl.Serialization.deserializeCASComplete;
+import static org.apache.uima.cas.impl.Serialization.serializeCASComplete;
+import static org.apache.uima.fit.util.CasUtil.getType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +42,13 @@ import java.util.Map;
 
 import javax.persistence.NoResultException;
 
+import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
+import org.apache.uima.cas.impl.CASCompleteSerializer;
+import org.apache.uima.cas.impl.CASImpl;
+import org.apache.uima.cas.text.AnnotationFS;
+import org.apache.uima.fit.factory.CasFactory;
+import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.IFeedback;
@@ -54,26 +67,23 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 import org.wicketstuff.event.annotation.OnEvent;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.api.CasStorageService;
 import de.tudarmstadt.ukp.clarin.webanno.api.CorrectionDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.api.SessionMetaData;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.AnnotationEditorExtensionRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBar;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateImpl;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.SentenceOrientedPagingStrategy;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.SelectionChangedEvent;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.tree.CodebookCorrectionTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.DocumentNamePanel;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.ConstraintsService;
-import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocumentState;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocumentStateTransition;
@@ -81,10 +91,12 @@ import de.tudarmstadt.ukp.clarin.webanno.model.Mode;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.DecoratedObject;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 
 @MountPath("/codebookcorrection.html")
 public class CodebookCorrectionPage
@@ -97,14 +109,9 @@ public class CodebookCorrectionPage
     private @SpringBean ProjectService projectService;
     private @SpringBean UserDao userRepository;
     private @SpringBean DocumentService documentService;
-    private @SpringBean CurationDocumentService curationDocumentService;
-    private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean CorrectionDocumentService correctionDocumentService;
-    private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
     private @SpringBean ConstraintsService constraintsService;
-    private @SpringBean CasStorageService casStorageService;
-    private @SpringBean CodebookAutomationService codebookAutomationService;
 
     private long currentProjectId;
 
@@ -406,7 +413,8 @@ public class CodebookCorrectionPage
 
         AnnotatorState state = getModelObject();
 
-        state.setUser(userRepository.getCurrentUser());
+        User user = userRepository.getCurrentUser();
+        state.setUser(user);
         state.setDocument(state.getDocument(), getListOfDocs());
 
         // re-init tree since now the current project is set
@@ -421,18 +429,20 @@ public class CodebookCorrectionPage
                     .createOrGetAnnotationDocument(state.getDocument(), state.getUser());
 
             // Read the correction CAS - if it does not exist yet, from the initial CAS
-            CAS correctionCas = codebookAutomationService.readOrCreateCorrectionCas(state, true);
-
-            // Read the annotation CAS or create an annotation CAS from the initial CAS by stripping
-            // annotations
-            CAS editorCas = documentService.readAnnotationCas(annotationDocument,
-                    FORCE_CAS_UPGRADE);
-            // After creating an new CAS or upgrading the CAS, we need to save it
-            documentService.writeAnnotationCas(editorCas, annotationDocument.getDocument(),
-                    state.getUser(), false);
+            CAS correctionCas;
+            if (correctionDocumentService.existsCorrectionCas(state.getDocument())) {
+                correctionCas = correctionDocumentService.readCorrectionCas(state.getDocument());
+            }
+            else {
+                correctionCas = documentService.createOrReadInitialCas(state.getDocument());
+            }
+            // Update the CASes
+            correctionDocumentService.upgradeCorrectionCas(correctionCas, state.getDocument());
+            // After upgrading the CAS, we need to save it
+            correctionDocumentService.writeCorrectionCas(correctionCas, state.getDocument());
 
             // Initialize timestamp in state
-            updateDocumentTimestampAfterWrite(state, documentService
+            AnnotatorStateUtils.updateDocumentTimestampAfterWrite(state, documentService
                     .getAnnotationCasTimestamp(state.getDocument(), state.getUser().getUsername()));
 
             // Load constraints
@@ -452,9 +462,8 @@ public class CodebookCorrectionPage
 
             // Update document state
             if (state.getDocument().getState().equals(SourceDocumentState.NEW)) {
-                // TODO we should introduce a new SourceDocumentState that reflects correction
                 documentService.transitionSourceDocumentState(state.getDocument(),
-                        NEW_TO_ANNOTATION_IN_PROGRESS);
+                        SourceDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS);
             }
 
             if (AnnotationDocumentState.NEW.equals(annotationDocument.getState())) {
@@ -483,5 +492,45 @@ public class CodebookCorrectionPage
             firstLoad = false;
         }
         response.render(OnLoadHeaderItem.forScript(jQueryString));
+    }
+
+    public CAS clearAnnotations(CAS aCas) throws IOException
+    {
+        CAS target;
+        try {
+            target = CasFactory.createCas((TypeSystemDescription) null);
+        }
+        catch (UIMAException e) {
+            throw new IOException(e);
+        }
+
+        // Copy the CAS - basically we do this just to keep the full type system information
+        CASCompleteSerializer serializer = serializeCASComplete((CASImpl) getRealCas(aCas));
+        deserializeCASComplete(serializer, (CASImpl) getRealCas(target));
+
+        // Remove all annotations from the target CAS but we keep the type system!
+        target.reset();
+
+        // Copy over essential information
+        if (exists(aCas, getType(aCas, DocumentMetaData.class))) {
+            copyDocumentMetadata(aCas, target);
+        }
+        else {
+            WebAnnoCasUtil.createDocumentMetadata(aCas);
+        }
+        target.setDocumentLanguage(aCas.getDocumentLanguage()); // DKPro Core Issue 435
+        target.setDocumentText(aCas.getDocumentText());
+
+        // Transfer token boundaries
+        for (AnnotationFS t : selectTokens(aCas)) {
+            target.addFsToIndexes(createToken(target, t.getBegin(), t.getEnd()));
+        }
+
+        // Transfer sentence boundaries
+        for (AnnotationFS s : selectSentences(aCas)) {
+            target.addFsToIndexes(createSentence(target, s.getBegin(), s.getEnd()));
+        }
+
+        return target;
     }
 }
