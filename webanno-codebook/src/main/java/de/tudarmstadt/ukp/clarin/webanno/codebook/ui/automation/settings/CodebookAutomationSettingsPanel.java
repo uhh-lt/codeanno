@@ -84,7 +84,7 @@ public class CodebookAutomationSettingsPanel
         codebookSelectionForm.add(codebookAutomationSettingsTreePanel);
 
         // cb automation settings panel
-        this.automationSettingsPanel = new AutomationSettingsPanel(Model.of(), aProjectModel);
+        this.automationSettingsPanel = new AutomationSettingsPanel(aProjectModel.getObject());
         this.addOrReplace(automationSettingsPanel);
 
         // heartbeat check button
@@ -165,7 +165,7 @@ public class CodebookAutomationSettingsPanel
 
     private void updateAutomationSettingsPanel(Codebook selectedCodebook)
     {
-        this.automationSettingsPanel.setDefaultModel(Model.of(selectedCodebook));
+        this.automationSettingsPanel.setCodebook(selectedCodebook);
     }
 
     private void updateTree()

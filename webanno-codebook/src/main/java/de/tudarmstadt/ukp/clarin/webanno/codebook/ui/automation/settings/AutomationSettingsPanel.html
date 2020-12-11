@@ -20,7 +20,7 @@
 <body>
 <wicket:panel>
 
-    <div class="card flex-content">
+    <div class="card flex-content mt-0">
         <div class="card-header">
             <wicket:message key="header.text"/>
         </div>
@@ -29,6 +29,27 @@
         <div class="card-body flex-v-container flex-gutter">
             <!-- Available Alert -->
             <div class="alert text-center d-block p-0 m-0" wicket:id="automationAvailableAlert"></div>
+
+            <!-- Model Version Selection  -->
+            <div class="card flex-content" wicket:id="modelVersionSelectionPanel">
+                <div class="card-header small">
+                    <wicket:message key="modelVersionSelection.header"/>
+                </div>
+                <div class="card-body flex-v-container">
+
+                    <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label" wicket:for="modelVersionSelection">
+                            <wicket:message key="modelVersionSelection.label"/>
+                        </label>
+                        <div class="col-md-8">
+<!-- TODO                       <select class="form-control form-control-sm"
+wicket:id="modelVersionSelection"></select>-->
+                            <input class="form-control form-control-sm" wicket:id="modelVersionSelection"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
 
             <!-- Metadata panel-->
             <div class="card flex-content" wicket:id="modelMetadataPanel">
