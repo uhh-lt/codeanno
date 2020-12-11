@@ -207,12 +207,19 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
     public synchronized Call predictTagAsync(
             Codebook cb, Project proj, SourceDocument sdoc, String userName
     ) throws ApiException {
+        return predictTagAsync(cb, proj, sdoc, userName, DEFAULT_VERSION);
+    }
+
+    @Override
+    public synchronized Call predictTagAsync(
+            Codebook cb, Project proj, SourceDocument sdoc, String userName, String modelVersion
+    ) throws ApiException {
         if (!this.performHeartbeatCheck()) return null;
 
         logger.info("Starting asynchronous Codebook Tag prediction for " + cb.getName() +
                     " of Document " + sdoc.getId());
 
-        PredictionRequest req = buildPredictionRequest(cb, proj, sdoc);
+        PredictionRequest req = buildPredictionRequest(cb, proj, sdoc, modelVersion);
 
         // add to to inProgress
         this.addToPredictionInProgress(req);
@@ -224,12 +231,27 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
 
     @Override
     public Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException {
-        return this.predictTagsAsync(cb, proj, documentService.listSourceDocuments(proj), userName);
+        return this.predictTagsAsync(cb, proj, userName, DEFAULT_VERSION);
+    }
+
+    @Override
+    public Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion)
+            throws ApiException {
+        return this.predictTagsAsync(cb, proj, documentService.listSourceDocuments(proj), userName,
+                                     modelVersion);
     }
 
     @Override
     public Call predictTagsAsync(
             Codebook cb, Project proj, List<SourceDocument> sdocs, String userName
+    ) throws ApiException {
+        return predictTagsAsync(cb, proj, sdocs, userName, DEFAULT_VERSION);
+    }
+
+    @Override
+    public Call predictTagsAsync(
+            Codebook cb, Project proj, List<SourceDocument> sdocs, String userName,
+            String modelVersion
     ) throws ApiException {
 
         if (!this.performHeartbeatCheck()) return null;
@@ -238,13 +260,15 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
                     " for Documents: " +
                     sdocs.stream().map(SourceDocument::getId).collect(Collectors.toList()));
 
-        MultiDocumentPredictionRequest req = buildMultiDocPredictionRequest(cb, proj, sdocs);
+        MultiDocumentPredictionRequest req = buildMultiDocPredictionRequest(cb, proj, sdocs,
+                                                                            modelVersion);
 
         // add to to inProgress
         this.addToPredictionInProgress(req);
 
         return predictionApi.predictMultiPredictionPredictMultiPostAsync(req,
-            new PersistMultiPredResultToCasCallback(this, userName));
+                                                                         new PersistMultiPredResultToCasCallback(
+                                                                                 this, userName));
     }
 
 
@@ -469,7 +493,7 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
     }
 
     private PredictionRequest buildPredictionRequest(
-            Codebook cb, Project proj, SourceDocument sdoc
+            Codebook cb, Project proj, SourceDocument sdoc, String modelVersion
     ) {
         PredictionRequest request = new PredictionRequest();
 
@@ -477,11 +501,11 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
         DocumentModel docm = buildDocumentModel(proj, sdoc);
         TagLabelMapping mapping = tagLabelMappings.get(cb);
 
-        return request.codebook(cbm).doc(docm).mapping(mapping);
+        return request.codebook(cbm).doc(docm).mapping(mapping).modelVersion(modelVersion);
     }
 
     private MultiDocumentPredictionRequest buildMultiDocPredictionRequest(
-            Codebook cb, Project proj, List<SourceDocument> sdocs
+            Codebook cb, Project proj, List<SourceDocument> sdocs, String modelVersion
     ) {
         MultiDocumentPredictionRequest req = new MultiDocumentPredictionRequest();
 
@@ -491,7 +515,7 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
                 Collectors.toList());
         TagLabelMapping mapping = tagLabelMappings.get(cb);
 
-        return req.codebook(cbm).docs(docModels).mapping(mapping);
+        return req.codebook(cbm).docs(docModels).mapping(mapping).modelVersion(modelVersion);
     }
 
 }

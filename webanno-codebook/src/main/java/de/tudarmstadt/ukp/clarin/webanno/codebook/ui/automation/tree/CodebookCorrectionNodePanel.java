@@ -105,7 +105,7 @@ public class CodebookCorrectionNodePanel
         this.codebookCorrectionPanelHeader.setOutputMarkupPlaceholderTag(true);
         try {
             this.codebookCorrectionPanelHeader.add(AttributeModifier.append("class",
-                    automationService.isAutomationAvailable(this.node.getCodebook(), true)
+                    automationService.isAutomationAvailable(this.node.getCodebook(), false)
                             ? AUTOMATION_AVAILABLE
                             : AUTOMATION_NOT_AVAILABLE));
         }

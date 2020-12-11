@@ -145,18 +145,19 @@ public class AutomationSettingsPanel extends Panel {
                         .isPredictionInProgress(this.getModelObject().getCodebook())));
         startPredictionsButton.add(LambdaBehavior.visibleWhen(this::isAutomationAvailable));
 
-        this.addOrReplace(startPredictionsButton);
+        tagLabelMappingPanel.addOrReplace(startPredictionsButton);
     }
 
     protected void actionStartPredictions(AjaxRequestTarget aTarget) {
         Codebook cb = this.getModelObject().getCodebook();
         Project project = this.getModelObject().getProject();
         String userName = userService.getCurrentUsername();
+        String modelVersion = this.getModelObject().getModelVersion();
 
         // start async prediction for all docs in the project
         try {
             this.setPredictionInProgress(true);
-            codebookAutomationService.predictTagsAsync(cb, project, userName);
+            codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion);
         } catch (ApiException exception) {
             exception.printStackTrace();
         }
@@ -323,6 +324,8 @@ public class AutomationSettingsPanel extends Panel {
             }
         }.setReuseItems(true));
 
+        createOrUpdateStartPredictionsButton();
+
         this.addOrReplace(tagLabelMappingPanel);
     }
 
@@ -333,7 +336,7 @@ public class AutomationSettingsPanel extends Panel {
         this.createOrUpdateAutomationAvailableAlert();
         this.createOrUpdateModelMetadataPanel();
         this.createOrUpdateTagLabelMappingPanel();
-        this.createOrUpdateStartPredictionsButton();
+        this.createOrUpdateModelVersionSelection();
 
         this.setVisible(this.getModelObject().getCodebook() != null);
     }
@@ -373,6 +376,7 @@ public class AutomationSettingsPanel extends Panel {
     }
 
     public void setCodebook(Codebook cb) {
+        this.getModelObject().reset();
         this.getModelObject().setCodebook(cb);
         modelChanged();
     }

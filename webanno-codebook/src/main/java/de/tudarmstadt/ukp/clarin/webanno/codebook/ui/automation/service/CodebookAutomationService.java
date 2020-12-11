@@ -64,9 +64,19 @@ public interface CodebookAutomationService {
     Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName)
             throws ApiException;
 
+    Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName,
+                         String modelVersion)
+            throws ApiException;
+
     Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException;
 
+    Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion) throws ApiException;
+
+
     Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName)
+            throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName, String modelVersion)
             throws ApiException;
 
     ModelMetadata getModelMetadata(Codebook cb) throws ApiException;

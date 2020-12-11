@@ -20,24 +20,24 @@
 <body>
 <wicket:panel>
 
-    <div class="card flex-content mt-0">
+    <div class="card flex-content">
         <div class="card-header">
             <wicket:message key="header.text"/>
         </div>
 
         <!-- Main Container -->
-        <div class="card-body flex-v-container flex-gutter">
+        <div class="card-body flex-v-container flex-no-gutter">
             <!-- Available Alert -->
             <div class="alert text-center d-block p-0 m-0" wicket:id="automationAvailableAlert"></div>
 
             <!-- Model Version Selection  -->
-            <div class="card flex-content" wicket:id="modelVersionSelectionPanel">
+            <div class="card mt-0" wicket:id="modelVersionSelectionPanel">
                 <div class="card-header small">
                     <wicket:message key="modelVersionSelection.header"/>
                 </div>
-                <div class="card-body flex-v-container">
+                <div class="card-body pb-0">
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row pb-0 mb-0">
                         <label class="col-sm-4 col-form-label" wicket:for="modelVersionSelection">
                             <wicket:message key="modelVersionSelection.label"/>
                         </label>
@@ -52,13 +52,13 @@ wicket:id="modelVersionSelection"></select>-->
             </div>
 
             <!-- Metadata panel-->
-            <div class="card flex-content" wicket:id="modelMetadataPanel">
+            <div class="card flex-content mt-1" wicket:id="modelMetadataPanel">
                 <div class="card-header small">
                     <wicket:message key="modelMetadataPanel.header"/>
                 </div>
-                <div class="card-body flex-v-container">
+                <div class="card-body flex-v-container flex-no-gutter scrolling">
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label" wicket:for="modelType">
                             <wicket:message key="metadata.modelType"/>
                         </label>
@@ -67,7 +67,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label"
                                wicket:for="modelConfig.embeddingType">
                             <wicket:message key="metadata.modelConfig.embeddingType"/>
@@ -78,7 +78,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label">
                             <wicket:message key="metadata.modelConfig.hiddenUnits"/>
                         </label>
@@ -94,7 +94,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label" wicket:for="modelConfig.dropout">
                             <wicket:message key="metadata.modelConfig.dropout"/>
                         </label>
@@ -103,7 +103,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label" wicket:for="modelConfig.optimizer">
                             <wicket:message key="metadata.modelConfig.optimizer"/>
                         </label>
@@ -112,7 +112,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label" wicket:for="modelConfig.earlyStopping">
                             <wicket:message key="metadata.modelConfig.earlyStopping"/>
                         </label>
@@ -121,7 +121,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label"
                                wicket:for="modelConfig.activationFn">
                             <wicket:message key="metadata.modelConfig.activation"/>
@@ -132,7 +132,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label">
                             <wicket:message key="metadata.labels"/>
                         </label>
@@ -144,7 +144,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label">
                             <wicket:message key="metadata.evaluation"/>
                         </label>
@@ -156,7 +156,7 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row">
+                    <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label">
                             <wicket:message key="metadata.timestamp"/>
                         </label>
@@ -171,23 +171,23 @@ wicket:id="modelVersionSelection"></select>-->
             </div>
 
             <!-- Tag Label Mapping panel-->
-            <div class="card flex-content" wicket:id="tagLabelMappingPanel">
+            <div class="card flex-content mt-1 mb-0 pt-1 pb-0" wicket:id="tagLabelMappingPanel">
                 <div class="card-header small">
                     <wicket:message key="tagLabelMappingPanel.header"/>
                 </div>
 
                 <div class="card-body flex-v-container">
                     <form wicket:id="tagLabelMappingForm">
-                        <div class="row mt-1 mb-1">
-                            <div class="col-md-4">
+                        <div class="row mt-1 mb-1 small">
+                            <div class="col-md-4 small">
                                 Codebook Tag
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-8 small">
                                 mapped to Class
                             </div>
                         </div>
-                        <hr/>
-                        <div class="form-group form-row" wicket:id="tagsListView">
+                        <hr class="m-0 mb-1"/>
+                        <div class="form-group form-row mb-1" wicket:id="tagsListView">
                             <div class="col-md-4"><i><span wicket:id="name">name</span></i></div>
                             <div class="col-md-8">
                                 <select class="form-control form-control-sm" wicket:id="labelSelection"></select>
@@ -196,14 +196,16 @@ wicket:id="modelVersionSelection"></select>-->
 
                     </form>
                 </div>
+
+                <div class="card-footer">
+                    <!-- start prediction button-->
+                    <button class="btn btn-sm btn-primary mb-0 w-100" type="button"
+                            wicket:id="startPredictionsButton">
+                        <span wicket:id="startPredictionsButtonLabel"></span>&nbsp;
+                        <i class="fas fa-robot"></i>
+                    </button>
+                </div>
             </div>
-
-            <!-- start prediction button-->
-            <button class="flex-content btn btn-sm btn-primary" type="button" wicket:id="startPredictionsButton">
-                <span wicket:id="startPredictionsButtonLabel"></span>&nbsp;
-                <i class="fas fa-robot"></i>
-            </button>
-
         </div>
     </div>
 
