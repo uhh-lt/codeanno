@@ -206,7 +206,7 @@ public class CodebookAgreementPage
         for (User user : users) {
             List<CAS> cases = new ArrayList<>();
 
-            // Bulk-fetch all source documents for which there is already an annoation document for
+            // Bulk-fetch all source documents for which there is already an annotation document for
             // the user which is faster then checking for their existence individually
             List<SourceDocument> docsForUser = documentService
                     .listAnnotationDocuments(project, user).stream()
