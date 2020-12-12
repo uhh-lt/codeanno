@@ -29,7 +29,7 @@ import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 
 @Component
-@Order(300)
+@Order(450)
 public class CodebookAgreementPageMenuItem
     implements MenuItem
 {

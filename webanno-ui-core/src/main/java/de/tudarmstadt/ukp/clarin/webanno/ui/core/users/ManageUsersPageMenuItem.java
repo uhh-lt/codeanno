@@ -19,12 +19,14 @@ package de.tudarmstadt.ukp.clarin.webanno.ui.core.users;
 
 import org.apache.wicket.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.menu.MenuItem;
 
 @Component
+@Order(390)
 public class ManageUsersPageMenuItem
     implements MenuItem
 {
