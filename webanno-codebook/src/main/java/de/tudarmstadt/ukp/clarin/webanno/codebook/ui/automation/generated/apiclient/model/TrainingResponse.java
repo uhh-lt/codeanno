@@ -28,9 +28,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * id for a training to check if its done or not (or even progress), get log etc
  */
 @Schema(description = "id for a training to check if its done or not (or even progress), get log etc")
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TrainingResponse
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class TrainingResponse implements Serializable
 {
     @SerializedName("model_id")
     private String modelId = null;
@@ -43,7 +42,7 @@ public class TrainingResponse
 
     /**
      * Use this ID to get info about the status of the model!
-     *
+     * 
      * @return modelId
      **/
     @Schema(required = true, description = "Use this ID to get info about the status of the model!")

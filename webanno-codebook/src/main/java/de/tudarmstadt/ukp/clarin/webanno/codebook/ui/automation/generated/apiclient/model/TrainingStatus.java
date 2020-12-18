@@ -28,9 +28,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * TrainingStatus
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TrainingStatus
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class TrainingStatus implements Serializable
 {
     @SerializedName("state")
     private String state = "unknown";
@@ -46,7 +45,7 @@ public class TrainingStatus
 
     /**
      * Get state
-     *
+     * 
      * @return state
      **/
     @Schema(description = "")
@@ -68,7 +67,7 @@ public class TrainingStatus
 
     /**
      * Get processStatus
-     *
+     * 
      * @return processStatus
      **/
     @Schema(description = "")

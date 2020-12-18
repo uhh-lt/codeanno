@@ -134,15 +134,20 @@ public class AutomationSettingsPanel extends Panel {
         startPredictionsButton = new LambdaAjaxLink("startPredictionsButton",
                                                     this::actionStartPredictions);
 
-        startPredictionsButton.addOrReplace(
-                new Label("startPredictionsButtonLabel",
-                          new StringResourceModel("startPredictionsButtonLabel.start")));
-
         startPredictionsButton.setOutputMarkupId(true);
+
+
+        // update the button (enabled flag handled by the lambda behaviour)
+        boolean predictionInProgress =codebookAutomationService
+                .isPredictionInProgress(this.getModelObject().getCodebook(), this);
+        String resKey = predictionInProgress ? "startPredictionsButtonLabel.started" :
+                        "startPredictionsButtonLabel.start";
+        Label label = new Label("startPredictionsButtonLabel", new StringResourceModel(resKey));
+        startPredictionsButton.addOrReplace(label);
 
         startPredictionsButton.add(LambdaBehavior.enabledWhen(
                 () -> this.isAutomationAvailable(false) && !codebookAutomationService
-                        .isPredictionInProgress(this.getModelObject().getCodebook())));
+                        .isPredictionInProgress(this.getModelObject().getCodebook(), this)));
         startPredictionsButton.add(LambdaBehavior.visibleWhen(this::isAutomationAvailable));
 
         tagLabelMappingPanel.addOrReplace(startPredictionsButton);
@@ -156,19 +161,10 @@ public class AutomationSettingsPanel extends Panel {
 
         // start async prediction for all docs in the project
         try {
-            this.setPredictionInProgress(true);
-            codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion);
+            codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion, this);
         } catch (ApiException exception) {
             exception.printStackTrace();
         }
-
-        // update the button (enabled flag handled by the lambda behaviour)
-        startPredictionsButton.addOrReplace(new Label("startPredictionsButtonLabel",
-                                                      new StringResourceModel(
-                                                              "startPredictionsButtonLabel" +
-                                                              ".started")));
-
-        aTarget.add(startPredictionsButton);
     }
 
     private void createOrUpdateModelMetadataPanel() {
@@ -376,7 +372,7 @@ public class AutomationSettingsPanel extends Panel {
     }
 
     public void setCodebook(Codebook cb) {
-        this.getModelObject().reset();
+        this.getModelObject().resetData();
         this.getModelObject().setCodebook(cb);
         modelChanged();
     }
@@ -386,8 +382,10 @@ public class AutomationSettingsPanel extends Panel {
         modelChanged();
     }
 
-    private void setPredictionInProgress(boolean inProgress) {
+    public void setPredictionInProgress(boolean inProgress) {
+        /*This should only get called from outside!*/
         this.getModelObject().setPredictionInProgress(inProgress);
+//        modelChanged(); // FIXME update button when preds are finished
     }
 
     private void setModelMetadata(ModelMetadata modelMetadata) {

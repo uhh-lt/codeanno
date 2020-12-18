@@ -28,15 +28,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * PredictionRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class PredictionRequest
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class PredictionRequest implements Serializable
 {
     @SerializedName("doc")
-    private DocumentModel doc = null;
+    private DocumentDTO doc = null;
 
     @SerializedName("codebook")
-    private CodebookModel codebook = null;
+    private CodebookDTO codebook = null;
 
     @SerializedName("mapping")
     private TagLabelMapping mapping = null;
@@ -44,7 +43,7 @@ public class PredictionRequest
     @SerializedName("model_version")
     private String modelVersion = "default";
 
-    public PredictionRequest doc(DocumentModel doc)
+    public PredictionRequest doc(DocumentDTO doc)
     {
         this.doc = doc;
         return this;
@@ -52,21 +51,21 @@ public class PredictionRequest
 
     /**
      * Get doc
-     *
+     * 
      * @return doc
      **/
     @Schema(required = true, description = "")
-    public DocumentModel getDoc()
+    public DocumentDTO getDoc()
     {
         return doc;
     }
 
-    public void setDoc(DocumentModel doc)
+    public void setDoc(DocumentDTO doc)
     {
         this.doc = doc;
     }
 
-    public PredictionRequest codebook(CodebookModel codebook)
+    public PredictionRequest codebook(CodebookDTO codebook)
     {
         this.codebook = codebook;
         return this;
@@ -74,16 +73,16 @@ public class PredictionRequest
 
     /**
      * Get codebook
-     *
+     * 
      * @return codebook
      **/
     @Schema(required = true, description = "")
-    public CodebookModel getCodebook()
+    public CodebookDTO getCodebook()
     {
         return codebook;
     }
 
-    public void setCodebook(CodebookModel codebook)
+    public void setCodebook(CodebookDTO codebook)
     {
         this.codebook = codebook;
     }
@@ -96,7 +95,7 @@ public class PredictionRequest
 
     /**
      * Get mapping
-     *
+     * 
      * @return mapping
      **/
     @Schema(description = "")
@@ -118,7 +117,7 @@ public class PredictionRequest
 
     /**
      * Get modelVersion
-     *
+     * 
      * @return modelVersion
      **/
     @Schema(description = "")

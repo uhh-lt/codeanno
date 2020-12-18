@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -80,9 +81,9 @@ import okio.Okio;
 public class ApiClient
 {
 
-    private final Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String basePath = "/";
     private boolean debugging = false;
+    private final Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String tempFolderPath = null;
 
     private Map<String, Authentication> authentications;
@@ -470,9 +471,9 @@ public class ApiClient
      * response. The default value is <code>null</code>, i.e. using the system's default tempopary
      * folder.
      *
-     * @return Temporary folder path
      * @see <a href=
      *      "https://docs.oracle.com/javase/7/docs/api/java/io/File.html#createTempFile">createTempFile</a>
+     * @return Temporary folder path
      */
     public String getTempFolderPath()
     {
@@ -599,7 +600,7 @@ public class ApiClient
 
     /**
      * Formats the specified query parameter to a list containing a single {@code Pair} object.
-     * <p>
+     *
      * Note that {@code value} must not be a collection.
      *
      * @param name
@@ -622,7 +623,7 @@ public class ApiClient
 
     /**
      * Formats the specified collection query parameters to a list of {@code Pair} objects.
-     * <p>
+     *
      * Note that the values of each of the returned Pair objects are percent-encoded.
      *
      * @param collectionFormat
@@ -692,7 +693,7 @@ public class ApiClient
      * Check if the given MIME is a JSON MIME. JSON MIME examples: application/json
      * application/json; charset=UTF8 APPLICATION/JSON application/vnd.company+json "* / *" is also
      * default to JSON
-     *
+     * 
      * @param mime
      *            MIME (Multipurpose Internet Mail Extensions)
      * @return True if the given MIME is JSON, false otherwise.
@@ -756,12 +757,7 @@ public class ApiClient
      */
     public String escapeString(String str)
     {
-        try {
-            return URLEncoder.encode(str, "utf8").replaceAll("\\+", "%20");
-        }
-        catch (UnsupportedEncodingException e) {
-            return str;
-        }
+        return URLEncoder.encode(str, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
     }
 
     /**
@@ -876,9 +872,9 @@ public class ApiClient
      *
      * @param response
      *            An instance of the Response object
-     * @return Downloaded file
      * @throws ApiException
      *             If fail to read file content from response and write to disk
+     * @return Downloaded file
      */
     public File downloadFileFromResponse(Response response) throws ApiException
     {
@@ -899,9 +895,9 @@ public class ApiClient
      *
      * @param response
      *            An instance of the Response object
-     * @return Prepared file for the download
      * @throws IOException
      *             If fail to prepare file for download
+     * @return Prepared file for the download
      */
     public File prepareDownloadFile(Response response) throws IOException
     {
@@ -949,9 +945,9 @@ public class ApiClient
      *            Type
      * @param call
      *            An instance of the Call object
-     * @return ApiResponse&lt;T&gt;
      * @throws ApiException
      *             If fail to execute the call
+     * @return ApiResponse&lt;T&gt;
      */
     public <T> ApiResponse<T> execute(Call call) throws ApiException
     {
@@ -1002,6 +998,7 @@ public class ApiClient
     /**
      * Execute HTTP call asynchronously.
      *
+     * @see #execute(Call, Type)
      * @param <T>
      *            Type
      * @param call
@@ -1010,7 +1007,6 @@ public class ApiClient
      *            Return type
      * @param callback
      *            ApiCallback
-     * @see #execute(Call, Type)
      */
     @SuppressWarnings("unchecked")
     public <T> void executeAsync(Call call, final Type returnType, final ApiCallback<T> callback)
@@ -1048,10 +1044,10 @@ public class ApiClient
      *            Response
      * @param returnType
      *            Return type
-     * @return Type
      * @throws ApiException
      *             If the response has a unsuccessful status code or fail to deserialize the
      *             response body
+     * @return Type
      */
     public <T> T handleResponse(Response response, Type returnType) throws ApiException
     {

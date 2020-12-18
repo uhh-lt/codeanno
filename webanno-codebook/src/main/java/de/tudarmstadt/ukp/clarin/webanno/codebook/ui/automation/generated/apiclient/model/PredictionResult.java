@@ -31,9 +31,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * PredictionResult
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class PredictionResult
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class PredictionResult implements Serializable
 {
     @SerializedName("doc_id")
     private Integer docId = null;
@@ -58,7 +57,7 @@ public class PredictionResult
 
     /**
      * Get docId
-     *
+     * 
      * @return docId
      **/
     @Schema(required = true, description = "")
@@ -80,7 +79,7 @@ public class PredictionResult
 
     /**
      * Get projId
-     *
+     * 
      * @return projId
      **/
     @Schema(required = true, description = "")
@@ -102,7 +101,7 @@ public class PredictionResult
 
     /**
      * Get codebookName
-     *
+     * 
      * @return codebookName
      **/
     @Schema(required = true, description = "")
@@ -124,7 +123,7 @@ public class PredictionResult
 
     /**
      * Get predictedTag
-     *
+     * 
      * @return predictedTag
      **/
     @Schema(required = true, description = "")
@@ -152,7 +151,7 @@ public class PredictionResult
 
     /**
      * Get probabilities
-     *
+     * 
      * @return probabilities
      **/
     @Schema(required = true, description = "")

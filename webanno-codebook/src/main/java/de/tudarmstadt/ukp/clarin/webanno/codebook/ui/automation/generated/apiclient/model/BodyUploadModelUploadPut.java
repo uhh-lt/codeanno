@@ -26,13 +26,11 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * BodyUploadForCodebookModelUploadForCodebookPut
+ * BodyUploadModelUploadPut
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
-                            date = "2020-11-27T12:05:41.274Z[GMT]")
-public class BodyUploadForCodebookModelUploadForCodebookPut
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class BodyUploadModelUploadPut implements Serializable
 {
     @SerializedName("codebook_name")
     private String codebookName = null;
@@ -46,7 +44,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
     @SerializedName("model_archive")
     private File modelArchive = null;
 
-    public BodyUploadForCodebookModelUploadForCodebookPut codebookName(String codebookName)
+    public BodyUploadModelUploadPut codebookName(String codebookName)
     {
         this.codebookName = codebookName;
         return this;
@@ -54,7 +52,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
 
     /**
      * The name of the Codebook. Case-sensitive!
-     *
+     * 
      * @return codebookName
      **/
     @Schema(required = true, description = "The name of the Codebook. Case-sensitive!")
@@ -68,7 +66,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
         this.codebookName = codebookName;
     }
 
-    public BodyUploadForCodebookModelUploadForCodebookPut codebookTagList(String codebookTagList)
+    public BodyUploadModelUploadPut codebookTagList(String codebookTagList)
     {
         this.codebookTagList = codebookTagList;
         return this;
@@ -76,7 +74,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
 
     /**
      * Comma-separated list of tags. E.g. tag1,Tag2
-     *
+     * 
      * @return codebookTagList
      **/
     @Schema(required = true, description = "Comma-separated list of tags. E.g. tag1,Tag2")
@@ -90,7 +88,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
         this.codebookTagList = codebookTagList;
     }
 
-    public BodyUploadForCodebookModelUploadForCodebookPut modelVersion(String modelVersion)
+    public BodyUploadModelUploadPut modelVersion(String modelVersion)
     {
         this.modelVersion = modelVersion;
         return this;
@@ -99,7 +97,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
     /**
      * Optional version tag of the model. If a tag is not provided and if there is already an
      * existing model with the same (default) tag, the model gets overwritten. E.g. v1
-     *
+     * 
      * @return modelVersion
      **/
     @Schema(required = true, description = "Optional version tag of the model. If a tag is not provided and if there is already an existing model with the same (default) tag, the model gets overwritten.  E.g. v1")
@@ -113,7 +111,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
         this.modelVersion = modelVersion;
     }
 
-    public BodyUploadForCodebookModelUploadForCodebookPut modelArchive(File modelArchive)
+    public BodyUploadModelUploadPut modelArchive(File modelArchive)
     {
         this.modelArchive = modelArchive;
         return this;
@@ -121,7 +119,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
 
     /**
      * Zip-archive of the model.
-     *
+     * 
      * @return modelArchive
      **/
     @Schema(required = true, description = "Zip-archive of the model.")
@@ -144,17 +142,11 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BodyUploadForCodebookModelUploadForCodebookPut
-                bodyUploadForCodebookModelUploadForCodebookPut =
-                (BodyUploadForCodebookModelUploadForCodebookPut) o;
-        return Objects.equals(this.codebookName,
-                bodyUploadForCodebookModelUploadForCodebookPut.codebookName)
-                && Objects.equals(this.codebookTagList,
-                        bodyUploadForCodebookModelUploadForCodebookPut.codebookTagList)
-                && Objects.equals(this.modelVersion,
-                        bodyUploadForCodebookModelUploadForCodebookPut.modelVersion)
-                && Objects.equals(this.modelArchive,
-                        bodyUploadForCodebookModelUploadForCodebookPut.modelArchive);
+        BodyUploadModelUploadPut bodyUploadModelUploadPut = (BodyUploadModelUploadPut) o;
+        return Objects.equals(this.codebookName, bodyUploadModelUploadPut.codebookName)
+                && Objects.equals(this.codebookTagList, bodyUploadModelUploadPut.codebookTagList)
+                && Objects.equals(this.modelVersion, bodyUploadModelUploadPut.modelVersion)
+                && Objects.equals(this.modelArchive, bodyUploadModelUploadPut.modelArchive);
     }
 
     @Override
@@ -168,7 +160,7 @@ public class BodyUploadForCodebookModelUploadForCodebookPut
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class BodyUploadForCodebookModelUploadForCodebookPut {\n");
+        sb.append("class BodyUploadModelUploadPut {\n");
 
         sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
         sb.append("    codebookTagList: ").append(toIndentedString(codebookTagList)).append("\n");

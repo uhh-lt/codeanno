@@ -27,6 +27,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionRequest;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings.AutomationSettingsPanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import org.apache.uima.UIMAException;
@@ -46,11 +47,11 @@ public interface CodebookAutomationService {
 
     void updateTagLabelMapping(Codebook cb, String tag, String label);
 
-    boolean isPredictionInProgress(Codebook cb);
+    boolean isPredictionInProgress(Codebook cb, Object caller);
 
-    void addToPredictionInProgress(PredictionRequest req);
+    void addToPredictionInProgress(PredictionRequest req, Object caller);
 
-    void addToPredictionInProgress(MultiDocumentPredictionRequest req);
+    void addToPredictionInProgress(MultiDocumentPredictionRequest req, Object caller);
 
     void removeFromPredictionInProgress(PredictionResult result);
 
@@ -65,18 +66,25 @@ public interface CodebookAutomationService {
             throws ApiException;
 
     Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName,
-                         String modelVersion)
+                         String modelVersion, Object caller)
             throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion) throws ApiException;
 
+    Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion,
+                          Object caller) throws ApiException;
+
 
     Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName)
             throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName, String modelVersion)
+            throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName,
+                          String modelVersion, Object caller)
             throws ApiException;
 
     ModelMetadata getModelMetadata(Codebook cb) throws ApiException;

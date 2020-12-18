@@ -65,6 +65,7 @@ public class PersistMultiPredResultToCasCallback
             this.initCasStorageSession();
 
             codebookAutomationService.writePredictedTagsToCorrectionCas(result, userName);
+            codebookAutomationService.removeFromPredictionInProgress(result);
         }
         finally {
             this.closeCasStorageSession();

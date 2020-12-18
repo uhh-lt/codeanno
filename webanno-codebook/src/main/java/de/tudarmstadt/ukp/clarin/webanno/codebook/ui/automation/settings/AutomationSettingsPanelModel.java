@@ -18,20 +18,19 @@ class AutomationSettingsPanelModel implements Serializable {
     private Codebook codebook;
 
     public AutomationSettingsPanelModel() {
-        this.reset();
+        this.resetData();
     }
 
     public AutomationSettingsPanelModel(Project project) {
-        this.reset();
+        this.resetData();
         this.project = project;
+        this.codebook = null;
     }
 
-    public void reset() {
+    public void resetData() {
         this.predictionInProgress = false;
         this.modelVersion = "default";
         this.modelMetadata = null;
-        this.project = null;
-        this.codebook = null;
     }
 
     public Codebook getCodebook() {

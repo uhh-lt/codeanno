@@ -30,16 +30,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * MultiDocumentPredictionRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
-                            date = "2020-11-27T12:05:41.274Z[GMT]")
-public class MultiDocumentPredictionRequest
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class MultiDocumentPredictionRequest implements Serializable
 {
     @SerializedName("docs")
-    private List<DocumentModel> docs = new ArrayList<DocumentModel>();
+    private List<DocumentDTO> docs = new ArrayList<DocumentDTO>();
 
     @SerializedName("codebook")
-    private CodebookModel codebook = null;
+    private CodebookDTO codebook = null;
 
     @SerializedName("mapping")
     private TagLabelMapping mapping = null;
@@ -47,13 +45,13 @@ public class MultiDocumentPredictionRequest
     @SerializedName("model_version")
     private String modelVersion = "default";
 
-    public MultiDocumentPredictionRequest docs(List<DocumentModel> docs)
+    public MultiDocumentPredictionRequest docs(List<DocumentDTO> docs)
     {
         this.docs = docs;
         return this;
     }
 
-    public MultiDocumentPredictionRequest addDocsItem(DocumentModel docsItem)
+    public MultiDocumentPredictionRequest addDocsItem(DocumentDTO docsItem)
     {
         this.docs.add(docsItem);
         return this;
@@ -61,21 +59,21 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get docs
-     *
+     * 
      * @return docs
      **/
     @Schema(required = true, description = "")
-    public List<DocumentModel> getDocs()
+    public List<DocumentDTO> getDocs()
     {
         return docs;
     }
 
-    public void setDocs(List<DocumentModel> docs)
+    public void setDocs(List<DocumentDTO> docs)
     {
         this.docs = docs;
     }
 
-    public MultiDocumentPredictionRequest codebook(CodebookModel codebook)
+    public MultiDocumentPredictionRequest codebook(CodebookDTO codebook)
     {
         this.codebook = codebook;
         return this;
@@ -83,16 +81,16 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get codebook
-     *
+     * 
      * @return codebook
      **/
     @Schema(required = true, description = "")
-    public CodebookModel getCodebook()
+    public CodebookDTO getCodebook()
     {
         return codebook;
     }
 
-    public void setCodebook(CodebookModel codebook)
+    public void setCodebook(CodebookDTO codebook)
     {
         this.codebook = codebook;
     }
@@ -105,7 +103,7 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get mapping
-     *
+     * 
      * @return mapping
      **/
     @Schema(description = "")
@@ -127,7 +125,7 @@ public class MultiDocumentPredictionRequest
 
     /**
      * Get modelVersion
-     *
+     * 
      * @return modelVersion
      **/
     @Schema(description = "")
@@ -150,8 +148,7 @@ public class MultiDocumentPredictionRequest
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        MultiDocumentPredictionRequest multiDocumentPredictionRequest =
-                (MultiDocumentPredictionRequest) o;
+        MultiDocumentPredictionRequest multiDocumentPredictionRequest = (MultiDocumentPredictionRequest) o;
         return Objects.equals(this.docs, multiDocumentPredictionRequest.docs)
                 && Objects.equals(this.codebook, multiDocumentPredictionRequest.codebook)
                 && Objects.equals(this.mapping, multiDocumentPredictionRequest.mapping)

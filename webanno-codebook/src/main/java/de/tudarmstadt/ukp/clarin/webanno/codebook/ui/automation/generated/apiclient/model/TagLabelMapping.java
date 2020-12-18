@@ -30,9 +30,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * TagLabelMapping
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TagLabelMapping
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class TagLabelMapping implements Serializable
 {
     @SerializedName("map")
     private Map<String, String> map = new HashMap<String, String>();
@@ -51,7 +50,7 @@ public class TagLabelMapping
 
     /**
      * Get map
-     *
+     * 
      * @return map
      **/
     @Schema(required = true, description = "")

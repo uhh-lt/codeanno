@@ -30,9 +30,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * HTTPValidationError
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class HTTPValidationError
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class HTTPValidationError implements Serializable
 {
     @SerializedName("detail")
     private List<ValidationError> detail = null;
@@ -54,7 +53,7 @@ public class HTTPValidationError
 
     /**
      * Get detail
-     *
+     * 
      * @return detail
      **/
     @Schema(description = "")

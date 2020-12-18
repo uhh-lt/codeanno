@@ -17,7 +17,32 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service;
 
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.updateDocumentTimestampAfterWrite;
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.verifyAndUpdateDocumentTimestamp;
+import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import org.apache.uima.UIMAException;
+import org.apache.uima.cas.CAS;
+import org.apache.uima.cas.text.AnnotationFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
+
 import com.squareup.okhttp.Call;
+
 import de.tudarmstadt.ukp.clarin.webanno.api.CorrectionDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
@@ -34,14 +59,15 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.GeneralApi;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.ModelApi;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.PredictionApi;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.CodebookModel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DocumentModel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.CodebookDTO;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DocumentDTO;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionRequest;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionRequest;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.TagLabelMapping;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings.AutomationSettingsPanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocumentStateTransition;
 import de.tudarmstadt.ukp.clarin.webanno.model.Mode;
@@ -49,40 +75,19 @@ import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
-import org.apache.uima.UIMAException;
-import org.apache.uima.cas.CAS;
-import org.apache.uima.cas.text.AnnotationFS;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.updateDocumentTimestampAfterWrite;
-import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.verifyAndUpdateDocumentTimestamp;
-import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS;
 
 @Component(CodebookAutomationService.SERVICE_NAME)
-public class CodebookAutomationServiceImpl implements CodebookAutomationService {
-    private final static Logger logger = LoggerFactory.getLogger(
-            CodebookAutomationServiceImpl.class);
+public class CodebookAutomationServiceImpl
+    implements CodebookAutomationService
+{
+    private final static Logger logger = LoggerFactory
+            .getLogger(CodebookAutomationServiceImpl.class);
 
     private final PredictionApi predictionApi;
     private final ModelApi modelApi;
     private final GeneralApi generalApi;
 
-    // CodebookName -> (MultiDoc)PredictionRequest
+    // CodebookName -> Caller (AutomationSettingsPanel only for now)
     private final ConcurrentHashMap<String, Object> predictionInProgress;
     private final Object lock;
 
@@ -101,12 +106,12 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
     private boolean heartbeat;
 
     @Autowired
-    public CodebookAutomationServiceImpl(
-            DocumentService documentService, ProjectService projectService,
-            CodebookSchemaService codebookService,
+    public CodebookAutomationServiceImpl(DocumentService documentService,
+            ProjectService projectService, CodebookSchemaService codebookService,
             CorrectionDocumentService correctionDocumentService, UserDao userService,
-            ApplicationEventPublisher eventPublisher
-    ) throws MalformedURLException {
+            ApplicationEventPublisher eventPublisher)
+        throws MalformedURLException
+    {
         predictionApi = new PredictionApi();
         predictionApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
 
@@ -131,24 +136,28 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
         this.lock = new Object();
     }
 
-    private URL getApiBaseURL() throws MalformedURLException {
+    private URL getApiBaseURL() throws MalformedURLException
+    {
         String host = System.getProperty(CBA_API_HOST_ENV_VAR);
         int port = Integer.parseInt(System.getProperty(CBA_API_PORT_ENV_VAR));
         return new URL("http", host, port, "");
     }
 
     @Override
-    public synchronized boolean performHeartbeatCheck() {
+    public synchronized boolean performHeartbeatCheck()
+    {
         try {
             this.heartbeat = generalApi.heartbeatHeartbeatGet().isValue();
-        } catch (ApiException exception) {
+        }
+        catch (ApiException exception) {
             this.heartbeat = false;
         }
         return this.heartbeat;
     }
 
     @Override
-    public void updateTagLabelMapping(Codebook cb, String tag, String label) {
+    public void updateTagLabelMapping(Codebook cb, String tag, String label)
+    {
         this.tagLabelMappings.putIfAbsent(cb, new TagLabelMapping());
         this.tagLabelMappings.computeIfPresent(cb, (codebook, tagLabelMapping) -> {
             tagLabelMapping.getMap().put(tag, label);
@@ -157,190 +166,247 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
     }
 
     @Override
-    public boolean isPredictionInProgress(Codebook cb) {
-        if (cb == null) return false;
+    public boolean isPredictionInProgress(Codebook cb, Object caller)
+    {
+        if (cb == null)
+            return false;
         return this.predictionInProgress.get(cb.getUiName()) != null;
     }
 
     @Override
-    public void addToPredictionInProgress(PredictionRequest req) {
-        this.predictionInProgress.putIfAbsent(req.getCodebook().getName(), req);
+    public void addToPredictionInProgress(PredictionRequest req, Object caller)
+    {
+        this.predictionInProgress.putIfAbsent(req.getCodebook().getName(), caller);
     }
 
     @Override
-    public void addToPredictionInProgress(MultiDocumentPredictionRequest req) {
-        this.predictionInProgress.putIfAbsent(req.getCodebook().getName(), req);
+    public void addToPredictionInProgress(MultiDocumentPredictionRequest req, Object caller)
+    {
+        this.predictionInProgress.putIfAbsent(req.getCodebook().getName(), caller);
     }
 
     @Override
-    public void removeFromPredictionInProgress(PredictionResult result) {
-        this.predictionInProgress.remove(result.getCodebookName());
+    public void removeFromPredictionInProgress(PredictionResult result)
+    {
+        Object caller = this.predictionInProgress.remove(result.getCodebookName());
+        if (caller instanceof AutomationSettingsPanel)
+            ((AutomationSettingsPanel) caller).setPredictionInProgress(false);
+
     }
 
     @Override
-    public void removeFromPredictionInProgress(MultiDocumentPredictionResult result) {
-        this.predictionInProgress.remove(result.getCodebookName());
+    public void removeFromPredictionInProgress(MultiDocumentPredictionResult result)
+    {
+        Object caller = this.predictionInProgress.remove(result.getCodebookName());
+        // update caller UI
+        if (caller instanceof AutomationSettingsPanel)
+            ((AutomationSettingsPanel) caller).setPredictionInProgress(false);
+
+        // FIXME event doesn't update WicketPage..
         eventPublisher.publishEvent(new PredictionFinishedEvent(this, result.getCodebookName()));
     }
 
     @Override
-    public boolean isAutomationAvailable(Codebook cb, boolean updateCache) throws ApiException {
+    public boolean isAutomationAvailable(Codebook cb, boolean updateCache) throws ApiException
+    {
         return this.isAutomationAvailable(cb, DEFAULT_VERSION, updateCache);
     }
 
     @Override
     public boolean isAutomationAvailable(Codebook cb, String modelVersion, boolean updateCache)
-            throws ApiException {
-        if (!heartbeat || cb == null) return false;
+        throws ApiException
+    {
+        if (!heartbeat || cb == null)
+            return false;
 
         if (updateCache) {
-            CodebookModel cbm = buildCodebookModel(cb);
-            boolean available = modelApi.isAvailableModelIsAvailablePost(cbm, modelVersion)
-                                        .isValue();
+            CodebookDTO cbm = buildCodebookModel(cb);
+            boolean available = modelApi.isAvailableModelAvailablePost(cbm, modelVersion).isValue();
             this.availabilityCache.put(cb, available);
         }
-        if (this.availabilityCache.get(cb) == null) return false;
-        else return this.availabilityCache.get(cb);
+        if (this.availabilityCache.get(cb) == null)
+            return false;
+        else
+            return this.availabilityCache.get(cb);
     }
 
     @Override
-    public synchronized Call predictTagAsync(
-            Codebook cb, Project proj, SourceDocument sdoc, String userName
-    ) throws ApiException {
-        return predictTagAsync(cb, proj, sdoc, userName, DEFAULT_VERSION);
+    public synchronized Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc,
+            String userName)
+        throws ApiException
+    {
+        return predictTagAsync(cb, proj, sdoc, userName, DEFAULT_VERSION, null);
     }
 
     @Override
-    public synchronized Call predictTagAsync(
-            Codebook cb, Project proj, SourceDocument sdoc, String userName, String modelVersion
-    ) throws ApiException {
-        if (!this.performHeartbeatCheck()) return null;
+    public synchronized Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc,
+            String userName, String modelVersion, Object caller)
+        throws ApiException
+    {
+        if (!this.performHeartbeatCheck())
+            return null;
 
-        logger.info("Starting asynchronous Codebook Tag prediction for " + cb.getName() +
-                    " of Document " + sdoc.getId());
+        logger.info("Starting asynchronous Codebook Tag prediction for " + cb.getName()
+                + " of Document " + sdoc.getId());
 
         PredictionRequest req = buildPredictionRequest(cb, proj, sdoc, modelVersion);
 
-        // add to to inProgress
-        this.addToPredictionInProgress(req);
+        // add to to inProgress TODO add caller
+        // this.addToPredictionInProgress(cb, caller);
 
-        return predictionApi.predictPredictionPredictPostAsync(req,
-                                                               new PersistPredResultToCasCallback(
-                                                                       this, userName));
+        return predictionApi.predictPredictionSinglePostAsync(req,
+                new PersistPredResultToCasCallback(this, userName));
     }
 
     @Override
-    public Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException {
+    public Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException
+    {
         return this.predictTagsAsync(cb, proj, userName, DEFAULT_VERSION);
     }
 
     @Override
     public Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion)
-            throws ApiException {
+        throws ApiException
+    {
+        return this.predictTagsAsync(cb, proj, userName, modelVersion, null);
+    }
+
+    @Override
+    public Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion,
+            Object caller)
+        throws ApiException
+    {
         return this.predictTagsAsync(cb, proj, documentService.listSourceDocuments(proj), userName,
-                                     modelVersion);
+                modelVersion, caller);
     }
 
     @Override
-    public Call predictTagsAsync(
-            Codebook cb, Project proj, List<SourceDocument> sdocs, String userName
-    ) throws ApiException {
-        return predictTagsAsync(cb, proj, sdocs, userName, DEFAULT_VERSION);
+    public Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> sdocs,
+            String userName)
+        throws ApiException
+    {
+        return predictTagsAsync(cb, proj, sdocs, userName, DEFAULT_VERSION, null);
     }
 
     @Override
-    public Call predictTagsAsync(
-            Codebook cb, Project proj, List<SourceDocument> sdocs, String userName,
-            String modelVersion
-    ) throws ApiException {
+    public Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs,
+            String userName, String modelVersion)
+        throws ApiException
+    {
+        return predictTagsAsync(cb, proj, docs, userName, modelVersion, null);
+    }
 
-        if (!this.performHeartbeatCheck()) return null;
+    @Override
+    public Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> sdocs,
+            String userName, String modelVersion, Object caller)
+        throws ApiException
+    {
 
-        logger.info("Starting asynchronous Codebook Tag prediction for " + cb.getName() +
-                    " for Documents: " +
-                    sdocs.stream().map(SourceDocument::getId).collect(Collectors.toList()));
+        if (!this.performHeartbeatCheck())
+            return null;
+
+        logger.info("Starting asynchronous Codebook Tag prediction for " + cb.getName()
+                + " for Documents: "
+                + sdocs.stream().map(SourceDocument::getId).collect(Collectors.toList()));
 
         MultiDocumentPredictionRequest req = buildMultiDocPredictionRequest(cb, proj, sdocs,
-                                                                            modelVersion);
+                modelVersion);
 
         // add to to inProgress
-        this.addToPredictionInProgress(req);
+        this.addToPredictionInProgress(req, caller);
 
-        return predictionApi.predictMultiPredictionPredictMultiPostAsync(req,
-                                                                         new PersistMultiPredResultToCasCallback(
-                                                                                 this, userName));
+        // update caller UI
+        if (caller instanceof AutomationSettingsPanel)
+            ((AutomationSettingsPanel) caller).setPredictionInProgress(true);
+
+        return predictionApi.predictMultiPredictionMultiplePostAsync(req,
+                new PersistMultiPredResultToCasCallback(this, userName));
     }
 
-
     @Override
-    public ModelMetadata getModelMetadata(Codebook cb) throws ApiException {
+    public ModelMetadata getModelMetadata(Codebook cb) throws ApiException
+    {
         return this.getModelMetadata(cb, DEFAULT_VERSION);
     }
 
     @Override
-    public ModelMetadata getModelMetadata(Codebook cb, String modelVersion) throws ApiException {
-        if (!heartbeat) return null;
+    public ModelMetadata getModelMetadata(Codebook cb, String modelVersion) throws ApiException
+    {
+        if (!heartbeat)
+            return null;
 
-        CodebookModel cbm = buildCodebookModel(cb);
-        return modelApi.getMetadataModelGetMetadataPost(cbm, modelVersion);
+        CodebookDTO cbm = buildCodebookModel(cb);
+        return modelApi.getMetadataModelMetadataPost(cbm, modelVersion);
     }
 
-    private DocumentModel buildDocumentModel(Project proj, SourceDocument sdoc) {
-        DocumentModel docm = new DocumentModel().docId(sdoc.getId().intValue()).projId(
-                proj.getId().intValue());
+    private DocumentDTO buildDocumentModel(Project proj, SourceDocument sdoc)
+    {
+        DocumentDTO docm = new DocumentDTO().docId(sdoc.getId().intValue())
+                .projId(proj.getId().intValue());
         try {
             docm.text(new String(
                     Files.readAllBytes(documentService.getSourceDocumentFile(sdoc).toPath())));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             // TODO what to throw?!
             e.printStackTrace();
         }
         return docm;
     }
 
-    private CodebookModel buildCodebookModel(Codebook cb) {
-        CodebookModel cbm = new CodebookModel().name(cb.getUiName());
+    private CodebookDTO buildCodebookModel(Codebook cb)
+    {
+        CodebookDTO cbm = new CodebookDTO().name(cb.getUiName());
         this.codebookService.listTags(cb).forEach(t -> cbm.addTagsItem(t.getName()));
         return cbm;
     }
 
-    private Project getProject(PredictionResult result) {
-        if (result == null || result.getProjId() == null) return null;
+    private Project getProject(PredictionResult result)
+    {
+        if (result == null || result.getProjId() == null)
+            return null;
 
         return projectService.getProject(result.getProjId());
     }
 
-    private Project getProject(MultiDocumentPredictionResult result) {
-        if (result == null || result.getProjId() == null) return null;
+    private Project getProject(MultiDocumentPredictionResult result)
+    {
+        if (result == null || result.getProjId() == null)
+            return null;
 
         return projectService.getProject(result.getProjId());
     }
 
-    private SourceDocument getSourceDocument(PredictionResult result) {
-        if (result == null || result.getDocId() == null || result.getProjId() == null) return null;
+    private SourceDocument getSourceDocument(PredictionResult result)
+    {
+        if (result == null || result.getDocId() == null || result.getProjId() == null)
+            return null;
 
         return documentService.getSourceDocument(result.getProjId(), result.getDocId());
     }
 
     private Map<SourceDocument, String> getSourceDocumentsAndTags(
-            MultiDocumentPredictionResult result
-    ) {
-        if (result == null || result.getProjId() == null) return null;
+            MultiDocumentPredictionResult result)
+    {
+        if (result == null || result.getProjId() == null)
+            return null;
 
         Map<SourceDocument, String> predictions = new HashMap<>();
 
         result.getPredictedTags().forEach((docId, predTag) -> {
             SourceDocument sdoc = documentService.getSourceDocument(result.getProjId(),
-                                                                    Long.parseLong(docId));
+                    Long.parseLong(docId));
             predictions.put(sdoc, predTag);
         });
 
         return predictions;
     }
 
-    private Codebook getCodebook(PredictionResult result) {
-        if (result == null || result.getCodebookName() == null ||
-            result.getCodebookName().isEmpty()) return null;
+    private Codebook getCodebook(PredictionResult result)
+    {
+        if (result == null || result.getCodebookName() == null
+                || result.getCodebookName().isEmpty())
+            return null;
 
         Project project = this.getProject(result);
 
@@ -348,9 +414,11 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
                 CodebookConst.CODEBOOK_NAME_PREFIX + result.getCodebookName(), project);
     }
 
-    private Codebook getCodebook(MultiDocumentPredictionResult result) {
-        if (result == null || result.getCodebookName() == null ||
-            result.getCodebookName().isEmpty()) return null;
+    private Codebook getCodebook(MultiDocumentPredictionResult result)
+    {
+        if (result == null || result.getCodebookName() == null
+                || result.getCodebookName().isEmpty())
+            return null;
 
         Project project = this.getProject(result);
 
@@ -358,9 +426,10 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
                 CodebookConst.CODEBOOK_NAME_PREFIX + result.getCodebookName(), project);
     }
 
-    private void writeCodebookTagToCorrectionCas(
-            SourceDocument sdoc, Project project, Codebook cb, String predTag, String userName
-    ) throws IOException, UIMAException, AnnotationException {
+    private void writeCodebookTagToCorrectionCas(SourceDocument sdoc, Project project, Codebook cb,
+            String predTag, String userName)
+        throws IOException, UIMAException, AnnotationException
+    {
         synchronized (lock) {
 
             AnnotatorState state = this.createAnnotatorState(sdoc, project, userName);
@@ -371,23 +440,23 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
             CodebookFeature feature = codebookService.listCodebookFeature(cb).get(0);
             CodebookCasAdapter adapter = new CodebookCasAdapter(cb);
             AnnotationFS existingFs = adapter.getExistingFs(correctionCas);
-            int annoId = existingFs != null ? WebAnnoCasUtil.getAddr(existingFs) : adapter.add(
-                    correctionCas);
+            int annoId = existingFs != null ? WebAnnoCasUtil.getAddr(existingFs)
+                    : adapter.add(correctionCas);
             adapter.setFeatureValue(correctionCas, feature, annoId, predTag);
 
             correctionDocumentService.writeCorrectionCas(correctionCas, state.getDocument());
-            updateDocumentTimestampAfterWrite(state, correctionDocumentService
-                    .getCorrectionCasTimestamp(state.getDocument()));
+            updateDocumentTimestampAfterWrite(state,
+                    correctionDocumentService.getCorrectionCasTimestamp(state.getDocument()));
 
-            logger.info("Successfully wrote predicted Codebook Tag for Codebook <" + cb.getName() +
-                        "> and Document ID=<" + state.getDocument().getId() +
-                        "> to Correction CAS!");
+            logger.info("Successfully wrote predicted Codebook Tag for Codebook <" + cb.getName()
+                    + "> and Document ID=<" + state.getDocument().getId() + "> to Correction CAS!");
         }
     }
 
     @Override
     public void writePredictedTagToCorrectionCas(PredictionResult result, String userName)
-            throws IOException, UIMAException, AnnotationException {
+        throws IOException, UIMAException, AnnotationException
+    {
         SourceDocument sdoc = this.getSourceDocument(result);
         Project project = this.getProject(result);
         Codebook cb = this.getCodebook(result);
@@ -399,9 +468,9 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
     }
 
     @Override
-    public void writePredictedTagsToCorrectionCas(
-            MultiDocumentPredictionResult result, String userName
-    ) {
+    public void writePredictedTagsToCorrectionCas(MultiDocumentPredictionResult result,
+            String userName)
+    {
         Map<SourceDocument, String> predictedTags = this.getSourceDocumentsAndTags(result);
         Project project = this.getProject(result);
         Codebook cb = this.getCodebook(result);
@@ -409,9 +478,10 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
         predictedTags.forEach((sdoc, predTag) -> {
             try {
                 this.writeCodebookTagToCorrectionCas(sdoc, project, cb, predTag, userName);
-            } catch (IOException | UIMAException | AnnotationException e) {
-                logger.error("Could not persist predicted tag of Codebook <" + cb.getName() + "> " +
-                             "to CAS");
+            }
+            catch (IOException | UIMAException | AnnotationException e) {
+                logger.error("Could not persist predicted tag of Codebook <" + cb.getName() + "> "
+                        + "to CAS");
                 // TODO what to throw?!
                 e.printStackTrace();
             }
@@ -420,9 +490,10 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
         this.removeFromPredictionInProgress(result);
     }
 
-    private AnnotatorState createAnnotatorState(
-            SourceDocument doc, Project project, String userName
-    ) throws IOException {
+    private AnnotatorState createAnnotatorState(SourceDocument doc, Project project,
+            String userName)
+        throws IOException
+    {
         AnnotatorState state = new AnnotatorStateImpl(Mode.CORRECTION);
         state.setDocument(doc, Collections.singletonList(doc));
         state.setProject(project);
@@ -441,45 +512,51 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
 
     @Override
     public CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
-            throws IOException, UIMAException {
+        throws IOException, UIMAException
+    {
         SourceDocument doc = state.getDocument();
         try {
             CAS correctionCas = correctionDocumentService.readCorrectionCas(doc);
             if (upgrade) {
                 correctionDocumentService.upgradeCorrectionCas(correctionCas, doc);
                 correctionDocumentService.writeCorrectionCas(correctionCas, doc);
-                updateDocumentTimestampAfterWrite(state, correctionDocumentService
-                        .getCorrectionCasTimestamp(doc));
+                updateDocumentTimestampAfterWrite(state,
+                        correctionDocumentService.getCorrectionCasTimestamp(doc));
             }
             return correctionCas;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return initCorrectionCas(state);
         }
     }
 
-    private CAS initCorrectionCas(AnnotatorState state) throws IOException, UIMAException {
+    private CAS initCorrectionCas(AnnotatorState state) throws IOException, UIMAException
+    {
         SourceDocument doc = state.getDocument();
         User user = state.getUser();
-        if (user == null) try {
-            user = userService.getCurrentUser();
-        } catch (Exception e) {
-            user = userService.get("admin");
-        }
+        if (user == null)
+            try {
+                user = userService.getCurrentUser();
+            }
+            catch (Exception e) {
+                user = userService.get("admin");
+            }
         // Check if there is an annotation document entry in the database. If there is none,
         // create one.
         AnnotationDocument annotationDocument = documentService.createOrGetAnnotationDocument(doc,
-                                                                                              user);
+                user);
 
         // Change the state of the source document to in progress
         documentService.transitionSourceDocumentState(doc, NEW_TO_ANNOTATION_IN_PROGRESS);
         documentService.transitionAnnotationDocumentState(annotationDocument,
-                                                          AnnotationDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS);
+                AnnotationDocumentStateTransition.NEW_TO_ANNOTATION_IN_PROGRESS);
 
         // Read the correction CAS - if it does not exist yet, from the initial CAS
         CAS correctionCas;
         if (correctionDocumentService.existsCorrectionCas(doc)) {
             correctionCas = correctionDocumentService.readCorrectionCas(doc);
-        } else {
+        }
+        else {
             correctionCas = documentService.readAnnotationCas(annotationDocument);
         }
 
@@ -487,32 +564,32 @@ public class CodebookAutomationServiceImpl implements CodebookAutomationService 
         correctionDocumentService.upgradeCorrectionCas(correctionCas, doc);
         correctionDocumentService.writeCorrectionCas(correctionCas, doc);
         updateDocumentTimestampAfterWrite(state,
-                                          correctionDocumentService.getCorrectionCasTimestamp(doc));
+                correctionDocumentService.getCorrectionCasTimestamp(doc));
 
         return correctionCas;
     }
 
-    private PredictionRequest buildPredictionRequest(
-            Codebook cb, Project proj, SourceDocument sdoc, String modelVersion
-    ) {
+    private PredictionRequest buildPredictionRequest(Codebook cb, Project proj, SourceDocument sdoc,
+            String modelVersion)
+    {
         PredictionRequest request = new PredictionRequest();
 
-        CodebookModel cbm = buildCodebookModel(cb);
-        DocumentModel docm = buildDocumentModel(proj, sdoc);
+        CodebookDTO cbm = buildCodebookModel(cb);
+        DocumentDTO docm = buildDocumentModel(proj, sdoc);
         TagLabelMapping mapping = tagLabelMappings.get(cb);
 
         return request.codebook(cbm).doc(docm).mapping(mapping).modelVersion(modelVersion);
     }
 
-    private MultiDocumentPredictionRequest buildMultiDocPredictionRequest(
-            Codebook cb, Project proj, List<SourceDocument> sdocs, String modelVersion
-    ) {
+    private MultiDocumentPredictionRequest buildMultiDocPredictionRequest(Codebook cb, Project proj,
+            List<SourceDocument> sdocs, String modelVersion)
+    {
         MultiDocumentPredictionRequest req = new MultiDocumentPredictionRequest();
 
-        CodebookModel cbm = buildCodebookModel(cb);
-        List<DocumentModel> docModels = sdocs.stream().map(
-                sourceDocument -> this.buildDocumentModel(proj, sourceDocument)).collect(
-                Collectors.toList());
+        CodebookDTO cbm = buildCodebookModel(cb);
+        List<DocumentDTO> docModels = sdocs.stream()
+                .map(sourceDocument -> this.buildDocumentModel(proj, sourceDocument))
+                .collect(Collectors.toList());
         TagLabelMapping mapping = tagLabelMappings.get(cb);
 
         return req.codebook(cbm).docs(docModels).mapping(mapping).modelVersion(modelVersion);

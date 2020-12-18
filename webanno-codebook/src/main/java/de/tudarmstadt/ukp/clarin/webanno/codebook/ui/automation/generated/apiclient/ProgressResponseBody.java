@@ -35,7 +35,6 @@ public class ProgressResponseBody
     private final ResponseBody responseBody;
     private final ProgressListener progressListener;
     private BufferedSource bufferedSource;
-
     public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener)
     {
         this.responseBody = responseBody;

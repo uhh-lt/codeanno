@@ -25,12 +25,11 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * DocumentModel
+ * DocumentDTO
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class DocumentModel
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class DocumentDTO implements Serializable
 {
     @SerializedName("doc_id")
     private Integer docId = null;
@@ -41,7 +40,7 @@ public class DocumentModel
     @SerializedName("text")
     private String text = null;
 
-    public DocumentModel docId(Integer docId)
+    public DocumentDTO docId(Integer docId)
     {
         this.docId = docId;
         return this;
@@ -49,7 +48,7 @@ public class DocumentModel
 
     /**
      * Get docId
-     *
+     * 
      * @return docId
      **/
     @Schema(description = "")
@@ -63,7 +62,7 @@ public class DocumentModel
         this.docId = docId;
     }
 
-    public DocumentModel projId(Integer projId)
+    public DocumentDTO projId(Integer projId)
     {
         this.projId = projId;
         return this;
@@ -71,7 +70,7 @@ public class DocumentModel
 
     /**
      * Get projId
-     *
+     * 
      * @return projId
      **/
     @Schema(description = "")
@@ -85,7 +84,7 @@ public class DocumentModel
         this.projId = projId;
     }
 
-    public DocumentModel text(String text)
+    public DocumentDTO text(String text)
     {
         this.text = text;
         return this;
@@ -93,7 +92,7 @@ public class DocumentModel
 
     /**
      * Get text
-     *
+     * 
      * @return text
      **/
     @Schema(description = "")
@@ -116,10 +115,10 @@ public class DocumentModel
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DocumentModel documentModel = (DocumentModel) o;
-        return Objects.equals(this.docId, documentModel.docId)
-                && Objects.equals(this.projId, documentModel.projId)
-                && Objects.equals(this.text, documentModel.text);
+        DocumentDTO documentDTO = (DocumentDTO) o;
+        return Objects.equals(this.docId, documentDTO.docId)
+                && Objects.equals(this.projId, documentDTO.projId)
+                && Objects.equals(this.text, documentDTO.text);
     }
 
     @Override
@@ -132,7 +131,7 @@ public class DocumentModel
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class DocumentModel {\n");
+        sb.append("class DocumentDTO {\n");
 
         sb.append("    docId: ").append(toIndentedString(docId)).append("\n");
         sb.append("    projId: ").append(toIndentedString(projId)).append("\n");

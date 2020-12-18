@@ -37,3 +37,12 @@ EOF
 fd -e java -x sed -i -e 1,12d {}
 # add licence on top
 fd -j 1 -e java -x bash -c "echo '$licence' | cat - {} > /tmp/out && mv /tmp/out {}"
+
+echo "############################################################"
+echo "You still need to:"
+echo "\t- add 'implements Serializable' to all model classes"
+echo "\t- replace BigDecimal in ModelConfig to Double"
+echo "\t- replace Object with ModelConfig in ModelMetadata"
+echo "\t- resolve CheckStyle issues (too long lines, lamdbda indent, ...)"
+echo "\t- and of course adapt to the updated interfaces of the API (parameters, URLs, HTTP methods, ... )"
+echo "############################################################"

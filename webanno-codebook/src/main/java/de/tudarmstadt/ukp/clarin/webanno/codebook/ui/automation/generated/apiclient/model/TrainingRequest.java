@@ -28,12 +28,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * TrainingRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class TrainingRequest
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class TrainingRequest implements Serializable
 {
     @SerializedName("cb")
-    private CodebookModel cb = null;
+    private CodebookDTO cb = null;
 
     @SerializedName("model_config")
     private ModelConfig modelConfig = null;
@@ -56,7 +55,7 @@ public class TrainingRequest
     @SerializedName("max_steps_test")
     private Integer maxStepsTest = 100;
 
-    public TrainingRequest cb(CodebookModel cb)
+    public TrainingRequest cb(CodebookDTO cb)
     {
         this.cb = cb;
         return this;
@@ -64,16 +63,16 @@ public class TrainingRequest
 
     /**
      * Get cb
-     *
+     * 
      * @return cb
      **/
     @Schema(required = true, description = "")
-    public CodebookModel getCb()
+    public CodebookDTO getCb()
     {
         return cb;
     }
 
-    public void setCb(CodebookModel cb)
+    public void setCb(CodebookDTO cb)
     {
         this.cb = cb;
     }
@@ -86,7 +85,7 @@ public class TrainingRequest
 
     /**
      * Get modelConfig
-     *
+     * 
      * @return modelConfig
      **/
     @Schema(required = true, description = "")
@@ -108,7 +107,7 @@ public class TrainingRequest
 
     /**
      * Get modelVersion
-     *
+     * 
      * @return modelVersion
      **/
     @Schema(example = "default", description = "")
@@ -130,7 +129,7 @@ public class TrainingRequest
 
     /**
      * Get datasetVersion
-     *
+     * 
      * @return datasetVersion
      **/
     @Schema(example = "default", description = "")
@@ -152,7 +151,7 @@ public class TrainingRequest
 
     /**
      * Get batchSizeTrain
-     *
+     * 
      * @return batchSizeTrain
      **/
     @Schema(example = "32", description = "")
@@ -174,7 +173,7 @@ public class TrainingRequest
 
     /**
      * Get batchSizeTest
-     *
+     * 
      * @return batchSizeTest
      **/
     @Schema(example = "32", description = "")
@@ -196,7 +195,7 @@ public class TrainingRequest
 
     /**
      * Get maxStepsTrain
-     *
+     * 
      * @return maxStepsTrain
      **/
     @Schema(example = "10000", description = "")
@@ -218,7 +217,7 @@ public class TrainingRequest
 
     /**
      * Get maxStepsTest
-     *
+     * 
      * @return maxStepsTest
      **/
     @Schema(example = "1000", description = "")

@@ -36,7 +36,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ProgressRequestBody;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ProgressResponseBody;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.BooleanResponse;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.CodebookModel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.CodebookDTO;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.StringResponse;
 
@@ -65,8 +65,8 @@ public class ModelApi
     }
 
     /**
-     * Build call for getMetadataModelGetMetadataPost
-     *
+     * Build call for getMetadataModelMetadataPost
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -79,7 +79,7 @@ public class ModelApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getMetadataModelGetMetadataPostCall(CodebookModel body,
+    public com.squareup.okhttp.Call getMetadataModelMetadataPostCall(CodebookDTO body,
             String modelVersion, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -87,7 +87,7 @@ public class ModelApi
         Object localVarPostBody = body;
 
         // create path and map variables
-        String localVarPath = "/model/get_metadata/";
+        String localVarPath = "/model/metadata/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -133,8 +133,8 @@ public class ModelApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getMetadataModelGetMetadataPostValidateBeforeCall(
-            CodebookModel body, String modelVersion,
+    private com.squareup.okhttp.Call getMetadataModelMetadataPostValidateBeforeCall(
+            CodebookDTO body, String modelVersion,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -142,10 +142,10 @@ public class ModelApi
         // verify the required parameter 'body' is set
         if (body == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling getMetadataModelGetMetadataPost(Async)");
+                    "Missing the required parameter 'body' when calling getMetadataModelMetadataPost(Async)");
         }
 
-        com.squareup.okhttp.Call call = getMetadataModelGetMetadataPostCall(body, modelVersion,
+        com.squareup.okhttp.Call call = getMetadataModelMetadataPostCall(body, modelVersion,
                 progressListener, progressRequestListener);
         return call;
 
@@ -153,7 +153,7 @@ public class ModelApi
 
     /**
      * Get Metadata
-     *
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -163,17 +163,17 @@ public class ModelApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ModelMetadata getMetadataModelGetMetadataPost(CodebookModel body, String modelVersion)
+    public ModelMetadata getMetadataModelMetadataPost(CodebookDTO body, String modelVersion)
         throws ApiException
     {
-        ApiResponse<ModelMetadata> resp = getMetadataModelGetMetadataPostWithHttpInfo(body,
+        ApiResponse<ModelMetadata> resp = getMetadataModelMetadataPostWithHttpInfo(body,
                 modelVersion);
         return resp.getData();
     }
 
     /**
      * Get Metadata
-     *
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -183,11 +183,11 @@ public class ModelApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<ModelMetadata> getMetadataModelGetMetadataPostWithHttpInfo(
-            CodebookModel body, String modelVersion)
+    public ApiResponse<ModelMetadata> getMetadataModelMetadataPostWithHttpInfo(CodebookDTO body,
+            String modelVersion)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = getMetadataModelGetMetadataPostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = getMetadataModelMetadataPostValidateBeforeCall(body,
                 modelVersion, null, null);
         Type localVarReturnType = new TypeToken<ModelMetadata>()
         {
@@ -197,7 +197,7 @@ public class ModelApi
 
     /**
      * Get Metadata (asynchronously)
-     *
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -208,7 +208,7 @@ public class ModelApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getMetadataModelGetMetadataPostAsync(CodebookModel body,
+    public com.squareup.okhttp.Call getMetadataModelMetadataPostAsync(CodebookDTO body,
             String modelVersion, final ApiCallback<ModelMetadata> callback)
         throws ApiException
     {
@@ -236,7 +236,7 @@ public class ModelApi
             };
         }
 
-        com.squareup.okhttp.Call call = getMetadataModelGetMetadataPostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = getMetadataModelMetadataPostValidateBeforeCall(body,
                 modelVersion, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ModelMetadata>()
         {
@@ -246,8 +246,8 @@ public class ModelApi
     }
 
     /**
-     * Build call for isAvailableModelIsAvailablePost
-     *
+     * Build call for isAvailableModelAvailablePost
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -260,7 +260,7 @@ public class ModelApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call isAvailableModelIsAvailablePostCall(CodebookModel body,
+    public com.squareup.okhttp.Call isAvailableModelAvailablePostCall(CodebookDTO body,
             String modelVersion, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -268,7 +268,7 @@ public class ModelApi
         Object localVarPostBody = body;
 
         // create path and map variables
-        String localVarPath = "/model/is_available/";
+        String localVarPath = "/model/available/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -314,8 +314,8 @@ public class ModelApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call isAvailableModelIsAvailablePostValidateBeforeCall(
-            CodebookModel body, String modelVersion,
+    private com.squareup.okhttp.Call isAvailableModelAvailablePostValidateBeforeCall(
+            CodebookDTO body, String modelVersion,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -323,10 +323,10 @@ public class ModelApi
         // verify the required parameter 'body' is set
         if (body == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling isAvailableModelIsAvailablePost(Async)");
+                    "Missing the required parameter 'body' when calling isAvailableModelAvailablePost(Async)");
         }
 
-        com.squareup.okhttp.Call call = isAvailableModelIsAvailablePostCall(body, modelVersion,
+        com.squareup.okhttp.Call call = isAvailableModelAvailablePostCall(body, modelVersion,
                 progressListener, progressRequestListener);
         return call;
 
@@ -334,7 +334,7 @@ public class ModelApi
 
     /**
      * Is Available
-     *
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -344,17 +344,17 @@ public class ModelApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public BooleanResponse isAvailableModelIsAvailablePost(CodebookModel body, String modelVersion)
+    public BooleanResponse isAvailableModelAvailablePost(CodebookDTO body, String modelVersion)
         throws ApiException
     {
-        ApiResponse<BooleanResponse> resp = isAvailableModelIsAvailablePostWithHttpInfo(body,
+        ApiResponse<BooleanResponse> resp = isAvailableModelAvailablePostWithHttpInfo(body,
                 modelVersion);
         return resp.getData();
     }
 
     /**
      * Is Available
-     *
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -364,11 +364,11 @@ public class ModelApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<BooleanResponse> isAvailableModelIsAvailablePostWithHttpInfo(
-            CodebookModel body, String modelVersion)
+    public ApiResponse<BooleanResponse> isAvailableModelAvailablePostWithHttpInfo(CodebookDTO body,
+            String modelVersion)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = isAvailableModelIsAvailablePostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = isAvailableModelAvailablePostValidateBeforeCall(body,
                 modelVersion, null, null);
         Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
@@ -378,7 +378,7 @@ public class ModelApi
 
     /**
      * Is Available (asynchronously)
-     *
+     * 
      * @param body
      *            (required)
      * @param modelVersion
@@ -389,7 +389,7 @@ public class ModelApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call isAvailableModelIsAvailablePostAsync(CodebookModel body,
+    public com.squareup.okhttp.Call isAvailableModelAvailablePostAsync(CodebookDTO body,
             String modelVersion, final ApiCallback<BooleanResponse> callback)
         throws ApiException
     {
@@ -417,7 +417,7 @@ public class ModelApi
             };
         }
 
-        com.squareup.okhttp.Call call = isAvailableModelIsAvailablePostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = isAvailableModelAvailablePostValidateBeforeCall(body,
                 modelVersion, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
@@ -427,8 +427,187 @@ public class ModelApi
     }
 
     /**
-     * Build call for uploadForCodebookModelUploadForCodebookPut
-     *
+     * Build call for removeModelRemoveDelete
+     * 
+     * @param body
+     *            (required)
+     * @param modelVersion
+     *            (optional, default to default)
+     * @param progressListener
+     *            Progress listener
+     * @param progressRequestListener
+     *            Progress request listener
+     * @return Call to execute
+     * @throws ApiException
+     *             If fail to serialize the request body object
+     */
+    public com.squareup.okhttp.Call removeModelRemoveDeleteCall(CodebookDTO body,
+            String modelVersion, final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        Object localVarPostBody = body;
+
+        // create path and map variables
+        String localVarPath = "/model/remove/";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        if (modelVersion != null)
+            localVarQueryParams.addAll(apiClient.parameterToPair("model_version", modelVersion));
+
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        final String[] localVarAccepts = { "application/json" };
+        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null)
+            localVarHeaderParams.put("Accept", localVarAccept);
+
+        final String[] localVarContentTypes = { "application/json" };
+        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        if (progressListener != null) {
+            apiClient.getHttpClient().networkInterceptors()
+                    .add(new com.squareup.okhttp.Interceptor()
+                    {
+                        @Override
+                        public com.squareup.okhttp.Response intercept(
+                                com.squareup.okhttp.Interceptor.Chain chain)
+                            throws IOException
+                        {
+                            com.squareup.okhttp.Response originalResponse = chain
+                                    .proceed(chain.request());
+                            return originalResponse.newBuilder()
+                                    .body(new ProgressResponseBody(originalResponse.body(),
+                                            progressListener))
+                                    .build();
+                        }
+                    });
+        }
+
+        String[] localVarAuthNames = new String[] {};
+        return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams,
+                localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
+                localVarFormParams, localVarAuthNames, progressRequestListener);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private com.squareup.okhttp.Call removeModelRemoveDeleteValidateBeforeCall(CodebookDTO body,
+            String modelVersion, final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        // verify the required parameter 'body' is set
+        if (body == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'body' when calling removeModelRemoveDelete(Async)");
+        }
+
+        com.squareup.okhttp.Call call = removeModelRemoveDeleteCall(body, modelVersion,
+                progressListener, progressRequestListener);
+        return call;
+
+    }
+
+    /**
+     * Remove
+     * 
+     * @param body
+     *            (required)
+     * @param modelVersion
+     *            (optional, default to default)
+     * @return BooleanResponse
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public BooleanResponse removeModelRemoveDelete(CodebookDTO body, String modelVersion)
+        throws ApiException
+    {
+        ApiResponse<BooleanResponse> resp = removeModelRemoveDeleteWithHttpInfo(body, modelVersion);
+        return resp.getData();
+    }
+
+    /**
+     * Remove
+     * 
+     * @param body
+     *            (required)
+     * @param modelVersion
+     *            (optional, default to default)
+     * @return ApiResponse&lt;BooleanResponse&gt;
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public ApiResponse<BooleanResponse> removeModelRemoveDeleteWithHttpInfo(CodebookDTO body,
+            String modelVersion)
+        throws ApiException
+    {
+        com.squareup.okhttp.Call call = removeModelRemoveDeleteValidateBeforeCall(body,
+                modelVersion, null, null);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        {
+        }.getType();
+        return apiClient.execute(call, localVarReturnType);
+    }
+
+    /**
+     * Remove (asynchronously)
+     * 
+     * @param body
+     *            (required)
+     * @param modelVersion
+     *            (optional, default to default)
+     * @param callback
+     *            The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException
+     *             If fail to process the API call, e.g. serializing the request body object
+     */
+    public com.squareup.okhttp.Call removeModelRemoveDeleteAsync(CodebookDTO body,
+            String modelVersion, final ApiCallback<BooleanResponse> callback)
+        throws ApiException
+    {
+
+        ProgressResponseBody.ProgressListener progressListener = null;
+        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+
+        if (callback != null) {
+            progressListener = new ProgressResponseBody.ProgressListener()
+            {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done)
+                {
+                    callback.onDownloadProgress(bytesRead, contentLength, done);
+                }
+            };
+
+            progressRequestListener = new ProgressRequestBody.ProgressRequestListener()
+            {
+                @Override
+                public void onRequestProgress(long bytesWritten, long contentLength, boolean done)
+                {
+                    callback.onUploadProgress(bytesWritten, contentLength, done);
+                }
+            };
+        }
+
+        com.squareup.okhttp.Call call = removeModelRemoveDeleteValidateBeforeCall(body,
+                modelVersion, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        {
+        }.getType();
+        apiClient.executeAsync(call, localVarReturnType, callback);
+        return call;
+    }
+
+    /**
+     * Build call for uploadModelUploadPut
+     * 
      * @param codebookName
      *            (required)
      * @param codebookTagList
@@ -445,8 +624,8 @@ public class ModelApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call uploadForCodebookModelUploadForCodebookPutCall(
-            String codebookName, String codebookTagList, String modelVersion, File modelArchive,
+    public com.squareup.okhttp.Call uploadModelUploadPutCall(String codebookName,
+            String codebookTagList, String modelVersion, File modelArchive,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -454,7 +633,7 @@ public class ModelApi
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/model/upload_for_codebook/";
+        String localVarPath = "/model/upload/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -506,8 +685,8 @@ public class ModelApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call uploadForCodebookModelUploadForCodebookPutValidateBeforeCall(
-            String codebookName, String codebookTagList, String modelVersion, File modelArchive,
+    private com.squareup.okhttp.Call uploadModelUploadPutValidateBeforeCall(String codebookName,
+            String codebookTagList, String modelVersion, File modelArchive,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -515,34 +694,33 @@ public class ModelApi
         // verify the required parameter 'codebookName' is set
         if (codebookName == null) {
             throw new ApiException(
-                    "Missing the required parameter 'codebookName' when calling uploadForCodebookModelUploadForCodebookPut(Async)");
+                    "Missing the required parameter 'codebookName' when calling uploadModelUploadPut(Async)");
         }
         // verify the required parameter 'codebookTagList' is set
         if (codebookTagList == null) {
             throw new ApiException(
-                    "Missing the required parameter 'codebookTagList' when calling uploadForCodebookModelUploadForCodebookPut(Async)");
+                    "Missing the required parameter 'codebookTagList' when calling uploadModelUploadPut(Async)");
         }
         // verify the required parameter 'modelVersion' is set
         if (modelVersion == null) {
             throw new ApiException(
-                    "Missing the required parameter 'modelVersion' when calling uploadForCodebookModelUploadForCodebookPut(Async)");
+                    "Missing the required parameter 'modelVersion' when calling uploadModelUploadPut(Async)");
         }
         // verify the required parameter 'modelArchive' is set
         if (modelArchive == null) {
             throw new ApiException(
-                    "Missing the required parameter 'modelArchive' when calling uploadForCodebookModelUploadForCodebookPut(Async)");
+                    "Missing the required parameter 'modelArchive' when calling uploadModelUploadPut(Async)");
         }
 
-        com.squareup.okhttp.Call call = uploadForCodebookModelUploadForCodebookPutCall(codebookName,
-                codebookTagList, modelVersion, modelArchive, progressListener,
-                progressRequestListener);
+        com.squareup.okhttp.Call call = uploadModelUploadPutCall(codebookName, codebookTagList,
+                modelVersion, modelArchive, progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * Upload For Codebook
-     *
+     * Upload
+     * 
      * @param codebookName
      *            (required)
      * @param codebookTagList
@@ -556,18 +734,18 @@ public class ModelApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public StringResponse uploadForCodebookModelUploadForCodebookPut(String codebookName,
-            String codebookTagList, String modelVersion, File modelArchive)
+    public StringResponse uploadModelUploadPut(String codebookName, String codebookTagList,
+            String modelVersion, File modelArchive)
         throws ApiException
     {
-        ApiResponse<StringResponse> resp = uploadForCodebookModelUploadForCodebookPutWithHttpInfo(
-                codebookName, codebookTagList, modelVersion, modelArchive);
+        ApiResponse<StringResponse> resp = uploadModelUploadPutWithHttpInfo(codebookName,
+                codebookTagList, modelVersion, modelArchive);
         return resp.getData();
     }
 
     /**
-     * Upload For Codebook
-     *
+     * Upload
+     * 
      * @param codebookName
      *            (required)
      * @param codebookTagList
@@ -581,13 +759,12 @@ public class ModelApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<StringResponse> uploadForCodebookModelUploadForCodebookPutWithHttpInfo(
-            String codebookName, String codebookTagList, String modelVersion, File modelArchive)
+    public ApiResponse<StringResponse> uploadModelUploadPutWithHttpInfo(String codebookName,
+            String codebookTagList, String modelVersion, File modelArchive)
         throws ApiException
     {
-        com.squareup.okhttp.Call call =
-                uploadForCodebookModelUploadForCodebookPutValidateBeforeCall(
-                codebookName, codebookTagList, modelVersion, modelArchive, null, null);
+        com.squareup.okhttp.Call call = uploadModelUploadPutValidateBeforeCall(codebookName,
+                codebookTagList, modelVersion, modelArchive, null, null);
         Type localVarReturnType = new TypeToken<StringResponse>()
         {
         }.getType();
@@ -595,8 +772,8 @@ public class ModelApi
     }
 
     /**
-     * Upload For Codebook (asynchronously)
-     *
+     * Upload (asynchronously)
+     * 
      * @param codebookName
      *            (required)
      * @param codebookTagList
@@ -611,8 +788,8 @@ public class ModelApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call uploadForCodebookModelUploadForCodebookPutAsync(
-            String codebookName, String codebookTagList, String modelVersion, File modelArchive,
+    public com.squareup.okhttp.Call uploadModelUploadPutAsync(String codebookName,
+            String codebookTagList, String modelVersion, File modelArchive,
             final ApiCallback<StringResponse> callback)
         throws ApiException
     {
@@ -640,9 +817,8 @@ public class ModelApi
             };
         }
 
-        com.squareup.okhttp.Call call =
-                uploadForCodebookModelUploadForCodebookPutValidateBeforeCall(
-                codebookName, codebookTagList, modelVersion, modelArchive, progressListener,
+        com.squareup.okhttp.Call call = uploadModelUploadPutValidateBeforeCall(codebookName,
+                codebookTagList, modelVersion, modelArchive, progressListener,
                 progressRequestListener);
         Type localVarReturnType = new TypeToken<StringResponse>()
         {

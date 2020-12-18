@@ -18,6 +18,7 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,9 +31,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ModelConfig
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class ModelConfig
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class ModelConfig implements Serializable
 {
     @SerializedName("embedding_type")
     private String embeddingType = "https://tfhub.dev/google/universal-sentence-encoder/2";
@@ -60,7 +60,7 @@ public class ModelConfig
 
     /**
      * Get embeddingType
-     *
+     * 
      * @return embeddingType
      **/
     @Schema(example = "https://tfhub.dev/google/universal-sentence-encoder/2", description = "")
@@ -91,7 +91,7 @@ public class ModelConfig
 
     /**
      * Get hiddenUnits
-     *
+     * 
      * @return hiddenUnits
      **/
     @Schema(example = "[1024,1024,512,64]", description = "")
@@ -113,7 +113,7 @@ public class ModelConfig
 
     /**
      * Get dropout
-     *
+     * 
      * @return dropout
      **/
     @Schema(example = "0.2", description = "")
@@ -135,7 +135,7 @@ public class ModelConfig
 
     /**
      * Get optimizer
-     *
+     * 
      * @return optimizer
      **/
     @Schema(description = "")
@@ -157,7 +157,7 @@ public class ModelConfig
 
     /**
      * Get earlyStopping
-     *
+     * 
      * @return earlyStopping
      **/
     @Schema(example = "false", description = "")
@@ -179,7 +179,7 @@ public class ModelConfig
 
     /**
      * Get activationFn
-     *
+     * 
      * @return activationFn
      **/
     @Schema(description = "")

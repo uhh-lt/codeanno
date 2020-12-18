@@ -31,9 +31,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ModelMetadata
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class ModelMetadata
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class ModelMetadata implements Serializable
 {
     @SerializedName("labels")
     private Map<String, String> labels = new HashMap<String, String>();
@@ -64,7 +63,7 @@ public class ModelMetadata
 
     /**
      * Get labels
-     *
+     * 
      * @return labels
      **/
     @Schema(required = true, description = "")
@@ -86,7 +85,7 @@ public class ModelMetadata
 
     /**
      * Get modelType
-     *
+     * 
      * @return modelType
      **/
     @Schema(required = true, description = "")
@@ -114,7 +113,7 @@ public class ModelMetadata
 
     /**
      * Get evaluation
-     *
+     * 
      * @return evaluation
      **/
     @Schema(required = true, description = "")
@@ -136,7 +135,7 @@ public class ModelMetadata
 
     /**
      * Get modelConfig
-     *
+     * 
      * @return modelConfig
      **/
     @Schema(required = true, description = "")
@@ -158,7 +157,7 @@ public class ModelMetadata
 
     /**
      * Get timestamp
-     *
+     * 
      * @return timestamp
      **/
     @Schema(required = true, description = "")

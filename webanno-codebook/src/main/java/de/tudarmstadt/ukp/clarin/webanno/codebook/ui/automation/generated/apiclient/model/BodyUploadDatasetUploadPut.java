@@ -26,13 +26,11 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * BodyUploadDatasetTrainingUploadDatasetPut
+ * BodyUploadDatasetUploadPut
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen",
-                            date = "2020-11-27T12:05:41.274Z[GMT]")
-public class BodyUploadDatasetTrainingUploadDatasetPut
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class BodyUploadDatasetUploadPut implements Serializable
 {
     @SerializedName("codebook_name")
     private String codebookName = null;
@@ -46,7 +44,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
     @SerializedName("dataset_archive")
     private File datasetArchive = null;
 
-    public BodyUploadDatasetTrainingUploadDatasetPut codebookName(String codebookName)
+    public BodyUploadDatasetUploadPut codebookName(String codebookName)
     {
         this.codebookName = codebookName;
         return this;
@@ -54,7 +52,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
 
     /**
      * The name of the Codebook. Case-sensitive!
-     *
+     * 
      * @return codebookName
      **/
     @Schema(required = true, description = "The name of the Codebook. Case-sensitive!")
@@ -68,7 +66,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
         this.codebookName = codebookName;
     }
 
-    public BodyUploadDatasetTrainingUploadDatasetPut codebookTagList(String codebookTagList)
+    public BodyUploadDatasetUploadPut codebookTagList(String codebookTagList)
     {
         this.codebookTagList = codebookTagList;
         return this;
@@ -76,7 +74,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
 
     /**
      * Comma-separated list of tags. E.g. tag1,Tag2 ...
-     *
+     * 
      * @return codebookTagList
      **/
     @Schema(required = true, description = "Comma-separated list of tags. E.g. tag1,Tag2 ...")
@@ -90,7 +88,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
         this.codebookTagList = codebookTagList;
     }
 
-    public BodyUploadDatasetTrainingUploadDatasetPut datasetVersion(String datasetVersion)
+    public BodyUploadDatasetUploadPut datasetVersion(String datasetVersion)
     {
         this.datasetVersion = datasetVersion;
         return this;
@@ -99,7 +97,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
     /**
      * Optional version of the dataset. If not provided and if there is already an existing dataset
      * with the same (default) version, the dataset gets overwritten. E.g. v1
-     *
+     * 
      * @return datasetVersion
      **/
     @Schema(required = true, description = "Optional version of the dataset. If  not provided and if there is already an existing dataset with the same (default) version, the dataset gets overwritten.  E.g. v1")
@@ -113,7 +111,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
         this.datasetVersion = datasetVersion;
     }
 
-    public BodyUploadDatasetTrainingUploadDatasetPut datasetArchive(File datasetArchive)
+    public BodyUploadDatasetUploadPut datasetArchive(File datasetArchive)
     {
         this.datasetArchive = datasetArchive;
         return this;
@@ -121,7 +119,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
 
     /**
      * CSV Dataset in a zip-archive.
-     *
+     * 
      * @return datasetArchive
      **/
     @Schema(required = true, description = "CSV Dataset in a zip-archive.")
@@ -144,16 +142,11 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BodyUploadDatasetTrainingUploadDatasetPut bodyUploadDatasetTrainingUploadDatasetPut =
-                (BodyUploadDatasetTrainingUploadDatasetPut) o;
-        return Objects.equals(this.codebookName,
-                bodyUploadDatasetTrainingUploadDatasetPut.codebookName)
-                && Objects.equals(this.codebookTagList,
-                        bodyUploadDatasetTrainingUploadDatasetPut.codebookTagList)
-                && Objects.equals(this.datasetVersion,
-                        bodyUploadDatasetTrainingUploadDatasetPut.datasetVersion)
-                && Objects.equals(this.datasetArchive,
-                        bodyUploadDatasetTrainingUploadDatasetPut.datasetArchive);
+        BodyUploadDatasetUploadPut bodyUploadDatasetUploadPut = (BodyUploadDatasetUploadPut) o;
+        return Objects.equals(this.codebookName, bodyUploadDatasetUploadPut.codebookName)
+                && Objects.equals(this.codebookTagList, bodyUploadDatasetUploadPut.codebookTagList)
+                && Objects.equals(this.datasetVersion, bodyUploadDatasetUploadPut.datasetVersion)
+                && Objects.equals(this.datasetArchive, bodyUploadDatasetUploadPut.datasetArchive);
     }
 
     @Override
@@ -167,7 +160,7 @@ public class BodyUploadDatasetTrainingUploadDatasetPut
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class BodyUploadDatasetTrainingUploadDatasetPut {\n");
+        sb.append("class BodyUploadDatasetUploadPut {\n");
 
         sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
         sb.append("    codebookTagList: ").append(toIndentedString(codebookTagList)).append("\n");

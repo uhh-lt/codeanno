@@ -18,6 +18,7 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,9 +31,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * MultiDocumentPredictionResult
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class MultiDocumentPredictionResult
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class MultiDocumentPredictionResult implements Serializable
 {
     @SerializedName("proj_id")
     private Integer projId = null;
@@ -44,8 +44,7 @@ public class MultiDocumentPredictionResult
     private Map<String, String> predictedTags = new HashMap<String, String>();
 
     @SerializedName("probabilities")
-    private Map<String, Map<String, Double>> probabilities =
-            new HashMap<String, Map<String, Double>>();
+    private Map<String, Map<String, BigDecimal>> probabilities = new HashMap<String, Map<String, BigDecimal>>();
 
     public MultiDocumentPredictionResult projId(Integer projId)
     {
@@ -55,7 +54,7 @@ public class MultiDocumentPredictionResult
 
     /**
      * Get projId
-     *
+     * 
      * @return projId
      **/
     @Schema(required = true, description = "")
@@ -77,7 +76,7 @@ public class MultiDocumentPredictionResult
 
     /**
      * Get codebookName
-     *
+     * 
      * @return codebookName
      **/
     @Schema(required = true, description = "")
@@ -105,7 +104,7 @@ public class MultiDocumentPredictionResult
 
     /**
      * Get predictedTags
-     *
+     * 
      * @return predictedTags
      **/
     @Schema(required = true, description = "")
@@ -120,14 +119,14 @@ public class MultiDocumentPredictionResult
     }
 
     public MultiDocumentPredictionResult probabilities(
-            Map<String, Map<String, Double>> probabilities)
+            Map<String, Map<String, BigDecimal>> probabilities)
     {
         this.probabilities = probabilities;
         return this;
     }
 
     public MultiDocumentPredictionResult putProbabilitiesItem(String key,
-            Map<String, Double> probabilitiesItem)
+            Map<String, BigDecimal> probabilitiesItem)
     {
         this.probabilities.put(key, probabilitiesItem);
         return this;
@@ -135,16 +134,16 @@ public class MultiDocumentPredictionResult
 
     /**
      * Get probabilities
-     *
+     * 
      * @return probabilities
      **/
     @Schema(required = true, description = "")
-    public Map<String, Map<String, Double>> getProbabilities()
+    public Map<String, Map<String, BigDecimal>> getProbabilities()
     {
         return probabilities;
     }
 
-    public void setProbabilities(Map<String, Map<String, Double>> probabilities)
+    public void setProbabilities(Map<String, Map<String, BigDecimal>> probabilities)
     {
         this.probabilities = probabilities;
     }
@@ -158,8 +157,7 @@ public class MultiDocumentPredictionResult
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        MultiDocumentPredictionResult multiDocumentPredictionResult =
-                (MultiDocumentPredictionResult) o;
+        MultiDocumentPredictionResult multiDocumentPredictionResult = (MultiDocumentPredictionResult) o;
         return Objects.equals(this.projId, multiDocumentPredictionResult.projId)
                 && Objects.equals(this.codebookName, multiDocumentPredictionResult.codebookName)
                 && Objects.equals(this.predictedTags, multiDocumentPredictionResult.predictedTags)

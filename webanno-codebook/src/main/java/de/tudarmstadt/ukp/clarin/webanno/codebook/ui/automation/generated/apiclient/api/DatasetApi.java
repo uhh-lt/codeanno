@@ -17,6 +17,7 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -34,20 +35,19 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.Pair;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ProgressRequestBody;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ProgressResponseBody;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.TrainingRequest;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.TrainingResponse;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.TrainingStatus;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.BooleanResponse;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DatasetRequest;
 
-public class TrainingApi
+public class DatasetApi
 {
     private ApiClient apiClient;
 
-    public TrainingApi()
+    public DatasetApi()
     {
         this(Configuration.getDefaultApiClient());
     }
 
-    public TrainingApi(ApiClient apiClient)
+    public DatasetApi(ApiClient apiClient)
     {
         this.apiClient = apiClient;
     }
@@ -63,7 +63,7 @@ public class TrainingApi
     }
 
     /**
-     * Build call for getTrainLogTrainingLogPost
+     * Build call for isAvailableDatasetAvailablePost
      * 
      * @param body
      *            (required)
@@ -75,7 +75,7 @@ public class TrainingApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call getTrainLogTrainingLogPostCall(TrainingResponse body,
+    public com.squareup.okhttp.Call isAvailableDatasetAvailablePostCall(DatasetRequest body,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -83,7 +83,7 @@ public class TrainingApi
         Object localVarPostBody = body;
 
         // create path and map variables
-        String localVarPath = "/training/log/";
+        String localVarPath = "/dataset/available/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -127,231 +127,63 @@ public class TrainingApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getTrainLogTrainingLogPostValidateBeforeCall(
-            TrainingResponse body, final ProgressResponseBody.ProgressListener progressListener,
+    private com.squareup.okhttp.Call isAvailableDatasetAvailablePostValidateBeforeCall(
+            DatasetRequest body, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
         // verify the required parameter 'body' is set
         if (body == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling getTrainLogTrainingLogPost(Async)");
+                    "Missing the required parameter 'body' when calling isAvailableDatasetAvailablePost(Async)");
         }
 
-        com.squareup.okhttp.Call call = getTrainLogTrainingLogPostCall(body, progressListener,
+        com.squareup.okhttp.Call call = isAvailableDatasetAvailablePostCall(body, progressListener,
                 progressRequestListener);
         return call;
 
     }
 
     /**
-     * Get Train Log
+     * Is Available
      * 
      * @param body
      *            (required)
-     * @return Object
+     * @return BooleanResponse
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public Object getTrainLogTrainingLogPost(TrainingResponse body) throws ApiException
+    public BooleanResponse isAvailableDatasetAvailablePost(DatasetRequest body) throws ApiException
     {
-        ApiResponse<Object> resp = getTrainLogTrainingLogPostWithHttpInfo(body);
+        ApiResponse<BooleanResponse> resp = isAvailableDatasetAvailablePostWithHttpInfo(body);
         return resp.getData();
     }
 
     /**
-     * Get Train Log
+     * Is Available
      * 
      * @param body
      *            (required)
-     * @return ApiResponse&lt;Object&gt;
+     * @return ApiResponse&lt;BooleanResponse&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<Object> getTrainLogTrainingLogPostWithHttpInfo(TrainingResponse body)
+    public ApiResponse<BooleanResponse> isAvailableDatasetAvailablePostWithHttpInfo(
+            DatasetRequest body)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = getTrainLogTrainingLogPostValidateBeforeCall(body, null,
-                null);
-        Type localVarReturnType = new TypeToken<Object>()
-        {
-        }.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
-
-    /**
-     * Get Train Log (asynchronously)
-     * 
-     * @param body
-     *            (required)
-     * @param callback
-     *            The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException
-     *             If fail to process the API call, e.g. serializing the request body object
-     */
-    public com.squareup.okhttp.Call getTrainLogTrainingLogPostAsync(TrainingResponse body,
-            final ApiCallback<Object> callback)
-        throws ApiException
-    {
-
-        ProgressResponseBody.ProgressListener progressListener = null;
-        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
-
-        if (callback != null) {
-            progressListener = new ProgressResponseBody.ProgressListener()
-            {
-                @Override
-                public void update(long bytesRead, long contentLength, boolean done)
-                {
-                    callback.onDownloadProgress(bytesRead, contentLength, done);
-                }
-            };
-
-            progressRequestListener = new ProgressRequestBody.ProgressRequestListener()
-            {
-                @Override
-                public void onRequestProgress(long bytesWritten, long contentLength, boolean done)
-                {
-                    callback.onUploadProgress(bytesWritten, contentLength, done);
-                }
-            };
-        }
-
-        com.squareup.okhttp.Call call = getTrainLogTrainingLogPostValidateBeforeCall(body,
-                progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<Object>()
-        {
-        }.getType();
-        apiClient.executeAsync(call, localVarReturnType, callback);
-        return call;
-    }
-
-    /**
-     * Build call for getTrainingStatusTrainingStatusPost
-     * 
-     * @param body
-     *            (required)
-     * @param progressListener
-     *            Progress listener
-     * @param progressRequestListener
-     *            Progress request listener
-     * @return Call to execute
-     * @throws ApiException
-     *             If fail to serialize the request body object
-     */
-    public com.squareup.okhttp.Call getTrainingStatusTrainingStatusPostCall(TrainingResponse body,
-            final ProgressResponseBody.ProgressListener progressListener,
-            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
-        throws ApiException
-    {
-        Object localVarPostBody = body;
-
-        // create path and map variables
-        String localVarPath = "/training/status/";
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null)
-            localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = { "application/json" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
-        if (progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors()
-                    .add(new com.squareup.okhttp.Interceptor()
-                    {
-                        @Override
-                        public com.squareup.okhttp.Response intercept(
-                                com.squareup.okhttp.Interceptor.Chain chain)
-                            throws IOException
-                        {
-                            com.squareup.okhttp.Response originalResponse = chain
-                                    .proceed(chain.request());
-                            return originalResponse.newBuilder()
-                                    .body(new ProgressResponseBody(originalResponse.body(),
-                                            progressListener))
-                                    .build();
-                        }
-                    });
-        }
-
-        String[] localVarAuthNames = new String[] {};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams,
-                localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
-                localVarFormParams, localVarAuthNames, progressRequestListener);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getTrainingStatusTrainingStatusPostValidateBeforeCall(
-            TrainingResponse body, final ProgressResponseBody.ProgressListener progressListener,
-            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
-        throws ApiException
-    {
-        // verify the required parameter 'body' is set
-        if (body == null) {
-            throw new ApiException(
-                    "Missing the required parameter 'body' when calling getTrainingStatusTrainingStatusPost(Async)");
-        }
-
-        com.squareup.okhttp.Call call = getTrainingStatusTrainingStatusPostCall(body,
-                progressListener, progressRequestListener);
-        return call;
-
-    }
-
-    /**
-     * Get Training Status
-     * 
-     * @param body
-     *            (required)
-     * @return TrainingStatus
-     * @throws ApiException
-     *             If fail to call the API, e.g. server error or cannot deserialize the response
-     *             body
-     */
-    public TrainingStatus getTrainingStatusTrainingStatusPost(TrainingResponse body)
-        throws ApiException
-    {
-        ApiResponse<TrainingStatus> resp = getTrainingStatusTrainingStatusPostWithHttpInfo(body);
-        return resp.getData();
-    }
-
-    /**
-     * Get Training Status
-     * 
-     * @param body
-     *            (required)
-     * @return ApiResponse&lt;TrainingStatus&gt;
-     * @throws ApiException
-     *             If fail to call the API, e.g. server error or cannot deserialize the response
-     *             body
-     */
-    public ApiResponse<TrainingStatus> getTrainingStatusTrainingStatusPostWithHttpInfo(
-            TrainingResponse body)
-        throws ApiException
-    {
-        com.squareup.okhttp.Call call = getTrainingStatusTrainingStatusPostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = isAvailableDatasetAvailablePostValidateBeforeCall(body,
                 null, null);
-        Type localVarReturnType = new TypeToken<TrainingStatus>()
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Get Training Status (asynchronously)
+     * Is Available (asynchronously)
      * 
      * @param body
      *            (required)
@@ -361,8 +193,8 @@ public class TrainingApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call getTrainingStatusTrainingStatusPostAsync(TrainingResponse body,
-            final ApiCallback<TrainingStatus> callback)
+    public com.squareup.okhttp.Call isAvailableDatasetAvailablePostAsync(DatasetRequest body,
+            final ApiCallback<BooleanResponse> callback)
         throws ApiException
     {
 
@@ -389,9 +221,9 @@ public class TrainingApi
             };
         }
 
-        com.squareup.okhttp.Call call = getTrainingStatusTrainingStatusPostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = isAvailableDatasetAvailablePostValidateBeforeCall(body,
                 progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<TrainingStatus>()
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
         }.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
@@ -399,7 +231,7 @@ public class TrainingApi
     }
 
     /**
-     * Build call for trainTrainingTrainPost
+     * Build call for removeDatasetRemoveDelete
      * 
      * @param body
      *            (required)
@@ -411,7 +243,7 @@ public class TrainingApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call trainTrainingTrainPostCall(TrainingRequest body,
+    public com.squareup.okhttp.Call removeDatasetRemoveDeleteCall(DatasetRequest body,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -419,7 +251,7 @@ public class TrainingApi
         Object localVarPostBody = body;
 
         // create path and map variables
-        String localVarPath = "/training/train/";
+        String localVarPath = "/dataset/remove/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -457,67 +289,68 @@ public class TrainingApi
         }
 
         String[] localVarAuthNames = new String[] {};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams,
+        return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams,
                 localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
                 localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call trainTrainingTrainPostValidateBeforeCall(TrainingRequest body,
-            final ProgressResponseBody.ProgressListener progressListener,
+    private com.squareup.okhttp.Call removeDatasetRemoveDeleteValidateBeforeCall(
+            DatasetRequest body, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
         // verify the required parameter 'body' is set
         if (body == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling trainTrainingTrainPost(Async)");
+                    "Missing the required parameter 'body' when calling removeDatasetRemoveDelete(Async)");
         }
 
-        com.squareup.okhttp.Call call = trainTrainingTrainPostCall(body, progressListener,
+        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteCall(body, progressListener,
                 progressRequestListener);
         return call;
 
     }
 
     /**
-     * Train
+     * Remove
      * 
      * @param body
      *            (required)
-     * @return TrainingResponse
+     * @return BooleanResponse
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public TrainingResponse trainTrainingTrainPost(TrainingRequest body) throws ApiException
+    public BooleanResponse removeDatasetRemoveDelete(DatasetRequest body) throws ApiException
     {
-        ApiResponse<TrainingResponse> resp = trainTrainingTrainPostWithHttpInfo(body);
+        ApiResponse<BooleanResponse> resp = removeDatasetRemoveDeleteWithHttpInfo(body);
         return resp.getData();
     }
 
     /**
-     * Train
+     * Remove
      * 
      * @param body
      *            (required)
-     * @return ApiResponse&lt;TrainingResponse&gt;
+     * @return ApiResponse&lt;BooleanResponse&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<TrainingResponse> trainTrainingTrainPostWithHttpInfo(TrainingRequest body)
+    public ApiResponse<BooleanResponse> removeDatasetRemoveDeleteWithHttpInfo(DatasetRequest body)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = trainTrainingTrainPostValidateBeforeCall(body, null, null);
-        Type localVarReturnType = new TypeToken<TrainingResponse>()
+        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteValidateBeforeCall(body, null,
+                null);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Train (asynchronously)
+     * Remove (asynchronously)
      * 
      * @param body
      *            (required)
@@ -527,8 +360,8 @@ public class TrainingApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call trainTrainingTrainPostAsync(TrainingRequest body,
-            final ApiCallback<TrainingResponse> callback)
+    public com.squareup.okhttp.Call removeDatasetRemoveDeleteAsync(DatasetRequest body,
+            final ApiCallback<BooleanResponse> callback)
         throws ApiException
     {
 
@@ -555,9 +388,231 @@ public class TrainingApi
             };
         }
 
-        com.squareup.okhttp.Call call = trainTrainingTrainPostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteValidateBeforeCall(body,
                 progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<TrainingResponse>()
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        {
+        }.getType();
+        apiClient.executeAsync(call, localVarReturnType, callback);
+        return call;
+    }
+
+    /**
+     * Build call for uploadDatasetUploadPut
+     * 
+     * @param codebookName
+     *            (required)
+     * @param codebookTagList
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @param datasetArchive
+     *            (required)
+     * @param progressListener
+     *            Progress listener
+     * @param progressRequestListener
+     *            Progress request listener
+     * @return Call to execute
+     * @throws ApiException
+     *             If fail to serialize the request body object
+     */
+    public com.squareup.okhttp.Call uploadDatasetUploadPutCall(String codebookName,
+            String codebookTagList, String datasetVersion, File datasetArchive,
+            final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        Object localVarPostBody = null;
+
+        // create path and map variables
+        String localVarPath = "/dataset/upload/";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        if (codebookName != null)
+            localVarFormParams.put("codebook_name", codebookName);
+        if (codebookTagList != null)
+            localVarFormParams.put("codebook_tag_list", codebookTagList);
+        if (datasetVersion != null)
+            localVarFormParams.put("dataset_version", datasetVersion);
+        if (datasetArchive != null)
+            localVarFormParams.put("dataset_archive", datasetArchive);
+
+        final String[] localVarAccepts = { "application/json" };
+        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null)
+            localVarHeaderParams.put("Accept", localVarAccept);
+
+        final String[] localVarContentTypes = { "multipart/form-data" };
+        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        if (progressListener != null) {
+            apiClient.getHttpClient().networkInterceptors()
+                    .add(new com.squareup.okhttp.Interceptor()
+                    {
+                        @Override
+                        public com.squareup.okhttp.Response intercept(
+                                com.squareup.okhttp.Interceptor.Chain chain)
+                            throws IOException
+                        {
+                            com.squareup.okhttp.Response originalResponse = chain
+                                    .proceed(chain.request());
+                            return originalResponse.newBuilder()
+                                    .body(new ProgressResponseBody(originalResponse.body(),
+                                            progressListener))
+                                    .build();
+                        }
+                    });
+        }
+
+        String[] localVarAuthNames = new String[] {};
+        return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams,
+                localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
+                localVarFormParams, localVarAuthNames, progressRequestListener);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private com.squareup.okhttp.Call uploadDatasetUploadPutValidateBeforeCall(String codebookName,
+            String codebookTagList, String datasetVersion, File datasetArchive,
+            final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        // verify the required parameter 'codebookName' is set
+        if (codebookName == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'codebookName' when calling uploadDatasetUploadPut(Async)");
+        }
+        // verify the required parameter 'codebookTagList' is set
+        if (codebookTagList == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'codebookTagList' when calling uploadDatasetUploadPut(Async)");
+        }
+        // verify the required parameter 'datasetVersion' is set
+        if (datasetVersion == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'datasetVersion' when calling uploadDatasetUploadPut(Async)");
+        }
+        // verify the required parameter 'datasetArchive' is set
+        if (datasetArchive == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'datasetArchive' when calling uploadDatasetUploadPut(Async)");
+        }
+
+        com.squareup.okhttp.Call call = uploadDatasetUploadPutCall(codebookName, codebookTagList,
+                datasetVersion, datasetArchive, progressListener, progressRequestListener);
+        return call;
+
+    }
+
+    /**
+     * Upload
+     * 
+     * @param codebookName
+     *            (required)
+     * @param codebookTagList
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @param datasetArchive
+     *            (required)
+     * @return BooleanResponse
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public BooleanResponse uploadDatasetUploadPut(String codebookName, String codebookTagList,
+            String datasetVersion, File datasetArchive)
+        throws ApiException
+    {
+        ApiResponse<BooleanResponse> resp = uploadDatasetUploadPutWithHttpInfo(codebookName,
+                codebookTagList, datasetVersion, datasetArchive);
+        return resp.getData();
+    }
+
+    /**
+     * Upload
+     * 
+     * @param codebookName
+     *            (required)
+     * @param codebookTagList
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @param datasetArchive
+     *            (required)
+     * @return ApiResponse&lt;BooleanResponse&gt;
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public ApiResponse<BooleanResponse> uploadDatasetUploadPutWithHttpInfo(String codebookName,
+            String codebookTagList, String datasetVersion, File datasetArchive)
+        throws ApiException
+    {
+        com.squareup.okhttp.Call call = uploadDatasetUploadPutValidateBeforeCall(codebookName,
+                codebookTagList, datasetVersion, datasetArchive, null, null);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        {
+        }.getType();
+        return apiClient.execute(call, localVarReturnType);
+    }
+
+    /**
+     * Upload (asynchronously)
+     * 
+     * @param codebookName
+     *            (required)
+     * @param codebookTagList
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @param datasetArchive
+     *            (required)
+     * @param callback
+     *            The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException
+     *             If fail to process the API call, e.g. serializing the request body object
+     */
+    public com.squareup.okhttp.Call uploadDatasetUploadPutAsync(String codebookName,
+            String codebookTagList, String datasetVersion, File datasetArchive,
+            final ApiCallback<BooleanResponse> callback)
+        throws ApiException
+    {
+
+        ProgressResponseBody.ProgressListener progressListener = null;
+        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+
+        if (callback != null) {
+            progressListener = new ProgressResponseBody.ProgressListener()
+            {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done)
+                {
+                    callback.onDownloadProgress(bytesRead, contentLength, done);
+                }
+            };
+
+            progressRequestListener = new ProgressRequestBody.ProgressRequestListener()
+            {
+                @Override
+                public void onRequestProgress(long bytesWritten, long contentLength, boolean done)
+                {
+                    callback.onUploadProgress(bytesWritten, contentLength, done);
+                }
+            };
+        }
+
+        com.squareup.okhttp.Call call = uploadDatasetUploadPutValidateBeforeCall(codebookName,
+                codebookTagList, datasetVersion, datasetArchive, progressListener,
+                progressRequestListener);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
         }.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);

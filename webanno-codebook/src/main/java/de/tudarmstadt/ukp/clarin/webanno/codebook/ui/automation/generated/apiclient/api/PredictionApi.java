@@ -64,8 +64,8 @@ public class PredictionApi
     }
 
     /**
-     * Build call for predictMultiPredictionPredictMultiPost
-     *
+     * Build call for predictMultiPredictionMultiplePost
+     * 
      * @param body
      *            (required)
      * @param progressListener
@@ -76,7 +76,7 @@ public class PredictionApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call predictMultiPredictionPredictMultiPostCall(
+    public com.squareup.okhttp.Call predictMultiPredictionMultiplePostCall(
             MultiDocumentPredictionRequest body,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
@@ -85,7 +85,7 @@ public class PredictionApi
         Object localVarPostBody = body;
 
         // create path and map variables
-        String localVarPath = "/prediction/predict_multi";
+        String localVarPath = "/prediction/multiple";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -129,7 +129,7 @@ public class PredictionApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call predictMultiPredictionPredictMultiPostValidateBeforeCall(
+    private com.squareup.okhttp.Call predictMultiPredictionMultiplePostValidateBeforeCall(
             MultiDocumentPredictionRequest body,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
@@ -138,10 +138,10 @@ public class PredictionApi
         // verify the required parameter 'body' is set
         if (body == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling predictMultiPredictionPredictMultiPost(Async)");
+                    "Missing the required parameter 'body' when calling predictMultiPredictionMultiplePost(Async)");
         }
 
-        com.squareup.okhttp.Call call = predictMultiPredictionPredictMultiPostCall(body,
+        com.squareup.okhttp.Call call = predictMultiPredictionMultiplePostCall(body,
                 progressListener, progressRequestListener);
         return call;
 
@@ -149,7 +149,7 @@ public class PredictionApi
 
     /**
      * Predict Multi
-     *
+     * 
      * @param body
      *            (required)
      * @return MultiDocumentPredictionResult
@@ -157,18 +157,18 @@ public class PredictionApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public MultiDocumentPredictionResult predictMultiPredictionPredictMultiPost(
+    public MultiDocumentPredictionResult predictMultiPredictionMultiplePost(
             MultiDocumentPredictionRequest body)
         throws ApiException
     {
-        ApiResponse<MultiDocumentPredictionResult> resp =
-                predictMultiPredictionPredictMultiPostWithHttpInfo(body);
+        ApiResponse<MultiDocumentPredictionResult> resp = predictMultiPredictionMultiplePostWithHttpInfo(
+                body);
         return resp.getData();
     }
 
     /**
      * Predict Multi
-     *
+     * 
      * @param body
      *            (required)
      * @return ApiResponse&lt;MultiDocumentPredictionResult&gt;
@@ -176,12 +176,12 @@ public class PredictionApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<MultiDocumentPredictionResult>
-        predictMultiPredictionPredictMultiPostWithHttpInfo(MultiDocumentPredictionRequest body)
+    public ApiResponse<MultiDocumentPredictionResult> predictMultiPredictionMultiplePostWithHttpInfo(
+            MultiDocumentPredictionRequest body)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = predictMultiPredictionPredictMultiPostValidateBeforeCall(
-                body, null, null);
+        com.squareup.okhttp.Call call = predictMultiPredictionMultiplePostValidateBeforeCall(body,
+                null, null);
         Type localVarReturnType = new TypeToken<MultiDocumentPredictionResult>()
         {
         }.getType();
@@ -190,7 +190,7 @@ public class PredictionApi
 
     /**
      * Predict Multi (asynchronously)
-     *
+     * 
      * @param body
      *            (required)
      * @param callback
@@ -199,7 +199,7 @@ public class PredictionApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call predictMultiPredictionPredictMultiPostAsync(
+    public com.squareup.okhttp.Call predictMultiPredictionMultiplePostAsync(
             MultiDocumentPredictionRequest body,
             final ApiCallback<MultiDocumentPredictionResult> callback)
         throws ApiException
@@ -228,8 +228,8 @@ public class PredictionApi
             };
         }
 
-        com.squareup.okhttp.Call call = predictMultiPredictionPredictMultiPostValidateBeforeCall(
-                body, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = predictMultiPredictionMultiplePostValidateBeforeCall(body,
+                progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<MultiDocumentPredictionResult>()
         {
         }.getType();
@@ -238,8 +238,8 @@ public class PredictionApi
     }
 
     /**
-     * Build call for predictPredictionPredictPost
-     *
+     * Build call for predictPredictionSinglePost
+     * 
      * @param body
      *            (required)
      * @param progressListener
@@ -250,7 +250,7 @@ public class PredictionApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call predictPredictionPredictPostCall(PredictionRequest body,
+    public com.squareup.okhttp.Call predictPredictionSinglePostCall(PredictionRequest body,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -258,7 +258,7 @@ public class PredictionApi
         Object localVarPostBody = body;
 
         // create path and map variables
-        String localVarPath = "/prediction/predict";
+        String localVarPath = "/prediction/single";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -302,7 +302,7 @@ public class PredictionApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call predictPredictionPredictPostValidateBeforeCall(
+    private com.squareup.okhttp.Call predictPredictionSinglePostValidateBeforeCall(
             PredictionRequest body, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
@@ -310,10 +310,10 @@ public class PredictionApi
         // verify the required parameter 'body' is set
         if (body == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling predictPredictionPredictPost(Async)");
+                    "Missing the required parameter 'body' when calling predictPredictionSinglePost(Async)");
         }
 
-        com.squareup.okhttp.Call call = predictPredictionPredictPostCall(body, progressListener,
+        com.squareup.okhttp.Call call = predictPredictionSinglePostCall(body, progressListener,
                 progressRequestListener);
         return call;
 
@@ -321,7 +321,7 @@ public class PredictionApi
 
     /**
      * Predict
-     *
+     * 
      * @param body
      *            (required)
      * @return PredictionResult
@@ -329,15 +329,15 @@ public class PredictionApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public PredictionResult predictPredictionPredictPost(PredictionRequest body) throws ApiException
+    public PredictionResult predictPredictionSinglePost(PredictionRequest body) throws ApiException
     {
-        ApiResponse<PredictionResult> resp = predictPredictionPredictPostWithHttpInfo(body);
+        ApiResponse<PredictionResult> resp = predictPredictionSinglePostWithHttpInfo(body);
         return resp.getData();
     }
 
     /**
      * Predict
-     *
+     * 
      * @param body
      *            (required)
      * @return ApiResponse&lt;PredictionResult&gt;
@@ -345,11 +345,11 @@ public class PredictionApi
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<PredictionResult> predictPredictionPredictPostWithHttpInfo(
+    public ApiResponse<PredictionResult> predictPredictionSinglePostWithHttpInfo(
             PredictionRequest body)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = predictPredictionPredictPostValidateBeforeCall(body, null,
+        com.squareup.okhttp.Call call = predictPredictionSinglePostValidateBeforeCall(body, null,
                 null);
         Type localVarReturnType = new TypeToken<PredictionResult>()
         {
@@ -359,7 +359,7 @@ public class PredictionApi
 
     /**
      * Predict (asynchronously)
-     *
+     * 
      * @param body
      *            (required)
      * @param callback
@@ -368,7 +368,7 @@ public class PredictionApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call predictPredictionPredictPostAsync(PredictionRequest body,
+    public com.squareup.okhttp.Call predictPredictionSinglePostAsync(PredictionRequest body,
             final ApiCallback<PredictionResult> callback)
         throws ApiException
     {
@@ -396,7 +396,7 @@ public class PredictionApi
             };
         }
 
-        com.squareup.okhttp.Call call = predictPredictionPredictPostValidateBeforeCall(body,
+        com.squareup.okhttp.Call call = predictPredictionSinglePostValidateBeforeCall(body,
                 progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PredictionResult>()
         {

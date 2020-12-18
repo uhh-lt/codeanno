@@ -18,6 +18,8 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
@@ -25,61 +27,66 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * DatasetInfoRequest
+ * CodebookDTO
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-11-27T12:05:41.274Z[GMT]")
-public class DatasetInfoRequest
-    implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
+public class CodebookDTO implements Serializable
 {
-    @SerializedName("cb")
-    private CodebookModel cb = null;
+    @SerializedName("name")
+    private String name = null;
 
-    @SerializedName("dataset_version_tag")
-    private String datasetVersionTag = null;
+    @SerializedName("tags")
+    private List<String> tags = new ArrayList<String>();
 
-    public DatasetInfoRequest cb(CodebookModel cb)
+    public CodebookDTO name(String name)
     {
-        this.cb = cb;
+        this.name = name;
         return this;
     }
 
     /**
-     * Get cb
-     *
-     * @return cb
+     * Get name
+     * 
+     * @return name
      **/
     @Schema(required = true, description = "")
-    public CodebookModel getCb()
+    public String getName()
     {
-        return cb;
+        return name;
     }
 
-    public void setCb(CodebookModel cb)
+    public void setName(String name)
     {
-        this.cb = cb;
+        this.name = name;
     }
 
-    public DatasetInfoRequest datasetVersionTag(String datasetVersionTag)
+    public CodebookDTO tags(List<String> tags)
     {
-        this.datasetVersionTag = datasetVersionTag;
+        this.tags = tags;
+        return this;
+    }
+
+    public CodebookDTO addTagsItem(String tagsItem)
+    {
+        this.tags.add(tagsItem);
         return this;
     }
 
     /**
-     * Get datasetVersionTag
-     *
-     * @return datasetVersionTag
+     * Get tags
+     * 
+     * @return tags
      **/
     @Schema(required = true, description = "")
-    public String getDatasetVersionTag()
+    public List<String> getTags()
     {
-        return datasetVersionTag;
+        return tags;
     }
 
-    public void setDatasetVersionTag(String datasetVersionTag)
+    public void setTags(List<String> tags)
     {
-        this.datasetVersionTag = datasetVersionTag;
+        this.tags = tags;
     }
 
     @Override
@@ -91,26 +98,25 @@ public class DatasetInfoRequest
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DatasetInfoRequest datasetInfoRequest = (DatasetInfoRequest) o;
-        return Objects.equals(this.cb, datasetInfoRequest.cb)
-                && Objects.equals(this.datasetVersionTag, datasetInfoRequest.datasetVersionTag);
+        CodebookDTO codebookDTO = (CodebookDTO) o;
+        return Objects.equals(this.name, codebookDTO.name)
+                && Objects.equals(this.tags, codebookDTO.tags);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(cb, datasetVersionTag);
+        return Objects.hash(name, tags);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class DatasetInfoRequest {\n");
+        sb.append("class CodebookDTO {\n");
 
-        sb.append("    cb: ").append(toIndentedString(cb)).append("\n");
-        sb.append("    datasetVersionTag: ").append(toIndentedString(datasetVersionTag))
-                .append("\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
+        sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
         sb.append("}");
         return sb.toString();
     }
