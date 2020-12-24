@@ -17,7 +17,14 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.uima.UIMAException;
+import org.apache.uima.cas.CAS;
+
 import com.squareup.okhttp.Call;
+
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
@@ -27,16 +34,11 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionRequest;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings.AutomationSettingsPanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
-import org.apache.uima.UIMAException;
-import org.apache.uima.cas.CAS;
 
-import java.io.IOException;
-import java.util.List;
-
-public interface CodebookAutomationService {
+public interface CodebookAutomationService
+{
 
     String SERVICE_NAME = "codebookAutomationService";
 
@@ -58,44 +60,48 @@ public interface CodebookAutomationService {
     void removeFromPredictionInProgress(MultiDocumentPredictionResult result);
 
     boolean isAutomationAvailable(Codebook cb, String modelVersion, boolean updateCache)
-            throws ApiException;
+        throws ApiException;
 
     boolean isAutomationAvailable(Codebook cb, boolean updateCache) throws ApiException;
 
     Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName)
-            throws ApiException;
+        throws ApiException;
 
     Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName,
-                         String modelVersion, Object caller)
-            throws ApiException;
+            String modelVersion, Object caller)
+        throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException;
 
-    Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion) throws ApiException;
+    Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion)
+        throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion,
-                          Object caller) throws ApiException;
-
+            Object caller)
+        throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName)
-            throws ApiException;
-
-    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName, String modelVersion)
-            throws ApiException;
+        throws ApiException;
 
     Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName,
-                          String modelVersion, Object caller)
-            throws ApiException;
+            String modelVersion)
+        throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName,
+            String modelVersion, Object caller)
+        throws ApiException;
 
     ModelMetadata getModelMetadata(Codebook cb) throws ApiException;
 
     ModelMetadata getModelMetadata(Codebook cb, String modelVersion) throws ApiException;
 
+    List<ModelMetadata> getAvailableModels(Codebook cb) throws ApiException;
+
     void writePredictedTagToCorrectionCas(PredictionResult result, String userName)
-            throws IOException, UIMAException, AnnotationException;
+        throws IOException, UIMAException, AnnotationException;
 
     void writePredictedTagsToCorrectionCas(MultiDocumentPredictionResult result, String userName);
 
     CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
-            throws IOException, UIMAException;
+        throws IOException, UIMAException;
 }

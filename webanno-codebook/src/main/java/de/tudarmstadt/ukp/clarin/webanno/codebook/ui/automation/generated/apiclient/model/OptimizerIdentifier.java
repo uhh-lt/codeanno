@@ -30,7 +30,9 @@ import com.google.gson.stream.JsonWriter;
  * for details!
  */
 @JsonAdapter(OptimizerIdentifier.Adapter.class)
-public enum OptimizerIdentifier implements Serializable
+public enum OptimizerIdentifier
+    implements
+    Serializable
 {
     ADAM("Adam"), SGD("SGD"), ADAGRAD("Adagrad"), RMSPROP("RMSProp"), FTRL("Ftrl");
 

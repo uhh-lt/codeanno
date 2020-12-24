@@ -36,7 +36,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ProgressRequestBody;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ProgressResponseBody;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.BooleanResponse;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DatasetRequest;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DatasetMetadata;
 
 public class DatasetApi
 {
@@ -63,9 +63,11 @@ public class DatasetApi
     }
 
     /**
-     * Build call for isAvailableDatasetAvailablePost
+     * Build call for getMetadataDatasetMetadataGet
      * 
-     * @param body
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
      *            (required)
      * @param progressListener
      *            Progress listener
@@ -75,18 +77,23 @@ public class DatasetApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call isAvailableDatasetAvailablePostCall(DatasetRequest body,
-            final ProgressResponseBody.ProgressListener progressListener,
+    public com.squareup.okhttp.Call getMetadataDatasetMetadataGetCall(String cbName,
+            String datasetVersion, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
-        Object localVarPostBody = body;
+        Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/dataset/available/";
+        String localVarPath = "/dataset/metadata/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        if (cbName != null)
+            localVarQueryParams.addAll(apiClient.parameterToPair("cb_name", cbName));
+        if (datasetVersion != null)
+            localVarQueryParams
+                    .addAll(apiClient.parameterToPair("dataset_version", datasetVersion));
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -97,7 +104,9 @@ public class DatasetApi
         if (localVarAccept != null)
             localVarHeaderParams.put("Accept", localVarAccept);
 
-        final String[] localVarContentTypes = { "application/json" };
+        final String[] localVarContentTypes = {
+
+        };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
@@ -121,71 +130,84 @@ public class DatasetApi
         }
 
         String[] localVarAuthNames = new String[] {};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams,
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams,
                 localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
                 localVarFormParams, localVarAuthNames, progressRequestListener);
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call isAvailableDatasetAvailablePostValidateBeforeCall(
-            DatasetRequest body, final ProgressResponseBody.ProgressListener progressListener,
+    private com.squareup.okhttp.Call getMetadataDatasetMetadataGetValidateBeforeCall(String cbName,
+            String datasetVersion, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
-        // verify the required parameter 'body' is set
-        if (body == null) {
+        // verify the required parameter 'cbName' is set
+        if (cbName == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling isAvailableDatasetAvailablePost(Async)");
+                    "Missing the required parameter 'cbName' when calling getMetadataDatasetMetadataGet(Async)");
+        }
+        // verify the required parameter 'datasetVersion' is set
+        if (datasetVersion == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'datasetVersion' when calling getMetadataDatasetMetadataGet(Async)");
         }
 
-        com.squareup.okhttp.Call call = isAvailableDatasetAvailablePostCall(body, progressListener,
-                progressRequestListener);
+        com.squareup.okhttp.Call call = getMetadataDatasetMetadataGetCall(cbName, datasetVersion,
+                progressListener, progressRequestListener);
         return call;
 
     }
 
     /**
-     * Is Available
+     * Get Metadata
      * 
-     * @param body
+     * @param cbName
      *            (required)
-     * @return BooleanResponse
+     * @param datasetVersion
+     *            (required)
+     * @return DatasetMetadata
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public BooleanResponse isAvailableDatasetAvailablePost(DatasetRequest body) throws ApiException
+    public DatasetMetadata getMetadataDatasetMetadataGet(String cbName, String datasetVersion)
+        throws ApiException
     {
-        ApiResponse<BooleanResponse> resp = isAvailableDatasetAvailablePostWithHttpInfo(body);
+        ApiResponse<DatasetMetadata> resp = getMetadataDatasetMetadataGetWithHttpInfo(cbName,
+                datasetVersion);
         return resp.getData();
     }
 
     /**
-     * Is Available
+     * Get Metadata
      * 
-     * @param body
+     * @param cbName
      *            (required)
-     * @return ApiResponse&lt;BooleanResponse&gt;
+     * @param datasetVersion
+     *            (required)
+     * @return ApiResponse&lt;DatasetMetadata&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<BooleanResponse> isAvailableDatasetAvailablePostWithHttpInfo(
-            DatasetRequest body)
+    public ApiResponse<DatasetMetadata> getMetadataDatasetMetadataGetWithHttpInfo(String cbName,
+            String datasetVersion)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = isAvailableDatasetAvailablePostValidateBeforeCall(body,
-                null, null);
-        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        com.squareup.okhttp.Call call = getMetadataDatasetMetadataGetValidateBeforeCall(cbName,
+                datasetVersion, null, null);
+        Type localVarReturnType = new TypeToken<DatasetMetadata>()
         {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
-     * Is Available (asynchronously)
+     * Get Metadata (asynchronously)
      * 
-     * @param body
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
      *            (required)
      * @param callback
      *            The callback to be executed when the API call finishes
@@ -193,8 +215,8 @@ public class DatasetApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call isAvailableDatasetAvailablePostAsync(DatasetRequest body,
-            final ApiCallback<BooleanResponse> callback)
+    public com.squareup.okhttp.Call getMetadataDatasetMetadataGetAsync(String cbName,
+            String datasetVersion, final ApiCallback<DatasetMetadata> callback)
         throws ApiException
     {
 
@@ -221,9 +243,9 @@ public class DatasetApi
             };
         }
 
-        com.squareup.okhttp.Call call = isAvailableDatasetAvailablePostValidateBeforeCall(body,
-                progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        com.squareup.okhttp.Call call = getMetadataDatasetMetadataGetValidateBeforeCall(cbName,
+                datasetVersion, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<DatasetMetadata>()
         {
         }.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
@@ -231,9 +253,11 @@ public class DatasetApi
     }
 
     /**
-     * Build call for removeDatasetRemoveDelete
+     * Build call for isAvailableDatasetAvailableGet
      * 
-     * @param body
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
      *            (required)
      * @param progressListener
      *            Progress listener
@@ -243,18 +267,23 @@ public class DatasetApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call removeDatasetRemoveDeleteCall(DatasetRequest body,
-            final ProgressResponseBody.ProgressListener progressListener,
+    public com.squareup.okhttp.Call isAvailableDatasetAvailableGetCall(String cbName,
+            String datasetVersion, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
-        Object localVarPostBody = body;
+        Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/dataset/remove/";
+        String localVarPath = "/dataset/available/";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        if (cbName != null)
+            localVarQueryParams.addAll(apiClient.parameterToPair("cb_name", cbName));
+        if (datasetVersion != null)
+            localVarQueryParams
+                    .addAll(apiClient.parameterToPair("dataset_version", datasetVersion));
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -265,7 +294,370 @@ public class DatasetApi
         if (localVarAccept != null)
             localVarHeaderParams.put("Accept", localVarAccept);
 
-        final String[] localVarContentTypes = { "application/json" };
+        final String[] localVarContentTypes = {
+
+        };
+        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        if (progressListener != null) {
+            apiClient.getHttpClient().networkInterceptors()
+                    .add(new com.squareup.okhttp.Interceptor()
+                    {
+                        @Override
+                        public com.squareup.okhttp.Response intercept(
+                                com.squareup.okhttp.Interceptor.Chain chain)
+                            throws IOException
+                        {
+                            com.squareup.okhttp.Response originalResponse = chain
+                                    .proceed(chain.request());
+                            return originalResponse.newBuilder()
+                                    .body(new ProgressResponseBody(originalResponse.body(),
+                                            progressListener))
+                                    .build();
+                        }
+                    });
+        }
+
+        String[] localVarAuthNames = new String[] {};
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams,
+                localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
+                localVarFormParams, localVarAuthNames, progressRequestListener);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private com.squareup.okhttp.Call isAvailableDatasetAvailableGetValidateBeforeCall(String cbName,
+            String datasetVersion, final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        // verify the required parameter 'cbName' is set
+        if (cbName == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'cbName' when calling isAvailableDatasetAvailableGet(Async)");
+        }
+        // verify the required parameter 'datasetVersion' is set
+        if (datasetVersion == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'datasetVersion' when calling isAvailableDatasetAvailableGet(Async)");
+        }
+
+        com.squareup.okhttp.Call call = isAvailableDatasetAvailableGetCall(cbName, datasetVersion,
+                progressListener, progressRequestListener);
+        return call;
+
+    }
+
+    /**
+     * Is Available
+     * 
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @return BooleanResponse
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public BooleanResponse isAvailableDatasetAvailableGet(String cbName, String datasetVersion)
+        throws ApiException
+    {
+        ApiResponse<BooleanResponse> resp = isAvailableDatasetAvailableGetWithHttpInfo(cbName,
+                datasetVersion);
+        return resp.getData();
+    }
+
+    /**
+     * Is Available
+     * 
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @return ApiResponse&lt;BooleanResponse&gt;
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public ApiResponse<BooleanResponse> isAvailableDatasetAvailableGetWithHttpInfo(String cbName,
+            String datasetVersion)
+        throws ApiException
+    {
+        com.squareup.okhttp.Call call = isAvailableDatasetAvailableGetValidateBeforeCall(cbName,
+                datasetVersion, null, null);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        {
+        }.getType();
+        return apiClient.execute(call, localVarReturnType);
+    }
+
+    /**
+     * Is Available (asynchronously)
+     * 
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @param callback
+     *            The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException
+     *             If fail to process the API call, e.g. serializing the request body object
+     */
+    public com.squareup.okhttp.Call isAvailableDatasetAvailableGetAsync(String cbName,
+            String datasetVersion, final ApiCallback<BooleanResponse> callback)
+        throws ApiException
+    {
+
+        ProgressResponseBody.ProgressListener progressListener = null;
+        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+
+        if (callback != null) {
+            progressListener = new ProgressResponseBody.ProgressListener()
+            {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done)
+                {
+                    callback.onDownloadProgress(bytesRead, contentLength, done);
+                }
+            };
+
+            progressRequestListener = new ProgressRequestBody.ProgressRequestListener()
+            {
+                @Override
+                public void onRequestProgress(long bytesWritten, long contentLength, boolean done)
+                {
+                    callback.onUploadProgress(bytesWritten, contentLength, done);
+                }
+            };
+        }
+
+        com.squareup.okhttp.Call call = isAvailableDatasetAvailableGetValidateBeforeCall(cbName,
+                datasetVersion, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        {
+        }.getType();
+        apiClient.executeAsync(call, localVarReturnType, callback);
+        return call;
+    }
+
+    /**
+     * Build call for listDatasetsDatasetListGet
+     * 
+     * @param cbName
+     *            (required)
+     * @param progressListener
+     *            Progress listener
+     * @param progressRequestListener
+     *            Progress request listener
+     * @return Call to execute
+     * @throws ApiException
+     *             If fail to serialize the request body object
+     */
+    public com.squareup.okhttp.Call listDatasetsDatasetListGetCall(String cbName,
+            final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        Object localVarPostBody = null;
+
+        // create path and map variables
+        String localVarPath = "/dataset/list/";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        if (cbName != null)
+            localVarQueryParams.addAll(apiClient.parameterToPair("cb_name", cbName));
+
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        final String[] localVarAccepts = { "application/json" };
+        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null)
+            localVarHeaderParams.put("Accept", localVarAccept);
+
+        final String[] localVarContentTypes = {
+
+        };
+        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        if (progressListener != null) {
+            apiClient.getHttpClient().networkInterceptors()
+                    .add(new com.squareup.okhttp.Interceptor()
+                    {
+                        @Override
+                        public com.squareup.okhttp.Response intercept(
+                                com.squareup.okhttp.Interceptor.Chain chain)
+                            throws IOException
+                        {
+                            com.squareup.okhttp.Response originalResponse = chain
+                                    .proceed(chain.request());
+                            return originalResponse.newBuilder()
+                                    .body(new ProgressResponseBody(originalResponse.body(),
+                                            progressListener))
+                                    .build();
+                        }
+                    });
+        }
+
+        String[] localVarAuthNames = new String[] {};
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams,
+                localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams,
+                localVarFormParams, localVarAuthNames, progressRequestListener);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private com.squareup.okhttp.Call listDatasetsDatasetListGetValidateBeforeCall(String cbName,
+            final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        // verify the required parameter 'cbName' is set
+        if (cbName == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'cbName' when calling listDatasetsDatasetListGet(Async)");
+        }
+
+        com.squareup.okhttp.Call call = listDatasetsDatasetListGetCall(cbName, progressListener,
+                progressRequestListener);
+        return call;
+
+    }
+
+    /**
+     * List Datasets
+     * 
+     * @param cbName
+     *            (required)
+     * @return List&lt;DatasetMetadata&gt;
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public List<DatasetMetadata> listDatasetsDatasetListGet(String cbName) throws ApiException
+    {
+        ApiResponse<List<DatasetMetadata>> resp = listDatasetsDatasetListGetWithHttpInfo(cbName);
+        return resp.getData();
+    }
+
+    /**
+     * List Datasets
+     * 
+     * @param cbName
+     *            (required)
+     * @return ApiResponse&lt;List&lt;DatasetMetadata&gt;&gt;
+     * @throws ApiException
+     *             If fail to call the API, e.g. server error or cannot deserialize the response
+     *             body
+     */
+    public ApiResponse<List<DatasetMetadata>> listDatasetsDatasetListGetWithHttpInfo(String cbName)
+        throws ApiException
+    {
+        com.squareup.okhttp.Call call = listDatasetsDatasetListGetValidateBeforeCall(cbName, null,
+                null);
+        Type localVarReturnType = new TypeToken<List<DatasetMetadata>>()
+        {
+        }.getType();
+        return apiClient.execute(call, localVarReturnType);
+    }
+
+    /**
+     * List Datasets (asynchronously)
+     * 
+     * @param cbName
+     *            (required)
+     * @param callback
+     *            The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException
+     *             If fail to process the API call, e.g. serializing the request body object
+     */
+    public com.squareup.okhttp.Call listDatasetsDatasetListGetAsync(String cbName,
+            final ApiCallback<List<DatasetMetadata>> callback)
+        throws ApiException
+    {
+
+        ProgressResponseBody.ProgressListener progressListener = null;
+        ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+
+        if (callback != null) {
+            progressListener = new ProgressResponseBody.ProgressListener()
+            {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done)
+                {
+                    callback.onDownloadProgress(bytesRead, contentLength, done);
+                }
+            };
+
+            progressRequestListener = new ProgressRequestBody.ProgressRequestListener()
+            {
+                @Override
+                public void onRequestProgress(long bytesWritten, long contentLength, boolean done)
+                {
+                    callback.onUploadProgress(bytesWritten, contentLength, done);
+                }
+            };
+        }
+
+        com.squareup.okhttp.Call call = listDatasetsDatasetListGetValidateBeforeCall(cbName,
+                progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<List<DatasetMetadata>>()
+        {
+        }.getType();
+        apiClient.executeAsync(call, localVarReturnType, callback);
+        return call;
+    }
+
+    /**
+     * Build call for removeDatasetRemoveDelete
+     * 
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
+     *            (required)
+     * @param progressListener
+     *            Progress listener
+     * @param progressRequestListener
+     *            Progress request listener
+     * @return Call to execute
+     * @throws ApiException
+     *             If fail to serialize the request body object
+     */
+    public com.squareup.okhttp.Call removeDatasetRemoveDeleteCall(String cbName,
+            String datasetVersion, final ProgressResponseBody.ProgressListener progressListener,
+            final ProgressRequestBody.ProgressRequestListener progressRequestListener)
+        throws ApiException
+    {
+        Object localVarPostBody = null;
+
+        // create path and map variables
+        String localVarPath = "/dataset/remove/";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        if (cbName != null)
+            localVarQueryParams.addAll(apiClient.parameterToPair("cb_name", cbName));
+        if (datasetVersion != null)
+            localVarQueryParams
+                    .addAll(apiClient.parameterToPair("dataset_version", datasetVersion));
+
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        final String[] localVarAccepts = { "application/json" };
+        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null)
+            localVarHeaderParams.put("Accept", localVarAccept);
+
+        final String[] localVarContentTypes = {
+
+        };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
@@ -295,19 +687,24 @@ public class DatasetApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call removeDatasetRemoveDeleteValidateBeforeCall(
-            DatasetRequest body, final ProgressResponseBody.ProgressListener progressListener,
+    private com.squareup.okhttp.Call removeDatasetRemoveDeleteValidateBeforeCall(String cbName,
+            String datasetVersion, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
-        // verify the required parameter 'body' is set
-        if (body == null) {
+        // verify the required parameter 'cbName' is set
+        if (cbName == null) {
             throw new ApiException(
-                    "Missing the required parameter 'body' when calling removeDatasetRemoveDelete(Async)");
+                    "Missing the required parameter 'cbName' when calling removeDatasetRemoveDelete(Async)");
+        }
+        // verify the required parameter 'datasetVersion' is set
+        if (datasetVersion == null) {
+            throw new ApiException(
+                    "Missing the required parameter 'datasetVersion' when calling removeDatasetRemoveDelete(Async)");
         }
 
-        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteCall(body, progressListener,
-                progressRequestListener);
+        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteCall(cbName, datasetVersion,
+                progressListener, progressRequestListener);
         return call;
 
     }
@@ -315,34 +712,41 @@ public class DatasetApi
     /**
      * Remove
      * 
-     * @param body
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
      *            (required)
      * @return BooleanResponse
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public BooleanResponse removeDatasetRemoveDelete(DatasetRequest body) throws ApiException
+    public BooleanResponse removeDatasetRemoveDelete(String cbName, String datasetVersion)
+        throws ApiException
     {
-        ApiResponse<BooleanResponse> resp = removeDatasetRemoveDeleteWithHttpInfo(body);
+        ApiResponse<BooleanResponse> resp = removeDatasetRemoveDeleteWithHttpInfo(cbName,
+                datasetVersion);
         return resp.getData();
     }
 
     /**
      * Remove
      * 
-     * @param body
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
      *            (required)
      * @return ApiResponse&lt;BooleanResponse&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<BooleanResponse> removeDatasetRemoveDeleteWithHttpInfo(DatasetRequest body)
+    public ApiResponse<BooleanResponse> removeDatasetRemoveDeleteWithHttpInfo(String cbName,
+            String datasetVersion)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteValidateBeforeCall(body, null,
-                null);
+        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteValidateBeforeCall(cbName,
+                datasetVersion, null, null);
         Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
         }.getType();
@@ -352,7 +756,9 @@ public class DatasetApi
     /**
      * Remove (asynchronously)
      * 
-     * @param body
+     * @param cbName
+     *            (required)
+     * @param datasetVersion
      *            (required)
      * @param callback
      *            The callback to be executed when the API call finishes
@@ -360,8 +766,8 @@ public class DatasetApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call removeDatasetRemoveDeleteAsync(DatasetRequest body,
-            final ApiCallback<BooleanResponse> callback)
+    public com.squareup.okhttp.Call removeDatasetRemoveDeleteAsync(String cbName,
+            String datasetVersion, final ApiCallback<BooleanResponse> callback)
         throws ApiException
     {
 
@@ -388,8 +794,8 @@ public class DatasetApi
             };
         }
 
-        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteValidateBeforeCall(body,
-                progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = removeDatasetRemoveDeleteValidateBeforeCall(cbName,
+                datasetVersion, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<BooleanResponse>()
         {
         }.getType();
@@ -400,9 +806,7 @@ public class DatasetApi
     /**
      * Build call for uploadDatasetUploadPut
      * 
-     * @param codebookName
-     *            (required)
-     * @param codebookTagList
+     * @param cbName
      *            (required)
      * @param datasetVersion
      *            (required)
@@ -416,9 +820,8 @@ public class DatasetApi
      * @throws ApiException
      *             If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call uploadDatasetUploadPutCall(String codebookName,
-            String codebookTagList, String datasetVersion, File datasetArchive,
-            final ProgressResponseBody.ProgressListener progressListener,
+    public com.squareup.okhttp.Call uploadDatasetUploadPutCall(String cbName, String datasetVersion,
+            File datasetArchive, final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
@@ -433,10 +836,8 @@ public class DatasetApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-        if (codebookName != null)
-            localVarFormParams.put("codebook_name", codebookName);
-        if (codebookTagList != null)
-            localVarFormParams.put("codebook_tag_list", codebookTagList);
+        if (cbName != null)
+            localVarFormParams.put("cb_name", cbName);
         if (datasetVersion != null)
             localVarFormParams.put("dataset_version", datasetVersion);
         if (datasetArchive != null)
@@ -477,21 +878,16 @@ public class DatasetApi
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call uploadDatasetUploadPutValidateBeforeCall(String codebookName,
-            String codebookTagList, String datasetVersion, File datasetArchive,
+    private com.squareup.okhttp.Call uploadDatasetUploadPutValidateBeforeCall(String cbName,
+            String datasetVersion, File datasetArchive,
             final ProgressResponseBody.ProgressListener progressListener,
             final ProgressRequestBody.ProgressRequestListener progressRequestListener)
         throws ApiException
     {
-        // verify the required parameter 'codebookName' is set
-        if (codebookName == null) {
+        // verify the required parameter 'cbName' is set
+        if (cbName == null) {
             throw new ApiException(
-                    "Missing the required parameter 'codebookName' when calling uploadDatasetUploadPut(Async)");
-        }
-        // verify the required parameter 'codebookTagList' is set
-        if (codebookTagList == null) {
-            throw new ApiException(
-                    "Missing the required parameter 'codebookTagList' when calling uploadDatasetUploadPut(Async)");
+                    "Missing the required parameter 'cbName' when calling uploadDatasetUploadPut(Async)");
         }
         // verify the required parameter 'datasetVersion' is set
         if (datasetVersion == null) {
@@ -504,8 +900,8 @@ public class DatasetApi
                     "Missing the required parameter 'datasetArchive' when calling uploadDatasetUploadPut(Async)");
         }
 
-        com.squareup.okhttp.Call call = uploadDatasetUploadPutCall(codebookName, codebookTagList,
-                datasetVersion, datasetArchive, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = uploadDatasetUploadPutCall(cbName, datasetVersion,
+                datasetArchive, progressListener, progressRequestListener);
         return call;
 
     }
@@ -513,51 +909,47 @@ public class DatasetApi
     /**
      * Upload
      * 
-     * @param codebookName
-     *            (required)
-     * @param codebookTagList
+     * @param cbName
      *            (required)
      * @param datasetVersion
      *            (required)
      * @param datasetArchive
      *            (required)
-     * @return BooleanResponse
+     * @return DatasetMetadata
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public BooleanResponse uploadDatasetUploadPut(String codebookName, String codebookTagList,
-            String datasetVersion, File datasetArchive)
+    public DatasetMetadata uploadDatasetUploadPut(String cbName, String datasetVersion,
+            File datasetArchive)
         throws ApiException
     {
-        ApiResponse<BooleanResponse> resp = uploadDatasetUploadPutWithHttpInfo(codebookName,
-                codebookTagList, datasetVersion, datasetArchive);
+        ApiResponse<DatasetMetadata> resp = uploadDatasetUploadPutWithHttpInfo(cbName,
+                datasetVersion, datasetArchive);
         return resp.getData();
     }
 
     /**
      * Upload
      * 
-     * @param codebookName
-     *            (required)
-     * @param codebookTagList
+     * @param cbName
      *            (required)
      * @param datasetVersion
      *            (required)
      * @param datasetArchive
      *            (required)
-     * @return ApiResponse&lt;BooleanResponse&gt;
+     * @return ApiResponse&lt;DatasetMetadata&gt;
      * @throws ApiException
      *             If fail to call the API, e.g. server error or cannot deserialize the response
      *             body
      */
-    public ApiResponse<BooleanResponse> uploadDatasetUploadPutWithHttpInfo(String codebookName,
-            String codebookTagList, String datasetVersion, File datasetArchive)
+    public ApiResponse<DatasetMetadata> uploadDatasetUploadPutWithHttpInfo(String cbName,
+            String datasetVersion, File datasetArchive)
         throws ApiException
     {
-        com.squareup.okhttp.Call call = uploadDatasetUploadPutValidateBeforeCall(codebookName,
-                codebookTagList, datasetVersion, datasetArchive, null, null);
-        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        com.squareup.okhttp.Call call = uploadDatasetUploadPutValidateBeforeCall(cbName,
+                datasetVersion, datasetArchive, null, null);
+        Type localVarReturnType = new TypeToken<DatasetMetadata>()
         {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
@@ -566,9 +958,7 @@ public class DatasetApi
     /**
      * Upload (asynchronously)
      * 
-     * @param codebookName
-     *            (required)
-     * @param codebookTagList
+     * @param cbName
      *            (required)
      * @param datasetVersion
      *            (required)
@@ -580,9 +970,8 @@ public class DatasetApi
      * @throws ApiException
      *             If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call uploadDatasetUploadPutAsync(String codebookName,
-            String codebookTagList, String datasetVersion, File datasetArchive,
-            final ApiCallback<BooleanResponse> callback)
+    public com.squareup.okhttp.Call uploadDatasetUploadPutAsync(String cbName,
+            String datasetVersion, File datasetArchive, final ApiCallback<DatasetMetadata> callback)
         throws ApiException
     {
 
@@ -609,10 +998,9 @@ public class DatasetApi
             };
         }
 
-        com.squareup.okhttp.Call call = uploadDatasetUploadPutValidateBeforeCall(codebookName,
-                codebookTagList, datasetVersion, datasetArchive, progressListener,
-                progressRequestListener);
-        Type localVarReturnType = new TypeToken<BooleanResponse>()
+        com.squareup.okhttp.Call call = uploadDatasetUploadPutValidateBeforeCall(cbName,
+                datasetVersion, datasetArchive, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<DatasetMetadata>()
         {
         }.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);

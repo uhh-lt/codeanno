@@ -29,14 +29,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * BodyUploadDatasetUploadPut
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class BodyUploadDatasetUploadPut implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class BodyUploadDatasetUploadPut
+    implements Serializable
 {
-    @SerializedName("codebook_name")
-    private String codebookName = null;
-
-    @SerializedName("codebook_tag_list")
-    private String codebookTagList = null;
+    @SerializedName("cb_name")
+    private String cbName = null;
 
     @SerializedName("dataset_version")
     private String datasetVersion = null;
@@ -44,48 +42,26 @@ public class BodyUploadDatasetUploadPut implements Serializable
     @SerializedName("dataset_archive")
     private File datasetArchive = null;
 
-    public BodyUploadDatasetUploadPut codebookName(String codebookName)
+    public BodyUploadDatasetUploadPut cbName(String cbName)
     {
-        this.codebookName = codebookName;
+        this.cbName = cbName;
         return this;
     }
 
     /**
      * The name of the Codebook. Case-sensitive!
      * 
-     * @return codebookName
+     * @return cbName
      **/
     @Schema(required = true, description = "The name of the Codebook. Case-sensitive!")
-    public String getCodebookName()
+    public String getCbName()
     {
-        return codebookName;
+        return cbName;
     }
 
-    public void setCodebookName(String codebookName)
+    public void setCbName(String cbName)
     {
-        this.codebookName = codebookName;
-    }
-
-    public BodyUploadDatasetUploadPut codebookTagList(String codebookTagList)
-    {
-        this.codebookTagList = codebookTagList;
-        return this;
-    }
-
-    /**
-     * Comma-separated list of tags. E.g. tag1,Tag2 ...
-     * 
-     * @return codebookTagList
-     **/
-    @Schema(required = true, description = "Comma-separated list of tags. E.g. tag1,Tag2 ...")
-    public String getCodebookTagList()
-    {
-        return codebookTagList;
-    }
-
-    public void setCodebookTagList(String codebookTagList)
-    {
-        this.codebookTagList = codebookTagList;
+        this.cbName = cbName;
     }
 
     public BodyUploadDatasetUploadPut datasetVersion(String datasetVersion)
@@ -143,8 +119,7 @@ public class BodyUploadDatasetUploadPut implements Serializable
             return false;
         }
         BodyUploadDatasetUploadPut bodyUploadDatasetUploadPut = (BodyUploadDatasetUploadPut) o;
-        return Objects.equals(this.codebookName, bodyUploadDatasetUploadPut.codebookName)
-                && Objects.equals(this.codebookTagList, bodyUploadDatasetUploadPut.codebookTagList)
+        return Objects.equals(this.cbName, bodyUploadDatasetUploadPut.cbName)
                 && Objects.equals(this.datasetVersion, bodyUploadDatasetUploadPut.datasetVersion)
                 && Objects.equals(this.datasetArchive, bodyUploadDatasetUploadPut.datasetArchive);
     }
@@ -152,8 +127,7 @@ public class BodyUploadDatasetUploadPut implements Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hash(codebookName, codebookTagList, datasetVersion,
-                Objects.hashCode(datasetArchive));
+        return Objects.hash(cbName, datasetVersion, Objects.hashCode(datasetArchive));
     }
 
     @Override
@@ -162,8 +136,7 @@ public class BodyUploadDatasetUploadPut implements Serializable
         StringBuilder sb = new StringBuilder();
         sb.append("class BodyUploadDatasetUploadPut {\n");
 
-        sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
-        sb.append("    codebookTagList: ").append(toIndentedString(codebookTagList)).append("\n");
+        sb.append("    cbName: ").append(toIndentedString(cbName)).append("\n");
         sb.append("    datasetVersion: ").append(toIndentedString(datasetVersion)).append("\n");
         sb.append("    datasetArchive: ").append(toIndentedString(datasetArchive)).append("\n");
         sb.append("}");

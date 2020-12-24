@@ -17,17 +17,12 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.settings;
 
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.select.BootstrapSelect;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
-import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
-import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
-import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -45,13 +40,21 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.select.BootstrapSelect;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
+import de.tudarmstadt.ukp.clarin.webanno.model.Project;
+import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
+import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
+import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior;
 
-public class AutomationSettingsPanel extends Panel {
+public class AutomationSettingsPanel
+    extends Panel
+{
     private static final long serialVersionUID = -685340838123105638L;
 
     public static final String MID = "automationSettingsPanel";
@@ -72,7 +75,8 @@ public class AutomationSettingsPanel extends Panel {
     private @SpringBean CodebookSchemaService codebookSchemaService;
     private @SpringBean CodebookAutomationService codebookAutomationService;
 
-    public AutomationSettingsPanel(Project aProject) {
+    public AutomationSettingsPanel(Project aProject)
+    {
         super(MID, Model.of(new AutomationSettingsPanelModel(aProject)));
 
         // model version selection
@@ -90,70 +94,99 @@ public class AutomationSettingsPanel extends Panel {
         // start predictions button
         createOrUpdateStartPredictionsButton();
 
-        this.setVisible(this.getModelObject().getCodebook() != null);
+        this.setVisible(getModelObject().getCodebook() != null);
         this.setOutputMarkupPlaceholderTag(true);
     }
 
-    private void createOrUpdateModelVersionSelection() {
+    private void createOrUpdateModelVersionSelection()
+    {
 
         this.modelVersionSelectionPanel = new WebMarkupContainer("modelVersionSelectionPanel");
-        TextField<String> modelVersionSelection = new TextField<>("modelVersionSelection",
-            Model.of(this.getModelObject().getModelVersion()));
-        modelVersionSelection.add(new FormComponentUpdatingBehavior() {
 
+        // get the available models for the Codebook
+        List<String> modelVersionChoices = null;
+        try {
+            List<ModelMetadata> availableModels =
+                    this.getAvailableModels(getModelObject().getCodebook() != null);
+            modelVersionChoices = availableModels.stream().map(ModelMetadata::getVersion)
+                    .collect(Collectors.toList());
+        }
+        catch (ApiException e) {
+            e.printStackTrace();
+        }
+
+        // provide the choices in the selection
+        DropDownChoice<String> modelVersionSelection = new BootstrapSelect<>(
+                "modelVersionSelection", Model.of(getModelObject().getModelVersion()),
+                modelVersionChoices);
+        modelVersionSelection.add(new FormComponentUpdatingBehavior()
+        {
+
+            private static final long serialVersionUID = -7017410239431970221L;
+
+            @Override
+            protected void onUpdate()
+            {
+                super.onUpdate();
+                // set model version
+                getModelObject()
+                        .setModelVersion(this.getFormComponent().getDefaultModelObjectAsString());
+            }
+        });
+
+        modelVersionSelection.add(new FormComponentUpdatingBehavior()
+        {
             private static final long serialVersionUID = 1943677201058272469L;
 
             @Override
-            protected void onUpdate() {
+            protected void onUpdate()
+            {
                 super.onUpdate();
-                AutomationSettingsPanel.this.setModelVersion(modelVersionSelection.getModelObject());
+                AutomationSettingsPanel.this
+                        .setModelVersion(modelVersionSelection.getModelObject());
             }
         });
+
         this.modelVersionSelectionPanel.add(modelVersionSelection);
         this.addOrReplace(modelVersionSelectionPanel);
-
-
-        // TODO for this feature the respective list endpoints have to be implemented on API side
-//        DropDownChoice<String> ddChoice = new BootstrapSelect<>("modelVersionSelection",
-//                                                                Model.of(), modelVersionChoices);
-//        ddChoice.add(new FormComponentUpdatingBehavior()
-//        {
-//
-//            private static final long serialVersionUID = -7017410239431970221L;
-//
-//            @Override
-//            protected void onUpdate()
-//            {
-//                super.onUpdate();
-//                // set model version
-//            }
-//        });
     }
 
-    private void createOrUpdateStartPredictionsButton() {
+    private List<ModelMetadata> getAvailableModels(boolean updateCache) throws ApiException
+    {
+        if (updateCache && getModelObject().getAvailableModels().isEmpty()) {
+            List<ModelMetadata> availableModels = this.codebookAutomationService
+                    .getAvailableModels(getModelObject().getCodebook());
+            // safe for later use
+            this.getModelObject().setAvailableModels(availableModels);
+        }
+        return new ArrayList<>(this.getModelObject().getAvailableModels().values());
+    }
+
+    private void createOrUpdateStartPredictionsButton()
+    {
         startPredictionsButton = new LambdaAjaxLink("startPredictionsButton",
-                                                    this::actionStartPredictions);
+                this::actionStartPredictions);
 
         startPredictionsButton.setOutputMarkupId(true);
 
-
         // update the button (enabled flag handled by the lambda behaviour)
-        boolean predictionInProgress =codebookAutomationService
+        boolean predictionInProgress = codebookAutomationService
                 .isPredictionInProgress(this.getModelObject().getCodebook(), this);
-        String resKey = predictionInProgress ? "startPredictionsButtonLabel.started" :
-                        "startPredictionsButtonLabel.start";
+        String resKey = predictionInProgress ? "startPredictionsButtonLabel.started"
+                : "startPredictionsButtonLabel.start";
         Label label = new Label("startPredictionsButtonLabel", new StringResourceModel(resKey));
         startPredictionsButton.addOrReplace(label);
 
-        startPredictionsButton.add(LambdaBehavior.enabledWhen(
-                () -> this.isAutomationAvailable(false) && !codebookAutomationService
+        startPredictionsButton.add(LambdaBehavior
+                .enabledWhen(() -> this.isAutomationAvailable(false) && !codebookAutomationService
                         .isPredictionInProgress(this.getModelObject().getCodebook(), this)));
         startPredictionsButton.add(LambdaBehavior.visibleWhen(this::isAutomationAvailable));
 
         tagLabelMappingPanel.addOrReplace(startPredictionsButton);
     }
 
-    protected void actionStartPredictions(AjaxRequestTarget aTarget) {
+    protected void actionStartPredictions(AjaxRequestTarget aTarget)
+    {
         Codebook cb = this.getModelObject().getCodebook();
         Project project = this.getModelObject().getProject();
         String userName = userService.getCurrentUsername();
@@ -162,15 +195,29 @@ public class AutomationSettingsPanel extends Panel {
         // start async prediction for all docs in the project
         try {
             codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion, this);
-        } catch (ApiException exception) {
+        }
+        catch (ApiException exception) {
             exception.printStackTrace();
         }
     }
 
-    private void createOrUpdateModelMetadataPanel() {
+    private void createOrUpdateModelMetadataPanel()
+    {
         ModelMetadata metadata = null;
         if (metadataPanel == null) {
             metadataPanel = new WebMarkupContainer(METADATA_PANEL_MID);
+
+            TextField<String> codebookName = new TextField<>("codebookName");
+            codebookName.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(codebookName);
+
+            TextField<String> modelVersion = new TextField<>("version");
+            modelVersion.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(modelVersion);
+
+            TextField<String> datasetVersion = new TextField<>("datasetVersion");
+            datasetVersion.setEnabled(false).setOutputMarkupId(true);
+            metadataPanel.add(datasetVersion);
 
             TextField<String> modelType = new TextField<>("modelType");
             modelType.setEnabled(false).setOutputMarkupId(true);
@@ -196,17 +243,15 @@ public class AutomationSettingsPanel extends Panel {
             earlyStopping.setEnabled(false).setOutputMarkupId(true);
             metadataPanel.add(earlyStopping);
 
-            TextField<String> timestamp = new TextField<>("timestamp");
-            timestamp.setEnabled(false).setOutputMarkupId(true);
-            metadataPanel.add(timestamp);
-
             metadataPanel.setOutputMarkupPlaceholderTag(true);
             metadataPanel.add(LambdaBehavior.visibleWhen(this::isAutomationAvailable));
             this.addOrReplace(metadataPanel);
-        } else {
+        }
+        else {
             try {
                 metadata = getModelMetadata();
-            } catch (ApiException exception) {
+            }
+            catch (ApiException exception) {
                 // TODO what to do?
                 exception.printStackTrace();
             }
@@ -216,13 +261,16 @@ public class AutomationSettingsPanel extends Panel {
 
         // labels
         List<PairPojo> labels = new ArrayList<>();
-        if (metadata != null) for (Map.Entry<String, String> e : metadata.getLabels().entrySet())
-            labels.add(new PairPojo(e.getKey(), e.getValue()));
-        metadataPanel.addOrReplace(new PropertyListView<>("labelsListView", labels) {
+        if (metadata != null)
+            for (Map.Entry<String, String> e : metadata.getLabels().entrySet())
+                labels.add(new PairPojo(e.getKey(), e.getValue()));
+        metadataPanel.addOrReplace(new PropertyListView<>("labelsListView", labels)
+        {
             private static final long serialVersionUID = 9206487155367441591L;
 
             @Override
-            protected void populateItem(ListItem<PairPojo> item) {
+            protected void populateItem(ListItem<PairPojo> item)
+            {
                 item.add(new Label("key", item.getModelObject().key));
                 item.add(new Label("value", item.getModelObject().value));
             }
@@ -235,11 +283,14 @@ public class AutomationSettingsPanel extends Panel {
             for (int i = 0; i < hidden.size(); i++)
                 hiddenUnits.add(new PairPojo(Integer.toString(i), hidden.get(i).toString()));
         }
-        metadataPanel.addOrReplace(new PropertyListView<>("hiddenUnitsListView", hiddenUnits) {
+
+        metadataPanel.addOrReplace(new PropertyListView<>("hiddenUnitsListView", hiddenUnits)
+        {
             private static final long serialVersionUID = 9206487155367441591L;
 
             @Override
-            protected void populateItem(ListItem<PairPojo> item) {
+            protected void populateItem(ListItem<PairPojo> item)
+            {
                 item.add(new Label("layerNumber", item.getModelObject().key));
                 item.add(new Label("value", item.getModelObject().value));
             }
@@ -248,36 +299,44 @@ public class AutomationSettingsPanel extends Panel {
         // evaluation
         List<PairPojo> eval = new ArrayList<>();
         if (metadata != null)
-            for (Map.Entry<String, BigDecimal> e : metadata.getEvaluation().entrySet())
-                eval.add(new PairPojo(e.getKey(), e.getValue().toPlainString()));
-        metadataPanel.addOrReplace(new PropertyListView<PairPojo>("evaluationListView", eval) {
+            for (Map.Entry<String, Double> e : metadata.getEvaluation().entrySet())
+                eval.add(new PairPojo(e.getKey(), e.getValue().toString()));
+        metadataPanel.addOrReplace(new PropertyListView<PairPojo>("evaluationListView", eval)
+        {
             private static final long serialVersionUID = 9206487155367441591L;
 
             @Override
-            protected void populateItem(ListItem<PairPojo> item) {
+            protected void populateItem(ListItem<PairPojo> item)
+            {
                 item.add(new Label("key", item.getModelObject().key));
                 item.add(new Label("value", item.getModelObject().value));
             }
         }.setReuseItems(true));
     }
 
-    private ModelMetadata getModelMetadata() throws ApiException {
-        Codebook cb = this.getModelObject().getCodebook();
-        String modelVersion = this.getModelObject().getModelVersion();
-        if (cb == null || !codebookAutomationService.isAutomationAvailable(cb, modelVersion, false))
-            return null;
-
-        ModelMetadata metadata = null;
-        try {
-            metadata = codebookAutomationService.getModelMetadata(cb, modelVersion);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-        this.setModelMetadata(metadata);
-        return metadata;
+    private ModelMetadata getModelMetadata() throws ApiException
+    {
+        this.getAvailableModels(false);
+        return getModelObject().getModelMetadata();
+        // if (getModelObject().getAvailableModels().isEmpty()) {
+        //
+        // Codebook cb = this.getModelObject().getCodebook();
+        // String modelVersion = this.getModelObject().getModelVersion();
+        // if (cb == null || !codebookAutomationService.isAutomationAvailable(cb, modelVersion,
+        // false)) return null;
+        //
+        // ModelMetadata metadata = null;
+        // try {
+        // metadata = codebookAutomationService.getModelMetadata(cb, modelVersion);
+        // } catch (ApiException e) {
+        // e.printStackTrace();
+        // }
+        // return metadata;
+        // }
     }
 
-    private void createOrUpdateTagLabelMappingPanel() {
+    private void createOrUpdateTagLabelMappingPanel()
+    {
         if (tagLabelMappingPanel == null) {
             tagLabelMappingPanel = new WebMarkupContainer(TAG_LABEL_MAPPING_PANEL_MID);
             tagLabelMappingForm = new Form<>(TAG_LABEL_MAPPING_FORM_MID);
@@ -297,20 +356,24 @@ public class AutomationSettingsPanel extends Panel {
                 labelChoices.add(e.getKey());
 
         List<CodebookTag> tags = codebookSchemaService.listTags(cb);
-        tagLabelMappingForm.addOrReplace(new ListView<CodebookTag>("tagsListView", tags) {
+        tagLabelMappingForm.addOrReplace(new ListView<CodebookTag>("tagsListView", tags)
+        {
             private static final long serialVersionUID = 7639470004828914942L;
 
             @Override
-            protected void populateItem(ListItem<CodebookTag> item) {
+            protected void populateItem(ListItem<CodebookTag> item)
+            {
                 item.add(new Label("name", item.getModelObject().getName()));
                 DropDownChoice<String> ddChoice = new BootstrapSelect<>("labelSelection",
-                                                                        Model.of(), labelChoices);
-                ddChoice.add(new FormComponentUpdatingBehavior() {
+                        Model.of(), labelChoices);
+                ddChoice.add(new FormComponentUpdatingBehavior()
+                {
 
                     private static final long serialVersionUID = -7017410239431970221L;
 
                     @Override
-                    protected void onUpdate() {
+                    protected void onUpdate()
+                    {
                         super.onUpdate();
                         codebookAutomationService.updateTagLabelMapping(cb,
                                 item.getModelObject().getName(), ddChoice.getModelObject());
@@ -326,7 +389,8 @@ public class AutomationSettingsPanel extends Panel {
     }
 
     @Override
-    protected void onModelChanged() {
+    protected void onModelChanged()
+    {
         super.onModelChanged();
 
         this.createOrUpdateAutomationAvailableAlert();
@@ -337,77 +401,94 @@ public class AutomationSettingsPanel extends Panel {
         this.setVisible(this.getModelObject().getCodebook() != null);
     }
 
-
-    private boolean isAutomationAvailable() {
+    private boolean isAutomationAvailable()
+    {
         return this.isAutomationAvailable(false);
     }
 
-    private boolean isAutomationAvailable(boolean updateCache) {
-        boolean available = false;
+    private boolean isAutomationAvailable(boolean updateCache)
+    {
+        Codebook cb = this.getModelObject().getCodebook();
         try {
-            Codebook cb = this.getModelObject().getCodebook();
-            String modelVersion = this.getModelObject().getModelVersion();
-            if (cb != null)
-                available = codebookAutomationService.isAutomationAvailable(cb,
-                                                                            modelVersion,
-                                                                            updateCache);
-        } catch (ApiException e) {
-            e.printStackTrace();
+            return !codebookSchemaService.listTags(cb).isEmpty()
+                    && !this.getAvailableModels(false).isEmpty();
         }
-        return available;
+        catch (ApiException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // boolean available = false;
+        // try {
+        // String modelVersion = this.getModelObject().getModelVersion();
+        // if (cb != null)
+        // available = codebookAutomationService.isAutomationAvailable(cb, modelVersion,
+        // updateCache);
+        // }
+        // catch (ApiException e) {
+        // e.printStackTrace();
+        // }
+        // return available;
     }
 
-    private void createOrUpdateAutomationAvailableAlert() {
+    private void createOrUpdateAutomationAvailableAlert()
+    {
         boolean automationAvailable = isAutomationAvailable(true);
         Label label = new Label("automationAvailableAlert", new StringResourceModel(
                 automationAvailable ? "automation.available" : "automation.unavailable"));
-        label.add(new AttributeAppender("class", automationAvailable ? AUTOMATION_AVAILABLE :
-                                                 AUTOMATION_UNAVAILABLE, " "));
+        label.add(new AttributeAppender("class",
+                automationAvailable ? AUTOMATION_AVAILABLE : AUTOMATION_UNAVAILABLE, " "));
         label.setVisible(true);
         this.addOrReplace(label);
     }
 
-    private AutomationSettingsPanelModel getModelObject() {
+    private AutomationSettingsPanelModel getModelObject()
+    {
         return (AutomationSettingsPanelModel) this.getDefaultModelObject();
     }
 
-    public void setCodebook(Codebook cb) {
+    public void setCodebook(Codebook cb)
+    {
         this.getModelObject().resetData();
         this.getModelObject().setCodebook(cb);
         modelChanged();
     }
 
-    private void setModelVersion(String modelVersion) {
+    private void setModelVersion(String modelVersion)
+    {
         this.getModelObject().setModelVersion(modelVersion);
         modelChanged();
     }
 
-    public void setPredictionInProgress(boolean inProgress) {
-        /*This should only get called from outside!*/
+    public void setPredictionInProgress(boolean inProgress)
+    {
+        /* This should only get called from outside! */
         this.getModelObject().setPredictionInProgress(inProgress);
-//        modelChanged(); // FIXME update button when preds are finished
+        // modelChanged(); // FIXME update button when preds are finished
     }
 
-    private void setModelMetadata(ModelMetadata modelMetadata) {
-        this.getModelObject().setModelMetadata(modelMetadata);
-    }
-
-    private static class PairPojo implements Serializable {
+    private static class PairPojo
+        implements Serializable
+    {
         private static final long serialVersionUID = 1294588462693119953L;
         public String key;
         public String value;
 
-        public PairPojo(String key, String value) {
+        public PairPojo(String key, String value)
+        {
             this.key = key;
             this.value = value;
         }
     }
 
-    private static class TagLabelMappingFormModel implements Serializable {
+    private static class TagLabelMappingFormModel
+        implements Serializable
+    {
         private static final long serialVersionUID = -2729971443377393469L;
         public List<PairPojo> mappings;
 
-        public TagLabelMappingFormModel() {
+        public TagLabelMappingFormModel()
+        {
             this.mappings = new ArrayList<>();
         }
     }

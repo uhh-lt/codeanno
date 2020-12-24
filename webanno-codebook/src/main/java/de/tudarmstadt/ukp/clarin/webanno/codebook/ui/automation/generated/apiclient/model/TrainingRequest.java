@@ -28,11 +28,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * TrainingRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class TrainingRequest implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class TrainingRequest
+    implements Serializable
 {
-    @SerializedName("cb")
-    private CodebookDTO cb = null;
+    @SerializedName("cb_name")
+    private String cbName = null;
 
     @SerializedName("model_config")
     private ModelConfig modelConfig = null;
@@ -55,26 +56,26 @@ public class TrainingRequest implements Serializable
     @SerializedName("max_steps_test")
     private Integer maxStepsTest = 100;
 
-    public TrainingRequest cb(CodebookDTO cb)
+    public TrainingRequest cbName(String cbName)
     {
-        this.cb = cb;
+        this.cbName = cbName;
         return this;
     }
 
     /**
-     * Get cb
+     * The name of the Codebook for which the model gets trained!
      * 
-     * @return cb
+     * @return cbName
      **/
-    @Schema(required = true, description = "")
-    public CodebookDTO getCb()
+    @Schema(required = true, description = "The name of the Codebook for which the model gets trained!")
+    public String getCbName()
     {
-        return cb;
+        return cbName;
     }
 
-    public void setCb(CodebookDTO cb)
+    public void setCbName(String cbName)
     {
-        this.cb = cb;
+        this.cbName = cbName;
     }
 
     public TrainingRequest modelConfig(ModelConfig modelConfig)
@@ -241,7 +242,7 @@ public class TrainingRequest implements Serializable
             return false;
         }
         TrainingRequest trainingRequest = (TrainingRequest) o;
-        return Objects.equals(this.cb, trainingRequest.cb)
+        return Objects.equals(this.cbName, trainingRequest.cbName)
                 && Objects.equals(this.modelConfig, trainingRequest.modelConfig)
                 && Objects.equals(this.modelVersion, trainingRequest.modelVersion)
                 && Objects.equals(this.datasetVersion, trainingRequest.datasetVersion)
@@ -254,7 +255,7 @@ public class TrainingRequest implements Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hash(cb, modelConfig, modelVersion, datasetVersion, batchSizeTrain,
+        return Objects.hash(cbName, modelConfig, modelVersion, datasetVersion, batchSizeTrain,
                 batchSizeTest, maxStepsTrain, maxStepsTest);
     }
 
@@ -264,7 +265,7 @@ public class TrainingRequest implements Serializable
         StringBuilder sb = new StringBuilder();
         sb.append("class TrainingRequest {\n");
 
-        sb.append("    cb: ").append(toIndentedString(cb)).append("\n");
+        sb.append("    cbName: ").append(toIndentedString(cbName)).append("\n");
         sb.append("    modelConfig: ").append(toIndentedString(modelConfig)).append("\n");
         sb.append("    modelVersion: ").append(toIndentedString(modelVersion)).append("\n");
         sb.append("    datasetVersion: ").append(toIndentedString(datasetVersion)).append("\n");

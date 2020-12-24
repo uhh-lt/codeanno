@@ -28,8 +28,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * id for a training to check if its done or not (or even progress), get log etc
  */
 @Schema(description = "id for a training to check if its done or not (or even progress), get log etc")
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class TrainingResponse implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class TrainingResponse
+    implements Serializable
 {
     @SerializedName("model_id")
     private String modelId = null;

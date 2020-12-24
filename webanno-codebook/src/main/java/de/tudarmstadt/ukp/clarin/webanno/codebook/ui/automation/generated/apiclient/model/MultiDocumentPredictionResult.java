@@ -31,8 +31,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * MultiDocumentPredictionResult
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class MultiDocumentPredictionResult implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class MultiDocumentPredictionResult
+    implements Serializable
 {
     @SerializedName("proj_id")
     private Integer projId = null;

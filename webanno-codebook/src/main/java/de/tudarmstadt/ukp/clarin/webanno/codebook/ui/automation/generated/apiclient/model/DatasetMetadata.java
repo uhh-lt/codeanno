@@ -27,11 +27,11 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * ModelMetadata
+ * DatasetMetadata
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
-public class ModelMetadata
+public class DatasetMetadata
     implements Serializable
 {
     @SerializedName("codebook_name")
@@ -40,22 +40,16 @@ public class ModelMetadata
     @SerializedName("version")
     private String version = null;
 
-    @SerializedName("dataset_version")
-    private String datasetVersion = null;
-
     @SerializedName("labels")
     private Map<String, String> labels = new HashMap<String, String>();
 
-    @SerializedName("model_type")
-    private String modelType = null;
+    @SerializedName("num_training_samples")
+    private Integer numTrainingSamples = null;
 
-    @SerializedName("evaluation")
-    private Map<String, Double> evaluation = new HashMap<String, Double>();
+    @SerializedName("num_test_samples")
+    private Integer numTestSamples = null;
 
-    @SerializedName("model_config")
-    private ModelConfig modelConfig = null;
-
-    public ModelMetadata codebookName(String codebookName)
+    public DatasetMetadata codebookName(String codebookName)
     {
         this.codebookName = codebookName;
         return this;
@@ -77,7 +71,7 @@ public class ModelMetadata
         this.codebookName = codebookName;
     }
 
-    public ModelMetadata version(String version)
+    public DatasetMetadata version(String version)
     {
         this.version = version;
         return this;
@@ -99,35 +93,13 @@ public class ModelMetadata
         this.version = version;
     }
 
-    public ModelMetadata datasetVersion(String datasetVersion)
-    {
-        this.datasetVersion = datasetVersion;
-        return this;
-    }
-
-    /**
-     * Get datasetVersion
-     * 
-     * @return datasetVersion
-     **/
-    @Schema(required = true, description = "")
-    public String getDatasetVersion()
-    {
-        return datasetVersion;
-    }
-
-    public void setDatasetVersion(String datasetVersion)
-    {
-        this.datasetVersion = datasetVersion;
-    }
-
-    public ModelMetadata labels(Map<String, String> labels)
+    public DatasetMetadata labels(Map<String, String> labels)
     {
         this.labels = labels;
         return this;
     }
 
-    public ModelMetadata putLabelsItem(String key, String labelsItem)
+    public DatasetMetadata putLabelsItem(String key, String labelsItem)
     {
         this.labels.put(key, labelsItem);
         return this;
@@ -149,76 +121,48 @@ public class ModelMetadata
         this.labels = labels;
     }
 
-    public ModelMetadata modelType(String modelType)
+    public DatasetMetadata numTrainingSamples(Integer numTrainingSamples)
     {
-        this.modelType = modelType;
+        this.numTrainingSamples = numTrainingSamples;
         return this;
     }
 
     /**
-     * Get modelType
+     * Get numTrainingSamples
      * 
-     * @return modelType
+     * @return numTrainingSamples
      **/
     @Schema(required = true, description = "")
-    public String getModelType()
+    public Integer getNumTrainingSamples()
     {
-        return modelType;
+        return numTrainingSamples;
     }
 
-    public void setModelType(String modelType)
+    public void setNumTrainingSamples(Integer numTrainingSamples)
     {
-        this.modelType = modelType;
+        this.numTrainingSamples = numTrainingSamples;
     }
 
-    public ModelMetadata evaluation(Map<String, Double> evaluation)
+    public DatasetMetadata numTestSamples(Integer numTestSamples)
     {
-        this.evaluation = evaluation;
-        return this;
-    }
-
-    public ModelMetadata putEvaluationItem(String key, Double evaluationItem)
-    {
-        this.evaluation.put(key, evaluationItem);
+        this.numTestSamples = numTestSamples;
         return this;
     }
 
     /**
-     * Get evaluation
+     * Get numTestSamples
      * 
-     * @return evaluation
+     * @return numTestSamples
      **/
     @Schema(required = true, description = "")
-    public Map<String, Double> getEvaluation()
+    public Integer getNumTestSamples()
     {
-        return evaluation;
+        return numTestSamples;
     }
 
-    public void setEvaluation(Map<String, Double> evaluation)
+    public void setNumTestSamples(Integer numTestSamples)
     {
-        this.evaluation = evaluation;
-    }
-
-    public ModelMetadata modelConfig(ModelConfig modelConfig)
-    {
-        this.modelConfig = modelConfig;
-        return this;
-    }
-
-    /**
-     * Get modelConfig
-     * 
-     * @return modelConfig
-     **/
-    @Schema(required = true, description = "")
-    public ModelConfig getModelConfig()
-    {
-        return modelConfig;
-    }
-
-    public void setModelConfig(ModelConfig modelConfig)
-    {
-        this.modelConfig = modelConfig;
+        this.numTestSamples = numTestSamples;
     }
 
     @Override
@@ -230,36 +174,32 @@ public class ModelMetadata
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ModelMetadata modelMetadata = (ModelMetadata) o;
-        return Objects.equals(this.codebookName, modelMetadata.codebookName)
-                && Objects.equals(this.version, modelMetadata.version)
-                && Objects.equals(this.datasetVersion, modelMetadata.datasetVersion)
-                && Objects.equals(this.labels, modelMetadata.labels)
-                && Objects.equals(this.modelType, modelMetadata.modelType)
-                && Objects.equals(this.evaluation, modelMetadata.evaluation)
-                && Objects.equals(this.modelConfig, modelMetadata.modelConfig);
+        DatasetMetadata datasetMetadata = (DatasetMetadata) o;
+        return Objects.equals(this.codebookName, datasetMetadata.codebookName)
+                && Objects.equals(this.version, datasetMetadata.version)
+                && Objects.equals(this.labels, datasetMetadata.labels)
+                && Objects.equals(this.numTrainingSamples, datasetMetadata.numTrainingSamples)
+                && Objects.equals(this.numTestSamples, datasetMetadata.numTestSamples);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(codebookName, version, datasetVersion, labels, modelType, evaluation,
-                modelConfig);
+        return Objects.hash(codebookName, version, labels, numTrainingSamples, numTestSamples);
     }
 
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("class ModelMetadata {\n");
+        sb.append("class DatasetMetadata {\n");
 
         sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
         sb.append("    version: ").append(toIndentedString(version)).append("\n");
-        sb.append("    datasetVersion: ").append(toIndentedString(datasetVersion)).append("\n");
         sb.append("    labels: ").append(toIndentedString(labels)).append("\n");
-        sb.append("    modelType: ").append(toIndentedString(modelType)).append("\n");
-        sb.append("    evaluation: ").append(toIndentedString(evaluation)).append("\n");
-        sb.append("    modelConfig: ").append(toIndentedString(modelConfig)).append("\n");
+        sb.append("    numTrainingSamples: ").append(toIndentedString(numTrainingSamples))
+                .append("\n");
+        sb.append("    numTestSamples: ").append(toIndentedString(numTestSamples)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -29,14 +29,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * BodyUploadModelUploadPut
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class BodyUploadModelUploadPut implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class BodyUploadModelUploadPut
+    implements Serializable
 {
     @SerializedName("codebook_name")
     private String codebookName = null;
-
-    @SerializedName("codebook_tag_list")
-    private String codebookTagList = null;
 
     @SerializedName("model_version")
     private String modelVersion = null;
@@ -64,28 +62,6 @@ public class BodyUploadModelUploadPut implements Serializable
     public void setCodebookName(String codebookName)
     {
         this.codebookName = codebookName;
-    }
-
-    public BodyUploadModelUploadPut codebookTagList(String codebookTagList)
-    {
-        this.codebookTagList = codebookTagList;
-        return this;
-    }
-
-    /**
-     * Comma-separated list of tags. E.g. tag1,Tag2
-     * 
-     * @return codebookTagList
-     **/
-    @Schema(required = true, description = "Comma-separated list of tags. E.g. tag1,Tag2")
-    public String getCodebookTagList()
-    {
-        return codebookTagList;
-    }
-
-    public void setCodebookTagList(String codebookTagList)
-    {
-        this.codebookTagList = codebookTagList;
     }
 
     public BodyUploadModelUploadPut modelVersion(String modelVersion)
@@ -144,7 +120,6 @@ public class BodyUploadModelUploadPut implements Serializable
         }
         BodyUploadModelUploadPut bodyUploadModelUploadPut = (BodyUploadModelUploadPut) o;
         return Objects.equals(this.codebookName, bodyUploadModelUploadPut.codebookName)
-                && Objects.equals(this.codebookTagList, bodyUploadModelUploadPut.codebookTagList)
                 && Objects.equals(this.modelVersion, bodyUploadModelUploadPut.modelVersion)
                 && Objects.equals(this.modelArchive, bodyUploadModelUploadPut.modelArchive);
     }
@@ -152,8 +127,7 @@ public class BodyUploadModelUploadPut implements Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hash(codebookName, codebookTagList, modelVersion,
-                Objects.hashCode(modelArchive));
+        return Objects.hash(codebookName, modelVersion, Objects.hashCode(modelArchive));
     }
 
     @Override
@@ -163,7 +137,6 @@ public class BodyUploadModelUploadPut implements Serializable
         sb.append("class BodyUploadModelUploadPut {\n");
 
         sb.append("    codebookName: ").append(toIndentedString(codebookName)).append("\n");
-        sb.append("    codebookTagList: ").append(toIndentedString(codebookTagList)).append("\n");
         sb.append("    modelVersion: ").append(toIndentedString(modelVersion)).append("\n");
         sb.append("    modelArchive: ").append(toIndentedString(modelArchive)).append("\n");
         sb.append("}");

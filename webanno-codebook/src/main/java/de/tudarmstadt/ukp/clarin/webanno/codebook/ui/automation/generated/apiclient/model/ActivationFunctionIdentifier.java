@@ -29,7 +29,9 @@ import com.google.gson.stream.JsonWriter;
  * Possible activation functions
  */
 @JsonAdapter(ActivationFunctionIdentifier.Adapter.class)
-public enum ActivationFunctionIdentifier implements Serializable
+public enum ActivationFunctionIdentifier
+    implements
+    Serializable
 {
     RELU("relu"), SIGMOID("sigmoid"), TANH("tanh"), EXPONENTIAL("exponential");
 

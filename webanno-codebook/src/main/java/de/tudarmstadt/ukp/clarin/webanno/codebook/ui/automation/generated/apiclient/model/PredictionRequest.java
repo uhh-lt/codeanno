@@ -28,14 +28,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * PredictionRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class PredictionRequest implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class PredictionRequest
+    implements Serializable
 {
     @SerializedName("doc")
     private DocumentDTO doc = null;
 
-    @SerializedName("codebook")
-    private CodebookDTO codebook = null;
+    @SerializedName("cb_name")
+    private String cbName = null;
 
     @SerializedName("mapping")
     private TagLabelMapping mapping = null;
@@ -65,26 +66,26 @@ public class PredictionRequest implements Serializable
         this.doc = doc;
     }
 
-    public PredictionRequest codebook(CodebookDTO codebook)
+    public PredictionRequest cbName(String cbName)
     {
-        this.codebook = codebook;
+        this.cbName = cbName;
         return this;
     }
 
     /**
-     * Get codebook
+     * Get cbName
      * 
-     * @return codebook
+     * @return cbName
      **/
     @Schema(required = true, description = "")
-    public CodebookDTO getCodebook()
+    public String getCbName()
     {
-        return codebook;
+        return cbName;
     }
 
-    public void setCodebook(CodebookDTO codebook)
+    public void setCbName(String cbName)
     {
-        this.codebook = codebook;
+        this.cbName = cbName;
     }
 
     public PredictionRequest mapping(TagLabelMapping mapping)
@@ -142,7 +143,7 @@ public class PredictionRequest implements Serializable
         }
         PredictionRequest predictionRequest = (PredictionRequest) o;
         return Objects.equals(this.doc, predictionRequest.doc)
-                && Objects.equals(this.codebook, predictionRequest.codebook)
+                && Objects.equals(this.cbName, predictionRequest.cbName)
                 && Objects.equals(this.mapping, predictionRequest.mapping)
                 && Objects.equals(this.modelVersion, predictionRequest.modelVersion);
     }
@@ -150,7 +151,7 @@ public class PredictionRequest implements Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hash(doc, codebook, mapping, modelVersion);
+        return Objects.hash(doc, cbName, mapping, modelVersion);
     }
 
     @Override
@@ -160,7 +161,7 @@ public class PredictionRequest implements Serializable
         sb.append("class PredictionRequest {\n");
 
         sb.append("    doc: ").append(toIndentedString(doc)).append("\n");
-        sb.append("    codebook: ").append(toIndentedString(codebook)).append("\n");
+        sb.append("    cbName: ").append(toIndentedString(cbName)).append("\n");
         sb.append("    mapping: ").append(toIndentedString(mapping)).append("\n");
         sb.append("    modelVersion: ").append(toIndentedString(modelVersion)).append("\n");
         sb.append("}");

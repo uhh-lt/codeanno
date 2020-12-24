@@ -42,9 +42,7 @@
                             <wicket:message key="modelVersionSelection.label"/>
                         </label>
                         <div class="col-md-8">
-<!-- TODO                       <select class="form-control form-control-sm"
-wicket:id="modelVersionSelection"></select>-->
-                            <input class="form-control form-control-sm" wicket:id="modelVersionSelection"/>
+                            <select class="form-control form-control-sm" wicket:id="modelVersionSelection"></select>
                         </div>
                     </div>
                 </div>
@@ -57,6 +55,36 @@ wicket:id="modelVersionSelection"></select>-->
                     <wicket:message key="modelMetadataPanel.header"/>
                 </div>
                 <div class="card-body flex-v-container flex-no-gutter scrolling">
+
+                    <div class="form-group form-row mb-1">
+                        <label class="col-sm-4 col-form-label" wicket:for="codebookName">
+                            <wicket:message key="metadata.codebookName"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly
+                                   wicket:id="codebookName"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row mb-1">
+                        <label class="col-sm-4 col-form-label" wicket:for="version">
+                            <wicket:message key="metadata.modelVersion"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly
+                                   wicket:id="version"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-row mb-1">
+                        <label class="col-sm-4 col-form-label" wicket:for="datasetVersion">
+                            <wicket:message key="metadata.datasetVersion"/>
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control form-control-sm" readonly
+                                   wicket:id="datasetVersion"/>
+                        </div>
+                    </div>
 
                     <div class="form-group form-row mb-1">
                         <label class="col-sm-4 col-form-label" wicket:for="modelType">
@@ -122,13 +150,11 @@ wicket:id="modelVersionSelection"></select>-->
                     </div>
 
                     <div class="form-group form-row mb-1">
-                        <label class="col-sm-4 col-form-label"
-                               wicket:for="modelConfig.activationFn">
+                        <label class="col-sm-4 col-form-label" wicket:for="modelConfig.activationFn">
                             <wicket:message key="metadata.modelConfig.activation"/>
                         </label>
                         <div class="col-sm-8">
-                            <input class="form-control form-control-sm" readonly
-                                   wicket:id="modelConfig.activationFn"/>
+                            <input class="form-control form-control-sm" readonly wicket:id="modelConfig.activationFn"/>
                         </div>
                     </div>
 
@@ -156,22 +182,12 @@ wicket:id="modelVersionSelection"></select>-->
                         </div>
                     </div>
 
-                    <div class="form-group form-row mb-1">
-                        <label class="col-sm-4 col-form-label">
-                            <wicket:message key="metadata.timestamp"/>
-                        </label>
-                        <div class="col-sm-8">
-                            <input class="form-control form-control-sm" readonly wicket:id="timestamp"/>
-                        </div>
-                    </div>
-
-
                 </div>
 
             </div>
 
             <!-- Tag Label Mapping panel-->
-            <div class="card flex-content mt-1 mb-0 pt-1 pb-0" wicket:id="tagLabelMappingPanel">
+            <div class="card flex-content mt-1 mb-0" wicket:id="tagLabelMappingPanel">
                 <div class="card-header small">
                     <wicket:message key="tagLabelMappingPanel.header"/>
                 </div>

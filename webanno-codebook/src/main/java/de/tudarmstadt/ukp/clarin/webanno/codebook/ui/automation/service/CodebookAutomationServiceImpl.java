@@ -59,7 +59,6 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apicli
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.GeneralApi;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.ModelApi;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.api.PredictionApi;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.CodebookDTO;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.DocumentDTO;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.ModelMetadata;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.MultiDocumentPredictionRequest;
@@ -176,13 +175,13 @@ public class CodebookAutomationServiceImpl
     @Override
     public void addToPredictionInProgress(PredictionRequest req, Object caller)
     {
-        this.predictionInProgress.putIfAbsent(req.getCodebook().getName(), caller);
+        this.predictionInProgress.putIfAbsent(req.getCbName(), caller);
     }
 
     @Override
     public void addToPredictionInProgress(MultiDocumentPredictionRequest req, Object caller)
     {
-        this.predictionInProgress.putIfAbsent(req.getCodebook().getName(), caller);
+        this.predictionInProgress.putIfAbsent(req.getCbName(), caller);
     }
 
     @Override
@@ -220,8 +219,8 @@ public class CodebookAutomationServiceImpl
             return false;
 
         if (updateCache) {
-            CodebookDTO cbm = buildCodebookModel(cb);
-            boolean available = modelApi.isAvailableModelAvailablePost(cbm, modelVersion).isValue();
+            boolean available = modelApi.isAvailableModelAvailableGet(cb.getUiName(), modelVersion)
+                    .isValue();
             this.availabilityCache.put(cb, available);
         }
         if (this.availabilityCache.get(cb) == null)
@@ -335,8 +334,15 @@ public class CodebookAutomationServiceImpl
         if (!heartbeat)
             return null;
 
-        CodebookDTO cbm = buildCodebookModel(cb);
-        return modelApi.getMetadataModelMetadataPost(cbm, modelVersion);
+        return modelApi.getMetadataModelMetadataGet(cb.getUiName(), modelVersion);
+    }
+
+    @Override
+    public List<ModelMetadata> getAvailableModels(Codebook cb) throws ApiException
+    {
+        if (!heartbeat || cb == null)
+            return Collections.emptyList();
+        return modelApi.listModelsModelListGet(cb.getUiName());
     }
 
     private DocumentDTO buildDocumentModel(Project proj, SourceDocument sdoc)
@@ -352,13 +358,6 @@ public class CodebookAutomationServiceImpl
             e.printStackTrace();
         }
         return docm;
-    }
-
-    private CodebookDTO buildCodebookModel(Codebook cb)
-    {
-        CodebookDTO cbm = new CodebookDTO().name(cb.getUiName());
-        this.codebookService.listTags(cb).forEach(t -> cbm.addTagsItem(t.getName()));
-        return cbm;
     }
 
     private Project getProject(PredictionResult result)
@@ -574,11 +573,10 @@ public class CodebookAutomationServiceImpl
     {
         PredictionRequest request = new PredictionRequest();
 
-        CodebookDTO cbm = buildCodebookModel(cb);
         DocumentDTO docm = buildDocumentModel(proj, sdoc);
         TagLabelMapping mapping = tagLabelMappings.get(cb);
 
-        return request.codebook(cbm).doc(docm).mapping(mapping).modelVersion(modelVersion);
+        return request.cbName(cb.getUiName()).doc(docm).mapping(mapping).modelVersion(modelVersion);
     }
 
     private MultiDocumentPredictionRequest buildMultiDocPredictionRequest(Codebook cb, Project proj,
@@ -586,13 +584,13 @@ public class CodebookAutomationServiceImpl
     {
         MultiDocumentPredictionRequest req = new MultiDocumentPredictionRequest();
 
-        CodebookDTO cbm = buildCodebookModel(cb);
         List<DocumentDTO> docModels = sdocs.stream()
                 .map(sourceDocument -> this.buildDocumentModel(proj, sourceDocument))
                 .collect(Collectors.toList());
         TagLabelMapping mapping = tagLabelMappings.get(cb);
 
-        return req.codebook(cbm).docs(docModels).mapping(mapping).modelVersion(modelVersion);
+        return req.cbName(cb.getUiName()).docs(docModels).mapping(mapping)
+                .modelVersion(modelVersion);
     }
 
 }

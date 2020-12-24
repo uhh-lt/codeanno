@@ -30,14 +30,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * MultiDocumentPredictionRequest
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class MultiDocumentPredictionRequest implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class MultiDocumentPredictionRequest
+    implements Serializable
 {
     @SerializedName("docs")
     private List<DocumentDTO> docs = new ArrayList<DocumentDTO>();
 
-    @SerializedName("codebook")
-    private CodebookDTO codebook = null;
+    @SerializedName("cb_name")
+    private String cbName = null;
 
     @SerializedName("mapping")
     private TagLabelMapping mapping = null;
@@ -73,26 +74,26 @@ public class MultiDocumentPredictionRequest implements Serializable
         this.docs = docs;
     }
 
-    public MultiDocumentPredictionRequest codebook(CodebookDTO codebook)
+    public MultiDocumentPredictionRequest cbName(String cbName)
     {
-        this.codebook = codebook;
+        this.cbName = cbName;
         return this;
     }
 
     /**
-     * Get codebook
+     * Get cbName
      * 
-     * @return codebook
+     * @return cbName
      **/
     @Schema(required = true, description = "")
-    public CodebookDTO getCodebook()
+    public String getCbName()
     {
-        return codebook;
+        return cbName;
     }
 
-    public void setCodebook(CodebookDTO codebook)
+    public void setCbName(String cbName)
     {
-        this.codebook = codebook;
+        this.cbName = cbName;
     }
 
     public MultiDocumentPredictionRequest mapping(TagLabelMapping mapping)
@@ -150,7 +151,7 @@ public class MultiDocumentPredictionRequest implements Serializable
         }
         MultiDocumentPredictionRequest multiDocumentPredictionRequest = (MultiDocumentPredictionRequest) o;
         return Objects.equals(this.docs, multiDocumentPredictionRequest.docs)
-                && Objects.equals(this.codebook, multiDocumentPredictionRequest.codebook)
+                && Objects.equals(this.cbName, multiDocumentPredictionRequest.cbName)
                 && Objects.equals(this.mapping, multiDocumentPredictionRequest.mapping)
                 && Objects.equals(this.modelVersion, multiDocumentPredictionRequest.modelVersion);
     }
@@ -158,7 +159,7 @@ public class MultiDocumentPredictionRequest implements Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hash(docs, codebook, mapping, modelVersion);
+        return Objects.hash(docs, cbName, mapping, modelVersion);
     }
 
     @Override
@@ -168,7 +169,7 @@ public class MultiDocumentPredictionRequest implements Serializable
         sb.append("class MultiDocumentPredictionRequest {\n");
 
         sb.append("    docs: ").append(toIndentedString(docs)).append("\n");
-        sb.append("    codebook: ").append(toIndentedString(codebook)).append("\n");
+        sb.append("    cbName: ").append(toIndentedString(cbName)).append("\n");
         sb.append("    mapping: ").append(toIndentedString(mapping)).append("\n");
         sb.append("    modelVersion: ").append(toIndentedString(modelVersion)).append("\n");
         sb.append("}");

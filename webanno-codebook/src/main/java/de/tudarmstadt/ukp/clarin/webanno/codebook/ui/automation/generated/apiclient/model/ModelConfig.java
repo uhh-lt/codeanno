@@ -18,7 +18,6 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,8 +30,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ModelConfig
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-18T10:42:36.085Z[GMT]")
-public class ModelConfig implements Serializable
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+public class ModelConfig
+    implements Serializable
 {
     @SerializedName("embedding_type")
     private String embeddingType = "https://tfhub.dev/google/universal-sentence-encoder/2";
