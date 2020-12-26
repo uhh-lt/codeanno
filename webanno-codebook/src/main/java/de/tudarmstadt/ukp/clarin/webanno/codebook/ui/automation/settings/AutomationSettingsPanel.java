@@ -106,8 +106,8 @@ public class AutomationSettingsPanel
         // get the available models for the Codebook
         List<String> modelVersionChoices = null;
         try {
-            List<ModelMetadata> availableModels =
-                    this.getAvailableModels(getModelObject().getCodebook() != null);
+            List<ModelMetadata> availableModels = this
+                    .getAvailableModels(getModelObject().getCodebook() != null);
             modelVersionChoices = availableModels.stream().map(ModelMetadata::getVersion)
                     .collect(Collectors.toList());
             if (modelVersionChoices.size() == 1)
@@ -132,6 +132,8 @@ public class AutomationSettingsPanel
                 // set model version
                 getModelObject()
                         .setModelVersion(this.getFormComponent().getDefaultModelObjectAsString());
+
+                createOrUpdateStartPredictionsButton();
             }
         });
 
@@ -171,17 +173,15 @@ public class AutomationSettingsPanel
         startPredictionsButton.setOutputMarkupId(true);
 
         // update the button (enabled flag handled by the lambda behaviour)
-        boolean predictionInProgress = codebookAutomationService
-                .isPredictionInProgress(this.getModelObject().getCodebook(), this);
+        boolean predictionInProgress = this.getModelObject().isPredictionInProgress();
         String resKey = predictionInProgress ? "startPredictionsButtonLabel.started"
                 : "startPredictionsButtonLabel.start";
         Label label = new Label("startPredictionsButtonLabel", new StringResourceModel(resKey));
         startPredictionsButton.addOrReplace(label);
 
-        startPredictionsButton.add(LambdaBehavior
-                .enabledWhen(() -> this.isAutomationAvailable(false) && !codebookAutomationService
-                        .isPredictionInProgress(this.getModelObject().getCodebook(), this)));
-        startPredictionsButton.add(LambdaBehavior.visibleWhen(this::isAutomationAvailable));
+        startPredictionsButton.setVisible(this.isAutomationAvailable());
+        startPredictionsButton.add(LambdaBehavior.enabledWhen(
+                () -> !predictionInProgress && this.getModelObject().getModelMetadata() != null));
 
         tagLabelMappingPanel.addOrReplace(startPredictionsButton);
     }
@@ -196,10 +196,14 @@ public class AutomationSettingsPanel
         // start async prediction for all docs in the project
         try {
             codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion, this);
+            // disable the buttons
+            this.createOrUpdateStartPredictionsButton();
+            aTarget.add(this.startPredictionsButton);
         }
         catch (ApiException exception) {
             exception.printStackTrace();
         }
+
     }
 
     private void createOrUpdateModelMetadataPanel()
@@ -366,7 +370,7 @@ public class AutomationSettingsPanel
             {
                 item.add(new Label("name", item.getModelObject().getName()));
                 DropDownChoice<String> ddChoice = new BootstrapSelect<>("labelSelection",
-                                                                        Model.of(), labelChoices);
+                        Model.of(), labelChoices);
                 ddChoice.add(new FormComponentUpdatingBehavior()
                 {
 
@@ -377,7 +381,7 @@ public class AutomationSettingsPanel
                     {
                         super.onUpdate();
                         codebookAutomationService.updateTagLabelMapping(cb,
-                                                                        item.getModelObject().getName(), ddChoice.getModelObject());
+                                item.getModelObject().getName(), ddChoice.getModelObject());
                     }
                 });
                 item.add(ddChoice);
@@ -460,7 +464,6 @@ public class AutomationSettingsPanel
     {
         /* This should only get called from outside! */
         this.getModelObject().setPredictionInProgress(inProgress);
-        // modelChanged(); // FIXME update button when preds are finished
     }
 
     private static class PairPojo

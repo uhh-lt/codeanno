@@ -45,6 +45,7 @@ public class PersistMultiPredResultToCasCallback
         // TODO should we delete the existing Codebook Tag from the correction CAS? not really!
         logger.warn("Codebook Tag prediction FAILED! Reason: " + statusCode + " "
                 + e.getResponseBody());
+        e.printStackTrace();
 
         // TODO remove prediction from progress list
         this.closeCasStorageSession();

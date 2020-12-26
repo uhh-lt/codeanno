@@ -101,6 +101,8 @@ public class CodebookAutomationServiceImpl
     private final ApplicationEventPublisher eventPublisher;
 
     private static final String DEFAULT_VERSION = "default";
+    // 1 minute time out.. just in case (could take longer when deployed)
+    private static final Integer API_CALL_TIMEOUT_S = 60 * 1000;
 
     private boolean heartbeat;
 
@@ -113,14 +115,25 @@ public class CodebookAutomationServiceImpl
     {
         String baseUrl = this.getApiBaseURL().toString();
         logger.info("Using CBA API base URL: " + baseUrl);
+
         predictionApi = new PredictionApi();
         predictionApi.getApiClient().setBasePath(baseUrl);
+        predictionApi.getApiClient().setConnectTimeout(API_CALL_TIMEOUT_S);
+        predictionApi.getApiClient().setReadTimeout(API_CALL_TIMEOUT_S);
+        predictionApi.getApiClient().setWriteTimeout(API_CALL_TIMEOUT_S);
 
         modelApi = new ModelApi();
         modelApi.getApiClient().setBasePath(baseUrl);
-
+        modelApi.getApiClient().setConnectTimeout(API_CALL_TIMEOUT_S);
+        modelApi.getApiClient().setReadTimeout(API_CALL_TIMEOUT_S);
+        modelApi.getApiClient().setWriteTimeout(API_CALL_TIMEOUT_S);
+        
         generalApi = new GeneralApi();
         generalApi.getApiClient().setBasePath(baseUrl);
+        generalApi.getApiClient().setConnectTimeout(API_CALL_TIMEOUT_S);
+        generalApi.getApiClient().setReadTimeout(API_CALL_TIMEOUT_S);
+        generalApi.getApiClient().setWriteTimeout(API_CALL_TIMEOUT_S);
+
 
         this.availabilityCache = new HashMap<>();
         this.tagLabelMappings = new HashMap<>();
