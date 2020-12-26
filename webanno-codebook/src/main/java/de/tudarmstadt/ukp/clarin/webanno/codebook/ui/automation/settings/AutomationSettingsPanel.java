@@ -110,6 +110,8 @@ public class AutomationSettingsPanel
                     this.getAvailableModels(getModelObject().getCodebook() != null);
             modelVersionChoices = availableModels.stream().map(ModelMetadata::getVersion)
                     .collect(Collectors.toList());
+            if (modelVersionChoices.size() == 1)
+                getModelObject().setModelVersion(modelVersionChoices.get(0));
         }
         catch (ApiException e) {
             e.printStackTrace();
@@ -117,8 +119,7 @@ public class AutomationSettingsPanel
 
         // provide the choices in the selection
         DropDownChoice<String> modelVersionSelection = new BootstrapSelect<>(
-                "modelVersionSelection", Model.of(getModelObject().getModelVersion()),
-                modelVersionChoices);
+                "modelVersionSelection", Model.of(), modelVersionChoices);
         modelVersionSelection.add(new FormComponentUpdatingBehavior()
         {
 
@@ -153,7 +154,7 @@ public class AutomationSettingsPanel
 
     private List<ModelMetadata> getAvailableModels(boolean updateCache) throws ApiException
     {
-        if (updateCache && getModelObject().getAvailableModels().isEmpty()) {
+        if (updateCache) {
             List<ModelMetadata> availableModels = this.codebookAutomationService
                     .getAvailableModels(getModelObject().getCodebook());
             // safe for later use
@@ -356,7 +357,7 @@ public class AutomationSettingsPanel
                 labelChoices.add(e.getKey());
 
         List<CodebookTag> tags = codebookSchemaService.listTags(cb);
-        tagLabelMappingForm.addOrReplace(new ListView<CodebookTag>("tagsListView", tags)
+        tagLabelMappingForm.addOrReplace(new ListView<>("tagsListView", tags)
         {
             private static final long serialVersionUID = 7639470004828914942L;
 
@@ -365,7 +366,7 @@ public class AutomationSettingsPanel
             {
                 item.add(new Label("name", item.getModelObject().getName()));
                 DropDownChoice<String> ddChoice = new BootstrapSelect<>("labelSelection",
-                        Model.of(), labelChoices);
+                                                                        Model.of(), labelChoices);
                 ddChoice.add(new FormComponentUpdatingBehavior()
                 {
 
@@ -376,7 +377,7 @@ public class AutomationSettingsPanel
                     {
                         super.onUpdate();
                         codebookAutomationService.updateTagLabelMapping(cb,
-                                item.getModelObject().getName(), ddChoice.getModelObject());
+                                                                        item.getModelObject().getName(), ddChoice.getModelObject());
                     }
                 });
                 item.add(ddChoice);
@@ -386,19 +387,6 @@ public class AutomationSettingsPanel
         createOrUpdateStartPredictionsButton();
 
         this.addOrReplace(tagLabelMappingPanel);
-    }
-
-    @Override
-    protected void onModelChanged()
-    {
-        super.onModelChanged();
-
-        this.createOrUpdateAutomationAvailableAlert();
-        this.createOrUpdateModelMetadataPanel();
-        this.createOrUpdateTagLabelMappingPanel();
-        this.createOrUpdateModelVersionSelection();
-
-        this.setVisible(this.getModelObject().getCodebook() != null);
     }
 
     private boolean isAutomationAvailable()
@@ -411,7 +399,7 @@ public class AutomationSettingsPanel
         Codebook cb = this.getModelObject().getCodebook();
         try {
             return !codebookSchemaService.listTags(cb).isEmpty()
-                    && !this.getAvailableModels(false).isEmpty();
+                    && !this.getAvailableModels(updateCache).isEmpty();
         }
         catch (ApiException e) {
             e.printStackTrace();
@@ -451,13 +439,21 @@ public class AutomationSettingsPanel
     {
         this.getModelObject().resetData();
         this.getModelObject().setCodebook(cb);
-        modelChanged();
+
+        this.createOrUpdateAutomationAvailableAlert();
+        this.createOrUpdateModelVersionSelection();
+        this.createOrUpdateModelMetadataPanel();
+        this.createOrUpdateTagLabelMappingPanel();
+
+        this.setVisible(this.getModelObject().getCodebook() != null);
+
     }
 
     private void setModelVersion(String modelVersion)
     {
         this.getModelObject().setModelVersion(modelVersion);
-        modelChanged();
+        createOrUpdateModelMetadataPanel();
+        createOrUpdateTagLabelMappingPanel();
     }
 
     public void setPredictionInProgress(boolean inProgress)

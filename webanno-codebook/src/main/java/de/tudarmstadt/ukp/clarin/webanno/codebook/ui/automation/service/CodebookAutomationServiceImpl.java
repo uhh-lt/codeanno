@@ -111,14 +111,16 @@ public class CodebookAutomationServiceImpl
             ApplicationEventPublisher eventPublisher)
         throws MalformedURLException
     {
+        String baseUrl = this.getApiBaseURL().toString();
+        logger.info("Using CBA API base URL: " + baseUrl);
         predictionApi = new PredictionApi();
-        predictionApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
+        predictionApi.getApiClient().setBasePath(baseUrl);
 
         modelApi = new ModelApi();
-        modelApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
+        modelApi.getApiClient().setBasePath(baseUrl);
 
         generalApi = new GeneralApi();
-        generalApi.getApiClient().setBasePath(this.getApiBaseURL().toString());
+        generalApi.getApiClient().setBasePath(baseUrl);
 
         this.availabilityCache = new HashMap<>();
         this.tagLabelMappings = new HashMap<>();
