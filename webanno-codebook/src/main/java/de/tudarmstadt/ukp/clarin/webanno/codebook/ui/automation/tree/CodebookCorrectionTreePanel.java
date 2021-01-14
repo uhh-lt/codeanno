@@ -32,12 +32,12 @@ import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.CodebookCorrectionPage;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 
 public class CodebookCorrectionTreePanel
     extends CodebookTreePanel
@@ -85,7 +85,7 @@ public class CodebookCorrectionTreePanel
         // get all codebooks and init the provider
         List<Codebook> codebooks = this.codebookService
                 .listCodebook(parentPage.getModelObject().getProject());
-        this.provider = new CodebookTreeProvider(codebooks);
+        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
     }
 
     @Override

@@ -25,17 +25,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CodebookTree
-    implements Serializable
+import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
+import org.apache.wicket.model.IModel;
+
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+
+public class CodebookTreeProvider
+    implements Serializable, ITreeProvider<CodebookNode>
 {
 
     private static final long serialVersionUID = 7312208573006457875L;
 
-    private Map<String, CodebookNode> nameToNodes;
-    private Map<String, Codebook> nameToCodebooks;
-    private List<CodebookNode> roots;
+    private final Map<String, CodebookNode> nameToNodes;
+    private final Map<String, Codebook> nameToCodebooks;
+    private final List<CodebookNode> roots;
 
-    public CodebookTree(List<Codebook> allCodebooks)
+    private final CodebookSchemaService codebookService;
+
+    public CodebookTreeProvider(List<Codebook> allCodebooks, CodebookSchemaService codebookService)
     {
 
         this.nameToCodebooks = allCodebooks.stream()
@@ -48,6 +55,10 @@ public class CodebookTree
 
         this.roots = this.nameToNodes.values().stream().filter(CodebookNode::isRoot)
                 .collect(Collectors.toList());
+
+        this.sortNodes();
+
+        this.codebookService = codebookService;
     }
 
     public void setParent(CodebookNode node)
@@ -78,6 +89,7 @@ public class CodebookTree
         return this.nameToCodebooks.get(node.getName()).getParent() == null;
     }
 
+    @Override
     public Iterator<CodebookNode> getRoots()
     {
         return this.roots.iterator();
@@ -88,11 +100,13 @@ public class CodebookTree
         return this.roots;
     }
 
+    @Override
     public boolean hasChildren(CodebookNode node)
     {
         return !node.isLeaf();
     }
 
+    @Override
     public Iterator<CodebookNode> getChildren(final CodebookNode node)
     {
         return node.getChildren().iterator();
@@ -164,6 +178,13 @@ public class CodebookTree
         return allChildren;
     }
 
+    public List<CodebookNode> getSiblings(final CodebookNode node)
+    {
+        if (node.getParent() == null)
+            return roots;
+        return node.getParent().getChildren();
+    }
+
     public List<Codebook> getPossibleParents(final Codebook book)
     {
         if (book == null || book.getId() == null)
@@ -175,24 +196,50 @@ public class CodebookTree
         return possibleParents;
     }
 
-    public CodebookNode getCodebookNode(String id)
+    public void move(CodebookNode node, boolean up)
     {
-        return findCodebookNodeRecursively(roots, id);
+        List<CodebookNode> sibs = this.getSiblings(node);
+        int myIdx = sibs.indexOf(node);
+        // first cant move up and last cant move down
+        if ((up && myIdx == 0) || (!up && myIdx == sibs.size() - 1))
+            return;
+
+        // swap orderings (simple inc/dec wont do the job when changing tree structure, i.e.
+        // change a parent)
+        int tmp = node.getOrdering();
+        CodebookNode swapSib = sibs.get(myIdx + (up ? -1 : 1)); // 0 is highest leN
+        node.setOrdering(swapSib.getOrdering());
+        swapSib.setOrdering(tmp);
+
+        // change ordering in both Codebooks
+        Codebook cb = this.nameToCodebooks.get(node.getName());
+        cb.setOrder(node.getOrdering());
+        this.codebookService.createOrUpdateCodebook(cb);
+
+        cb = this.nameToCodebooks.get(swapSib.getName());
+        cb.setOrder(swapSib.getOrdering());
+        this.codebookService.createOrUpdateCodebook(cb);
+
+        this.sortNodes();
     }
 
-    private CodebookNode findCodebookNodeRecursively(Iterable<CodebookNode> nodes, String id)
+    private void sortNodes()
     {
-        for (CodebookNode node : nodes) {
-            if (node.getId().equals(id)) {
-                return node;
-            }
-
-            CodebookNode temp = findCodebookNodeRecursively(node.getChildren(), id);
-            if (temp != null) {
-                return temp;
-            }
-        }
-
-        return null;
+        Collections.sort(this.roots);
+        roots.forEach(codebookNode -> Collections.sort(codebookNode.getChildren()));
     }
+
+    // TreeProvider stuff
+    @Override
+    public void detach()
+    {
+
+    }
+
+    @Override
+    public IModel<CodebookNode> model(CodebookNode node)
+    {
+        return new CodebookNodeModel(node);
+    }
+
 }

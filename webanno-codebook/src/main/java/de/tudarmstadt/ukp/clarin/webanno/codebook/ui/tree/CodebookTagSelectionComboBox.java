@@ -120,7 +120,7 @@ public class CodebookTagSelectionComboBox
                 // persist
                 if (!codebookService.existsCodebookTag(newUserTag.getName(),
                         newUserTag.getCodebook())) {
-                    codebookService.createCodebookTag(newUserTag);
+                    codebookService.createOrUpdateCodebookTag(newUserTag);
                 }
                 else {
                     // TODO log or warning?

@@ -77,9 +77,10 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.tree.ProjectCodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
@@ -289,7 +290,7 @@ public class ProjectCodebookPanel
 
         codebook.setProject(project);
 
-        codebookService.createCodebook(codebook);
+        codebookService.createOrUpdateCodebook(codebook);
         if (!codebookService.existsFeature(CFN, codebook)) {
             CodebookFeature codebookFeature = new CodebookFeature();
             codebookFeature.setCodebook(codebook);
@@ -298,7 +299,7 @@ public class ProjectCodebookPanel
             codebookFeature.setUiName("Code");// not visible for current implementation
             codebookFeature.setDescription("Specific code values for this codebook");
             codebookFeature.setType(CAS.TYPE_NAME_STRING);
-            codebookService.createCodebookFeature(codebookFeature);
+            codebookService.createOrUpdateCodebookFeature(codebookFeature);
             tagSelectionPanel.setDefaultModelObject(codebook);
         }
 
@@ -441,8 +442,7 @@ public class ProjectCodebookPanel
         }
     }
 
-    // package private by intention
-    class CodebookDetailForm
+    public class CodebookDetailForm
         extends Form<Codebook>
     {
 
@@ -597,7 +597,7 @@ public class ProjectCodebookPanel
             aTarget.addChildren(getPage(), IFeedback.class);
         }
 
-        /* package private */ void updateParentChoicesForCodebook(Codebook currentCodebook)
+        public void updateParentChoicesForCodebook(Codebook currentCodebook)
         {
             List<Codebook> possibleParents = projectCodebookTreePanel.getProvider()
                     .getPossibleParents(currentCodebook);

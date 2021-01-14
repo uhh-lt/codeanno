@@ -62,7 +62,7 @@ public class CodebookSchemaServiceImpl
 
     @Override
     @Transactional
-    public void createCodebook(Codebook codebook)
+    public void createOrUpdateCodebook(Codebook codebook)
     {
         if (isNull(codebook.getId())) {
             entityManager.persist(codebook);
@@ -81,7 +81,7 @@ public class CodebookSchemaServiceImpl
 
     @Override
     @Transactional
-    public void createCodebookFeature(CodebookFeature aFeature)
+    public void createOrUpdateCodebookFeature(CodebookFeature aFeature)
     {
         if (isNull(aFeature.getId())) {
             entityManager.persist(aFeature);
@@ -192,7 +192,7 @@ public class CodebookSchemaServiceImpl
 
     @Override
     @Transactional
-    public void createCodebookTag(CodebookTag aTag)
+    public void createOrUpdateCodebookTag(CodebookTag aTag)
     {
         if (isNull(aTag.getId())) {
             entityManager.persist(aTag);

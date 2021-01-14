@@ -30,11 +30,11 @@ import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPage;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookUserSuggestion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 
 public class CodebookCurationTreePanel
     extends CodebookTreePanel
@@ -79,7 +79,7 @@ public class CodebookCurationTreePanel
         // get all codebooks and init the provider
         List<Codebook> codebooks = this.codebookService
                 .listCodebook(parentPage.getModelObject().getProject());
-        this.provider = new CodebookTreeProvider(codebooks);
+        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
     }
 
     @Override

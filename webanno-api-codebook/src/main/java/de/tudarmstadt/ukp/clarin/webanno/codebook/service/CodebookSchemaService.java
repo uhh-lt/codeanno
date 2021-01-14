@@ -38,9 +38,9 @@ public interface CodebookSchemaService
     String SERVICE_NAME = "codebookService";
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    void createCodebook(Codebook codebook);
+    void createOrUpdateCodebook(Codebook codebook);
 
-    void createCodebookFeature(CodebookFeature aFeature);
+    void createOrUpdateCodebookFeature(CodebookFeature aFeature);
 
     /**
      * creates a {@link CodebookTag} for a given {@link Codebook}. Combination of {@code tag name}
@@ -50,7 +50,7 @@ public interface CodebookSchemaService
      *            the tag.
      */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    void createCodebookTag(CodebookTag aTag);
+    void createOrUpdateCodebookTag(CodebookTag aTag);
 
     boolean existsFeature(String aName, Codebook aCodebook);
 

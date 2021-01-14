@@ -320,7 +320,6 @@ public class CodebookCasMerge
     private void copyFeatures(SourceDocument aDocument, String aUsername, CodebookCasAdapter aAdapter,
             Codebook aCodebook, FeatureStructure aTargetFS, FeatureStructure aSourceFs)
     {
-
         CodebookFeature feature = schemaService.listCodebookFeature(aCodebook).get(0);
 
         Type sourceFsType = aAdapter.getAnnotationType(aSourceFs.getCAS());

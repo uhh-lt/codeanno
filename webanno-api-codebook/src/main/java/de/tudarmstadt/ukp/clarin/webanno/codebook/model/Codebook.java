@@ -269,6 +269,16 @@ public class Codebook
         this.codebookOrder = order;
     }
 
+    public void incOrder()
+    {
+        this.codebookOrder += 1;
+    }
+
+    public void decOrder()
+    {
+        this.codebookOrder -= 1;
+    }
+
     @Override
     public String toString()
     {

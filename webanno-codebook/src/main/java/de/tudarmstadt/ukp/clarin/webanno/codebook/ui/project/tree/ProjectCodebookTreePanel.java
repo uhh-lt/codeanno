@@ -16,24 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project;
+package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.tree;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
-import org.apache.wicket.extensions.markup.html.repeater.tree.content.Folder;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookTagEditorPanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookTagSelectionPanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.ProjectCodebookPanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 
 public class ProjectCodebookTreePanel
@@ -65,12 +65,12 @@ public class ProjectCodebookTreePanel
         Project project = (Project) this.getDefaultModelObject();
         // get all codebooks and init the provider
         List<Codebook> codebooks = this.codebookService.listCodebook(project);
-        this.provider = new CodebookTreeProvider(codebooks);
+        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
     }
 
-    private Folder<CodebookNode> buildFolderComponent(String id, IModel<CodebookNode> model)
+    private SortCodebookFolder buildFolderComponent(String id, IModel<CodebookNode> model)
     {
-        Folder<CodebookNode> folder = new Folder<CodebookNode>(id, tree, model)
+        SortCodebookFolder folder = new SortCodebookFolder(id, tree, model)
         {
 
             private static final long serialVersionUID = 1L;
@@ -87,6 +87,7 @@ public class ProjectCodebookTreePanel
             @Override
             protected void onClick(Optional<AjaxRequestTarget> targetOptional)
             {
+                // onclick toggle expand / collapse
                 AjaxRequestTarget _target = targetOptional.get();
                 this.showCodebookEditors(_target);
                 if (!CodebookNodeExpansion.get().contains(this.getModelObject())) {
@@ -97,6 +98,12 @@ public class ProjectCodebookTreePanel
                     CodebookNodeExpansion.get().remove(this.getModelObject());
                     tree.collapse(this.getModelObject());
                 }
+            }
+
+            @Override
+            protected Component newLabelComponent(String id, IModel<CodebookNode> model)
+            {
+                return super.newLabelComponent(id, model);
             }
 
             private void showCodebookEditors(AjaxRequestTarget _target)
@@ -119,17 +126,17 @@ public class ProjectCodebookTreePanel
         };
 
         // remove tree theme specific styling of the labels
-        folder.streamChildren().forEach(
-            component -> component.add(new AttributeModifier("class", new Model<>("tree-label"))
-                {
-                    private static final long serialVersionUID = -3206327021544384435L;
-
-                    @Override
-                    protected String newValue(String currentValue, String valueToRemove)
-                    {
-                        return currentValue.replaceAll(valueToRemove, "");
-                    }
-                }));
+        // folder.streamChildren().forEach(
+        // component -> component.add(new AttributeModifier("class", new Model<>("tree-label"))
+        // {
+        // private static final long serialVersionUID = -3206327021544384435L;
+        //
+        // @Override
+        // protected String newValue(String currentValue, String valueToRemove)
+        // {
+        // return currentValue.replaceAll(valueToRemove, "");
+        // }
+        // }));
 
         return folder;
     }
@@ -155,14 +162,12 @@ public class ProjectCodebookTreePanel
         this.addOrReplace(tree);
     }
 
-    // package private by intention
-    void expandAll()
+    public void expandAll()
     {
         CodebookNodeExpansion.get().expandAll();
     }
 
-    // package private by intention
-    void collapseAll()
+    public void collapseAll()
     {
         CodebookNodeExpansion.get().collapseAll();
     }

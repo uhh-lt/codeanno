@@ -55,7 +55,7 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTree;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.csv.WebannoCsvWriter;
 import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedProject;
@@ -191,7 +191,7 @@ public class CodebookExporter
         return exCB;
     }
 
-    private List<ExportedCodebook> createExportedCodebooks(CodebookTree tree)
+    private List<ExportedCodebook> createExportedCodebooks(CodebookTreeProvider tree)
     {
         List<ExportedCodebook> exportedCodebooks = new ArrayList<>();
 
@@ -209,7 +209,7 @@ public class CodebookExporter
     }
 
     private void createExportedCodebookRecursively(Codebook child, ExportedCodebook parent,
-            List<ExportedCodebook> exCBs, CodebookTree tree)
+            List<ExportedCodebook> exCBs, CodebookTreeProvider tree)
     {
 
         ExportedCodebook childExCB = createExportedCodebook(child, parent);
@@ -232,7 +232,7 @@ public class CodebookExporter
     @Override
     public List<ExportedCodebook> exportCodebooks(List<Codebook> codebooks)
     {
-        CodebookTree tree = new CodebookTree(codebooks);
+        CodebookTreeProvider tree = new CodebookTreeProvider(codebooks, this.codebookService);
         return createExportedCodebooks(tree);
     }
 
@@ -258,7 +258,7 @@ public class CodebookExporter
         }
 
         // we have to persist the codebook before importing features and tags
-        codebookService.createCodebook(cb);
+        codebookService.createOrUpdateCodebook(cb);
 
         // TODO import features and tags
         for (ExportedCodebookFeature exFeature : exCB.getFeatures())
@@ -291,7 +291,7 @@ public class CodebookExporter
             return;
         }
 
-        codebookService.createCodebookTag(tag);
+        codebookService.createOrUpdateCodebookTag(tag);
     }
 
     private void importExportedCodebookFeature(ExportedCodebookFeature exFeature, Codebook cb)
@@ -304,7 +304,7 @@ public class CodebookExporter
         feature.setCodebook(cb);
         feature.setProject(cb.getProject());
 
-        codebookService.createCodebookFeature(feature);
+        codebookService.createOrUpdateCodebookFeature(feature);
     }
 
     @Override

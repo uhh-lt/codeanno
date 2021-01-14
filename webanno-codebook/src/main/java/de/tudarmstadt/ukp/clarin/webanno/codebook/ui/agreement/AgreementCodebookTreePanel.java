@@ -44,9 +44,9 @@ import org.apache.wicket.model.Model;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConst;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationLayer;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
@@ -150,7 +150,7 @@ public class AgreementCodebookTreePanel
     {
         // get all codebooks and init the provider
         List<Codebook> codebooks = this.codebookService.listCodebook(this.project);
-        this.provider = new CodebookTreeProvider(codebooks);
+        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
     }
 
     // TODO we could also put this into CodebookTreePanel and make the onClick callback abstract
