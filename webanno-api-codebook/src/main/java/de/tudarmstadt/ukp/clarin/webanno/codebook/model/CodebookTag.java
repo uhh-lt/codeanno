@@ -67,6 +67,10 @@ public class CodebookTag
     @OnDelete(action = OnDeleteAction.CASCADE) // TODO do we really want cascading delete?!
     private CodebookTag parent;
 
+
+    @Column(name = "tagOrdering", nullable = false)
+    private int tagOrdering = 0;
+
     public CodebookTag()
     {
         // Nothing to do
@@ -190,6 +194,14 @@ public class CodebookTag
     public boolean getReordered()
     {
         return reordered;
+    }
+
+    public int getTagOrdering() {
+        return tagOrdering;
+    }
+
+    public void setTagOrdering(int tagOrdering) {
+        this.tagOrdering = tagOrdering;
     }
     // END HACK
 }

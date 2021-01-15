@@ -109,6 +109,11 @@ public class CodebookTagEditorPanel
     private void actionSave(AjaxRequestTarget aTarget, Form<CodebookTag> aForm)
     {
         selectedTag.getObject().setCodebook(selectedCodebook.getObject());
+
+        if (selectedTag.getObject().getTagOrdering() < 1) {
+            int lastIndex = codebookSchemaService.listTags(selectedCodebook.getObject()).size();
+            selectedTag.getObject().setTagOrdering(lastIndex + 1);
+        }
         codebookSchemaService.createOrUpdateCodebookTag(selectedTag.getObject());
 
         // Reload whole page because master panel also needs to be reloaded.

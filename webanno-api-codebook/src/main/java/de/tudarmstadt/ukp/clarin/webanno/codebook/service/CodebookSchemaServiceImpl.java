@@ -160,13 +160,14 @@ public class CodebookSchemaServiceImpl
 
     @Override
     @Transactional
-    public Codebook getCodebook(int aCodebookorder, Project aProject)
+    public Codebook getCodebook(int aCodebookOrdering, Project aProject)
     {
         return entityManager
                 .createQuery(
-                        "FROM Codebook WHERE codebookorder = :codebookorder AND project =:project ",
+                        "FROM Codebook WHERE codebookOrdering = :codebookOrdering AND project =:project ",
                         Codebook.class)
-                .setParameter("codebookorder", aCodebookorder).setParameter("project", aProject)
+                .setParameter("codebookOrdering", aCodebookOrdering).setParameter("project",
+                                                                                 aProject)
                 .getSingleResult();
     }
 
@@ -233,7 +234,7 @@ public class CodebookSchemaServiceImpl
     public List<Codebook> listCodebook(Project aProject)
     {
         return entityManager
-                .createQuery("FROM Codebook WHERE project =:project ORDER BY codebookorder asc",
+                .createQuery("FROM Codebook WHERE project =:project ORDER BY codebookOrdering asc",
                         Codebook.class)
                 .setParameter("project", aProject).getResultList();
     }

@@ -283,9 +283,9 @@ public class ProjectCodebookPanel
             codebook.setName(internalName);
         }
 
-        if (codebook.getOrder() < 1) {
+        if (codebook.getOrdering() < 1) {
             int lastIndex = codebookService.listCodebook(project).size();
-            codebook.setOrder(lastIndex + 1);
+            codebook.setOrdering(lastIndex + 1);
         }
 
         codebook.setProject(project);

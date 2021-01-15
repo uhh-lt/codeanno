@@ -54,7 +54,7 @@ public class CodebookNode
         this.selected = false;
         this.parent = null;
         this.children = new ArrayList<>();
-        this.ordering = codebook.getOrder();
+        this.ordering = codebook.getOrdering();
     }
 
     public Codebook getCodebook()

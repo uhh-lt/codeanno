@@ -213,11 +213,11 @@ public class CodebookTreeProvider
 
         // change ordering in both Codebooks
         Codebook cb = this.nameToCodebooks.get(node.getName());
-        cb.setOrder(node.getOrdering());
+        cb.setOrdering(node.getOrdering());
         this.codebookService.createOrUpdateCodebook(cb);
 
         cb = this.nameToCodebooks.get(swapSib.getName());
-        cb.setOrder(swapSib.getOrdering());
+        cb.setOrdering(swapSib.getOrdering());
         this.codebookService.createOrUpdateCodebook(cb);
 
         this.sortNodes();

@@ -108,9 +108,13 @@ public class CodebookTagSelectionComboBox
                 CodebookTag newUserTag = new CodebookTag();
                 newUserTag.setName(newTagValue);
                 newUserTag.setCodebook(node.getCodebook());
-
                 newUserTag.setDescription(
                         "This tag was created by " + userRepo.getCurrentUsername() + "!");
+
+                if (newUserTag.getTagOrdering() < 1) {
+                    int lastIndex = codebookService.listTags(node.getCodebook()).size();
+                    newUserTag.setTagOrdering(lastIndex + 1);
+                }
 
                 // parent tag
                 CodebookNodePanel parentNodePanel = parentPanel.getParentNodePanel();

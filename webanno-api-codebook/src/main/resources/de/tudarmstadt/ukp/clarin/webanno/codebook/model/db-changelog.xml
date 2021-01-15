@@ -204,4 +204,22 @@
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="codebook" />
 	</changeSet>
 
+	<!-- Add ordering column to codebook_tag -->
+	<changeSet author="CodeAnno Team" id="1512223050574-30.11">
+		<addColumn tableName="codebook_tag">
+			<column name="tagOrdering"
+					type="INT"
+					afterColumn="name"
+			>
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<!-- rename ordering column of codebook -->
+	<changeSet author="CodeAnno Team" id="1512223050574-30.12">
+		<renameColumn tableName="codebook" oldColumnName="codebookorder"
+					  newColumnName="codebookOrdering" columnDataType="INT"/>
+	</changeSet>
+
 </databaseChangeLog>

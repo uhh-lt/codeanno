@@ -155,7 +155,7 @@ public class CodebookExporter
         exCB.setName(cb.getName());
         exCB.setUiName(cb.getUiName());
         exCB.setProjectName(cb.getProject().getName());
-        exCB.setOrder(cb.getOrder());
+        exCB.setOrder(cb.getOrdering());
         exCB.setParent(parent);
 
         // features
@@ -243,7 +243,7 @@ public class CodebookExporter
 
         cb.setName(exCB.getName());
         cb.setUiName(exCB.getUiName());
-        cb.setOrder(exCB.getOrder());
+        cb.setOrdering(exCB.getOrder());
         cb.setDescription(exCB.getDescription());
         cb.setProject(project);
 
@@ -277,6 +277,11 @@ public class CodebookExporter
         tag.setDescription(exTag.getDescription());
         tag.setName(exTag.getName());
         tag.setCodebook(cb);
+
+        if (tag.getTagOrdering() < 1) {
+            int lastIndex = codebookService.listTags(cb).size();
+            tag.setTagOrdering(lastIndex + 1);
+        }
 
         if (cb.getParent() != null && exTag.getParent() != null) {
             for (CodebookTag pTag : codebookService.listTags(cb.getParent()))
