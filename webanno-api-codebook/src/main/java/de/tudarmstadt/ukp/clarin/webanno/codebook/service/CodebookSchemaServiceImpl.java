@@ -230,7 +230,7 @@ public class CodebookSchemaServiceImpl
     public List<CodebookTag> listTags(Codebook aCodebook)
     {
         return entityManager
-                .createQuery("FROM CodebookTag WHERE codebook = :codebook ORDER BY name ASC",
+                .createQuery("FROM CodebookTag WHERE codebook = :codebook ORDER BY tagOrdering ASC",
                         CodebookTag.class)
                 .setParameter("codebook", aCodebook).getResultList();
     }
@@ -240,7 +240,7 @@ public class CodebookSchemaServiceImpl
     public List<Codebook> listCodebook(Project aProject)
     {
         return entityManager
-                .createQuery("FROM Codebook WHERE project =:project ORDER BY codebookOrdering asc",
+                .createQuery("FROM Codebook WHERE project =:project ORDER BY codebookOrdering ASC",
                         Codebook.class)
                 .setParameter("project", aProject).getResultList();
     }

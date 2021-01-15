@@ -20,62 +20,81 @@
 <body>
 <wicket:panel>
 
-    <form class="flex-content card" wicket:id="form">
-        <div class="card-header">
-            <wicket:message key="tag.details"/>
-            <div class="actions">
+    <div class="flex-content card">
+        <form class="flex-content" wicket:id="form">
+            <div class="card-header">
+                <wicket:message key="tag.details"/>
+                <div class="actions">
+                    <button class="btn btn-primary" wicket:id="save">
+                        <i class="fas fa-save"></i>
+                        <div class="btn-action-label">
+                            <wicket:message key="save"/>
+                        </div>
+                    </button>
 
-                <button class="btn btn-primary" wicket:id="save">
-                    <i class="fas fa-save"></i>
-                    <div class="btn-action-label">
-                        <wicket:message key="save"/>
-                    </div>
-                </button>
+                    <button class="btn btn-secondary" wicket:id="cancel">
+                        <i class="fas fa-times"></i>
+                        <div class="btn-action-label">
+                            <wicket:message key="cancel"/>
+                        </div>
+                    </button>
 
-                <button class="btn btn-secondary" wicket:id="cancel">
-                    <i class="fas fa-times"></i>
-                    <div class="btn-action-label">
-                        <wicket:message key="cancel"/>
-                    </div>
-                </button>
+                    <button class="btn btn-danger" wicket:id="delete">
+                        <i class="fas fa-trash"></i>&nbsp;
+                        <div class="btn-action-label">
+                            <wicket:message key="delete"/>
+                        </div>
+                    </button>
 
-                <button class="btn btn-danger" wicket:id="delete">
-                    <i class="fas fa-trash"></i>&nbsp;
-                    <div class="btn-action-label">
-                        <wicket:message key="delete"/>
-                    </div>
-                </button>
-
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="form-group form-row">
-                <label class="col-sm-3 col-form-label" wicket:for="name">
-                    <wicket:label key="name"/>
-                </label>
-                <div class="col-sm-9">
-                    <input class="form-control" type="text" wicket:id="name"/>
                 </div>
             </div>
-            <div class="form-group form-row">
-                <label class="col-sm-3 col-form-label" wicket:for="description">
-                    <wicket:label key="description"/>
-                </label>
-                <div class="col-sm-9">
+
+            <div class="card-body">
+                <div class="form-group form-row">
+                    <label class="col-sm-3 col-form-label" wicket:for="name">
+                        <wicket:message key="name"/>
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" wicket:id="name"/>
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    <label class="col-sm-3 col-form-label" wicket:for="description">
+                        <wicket:message key="description"/>
+                    </label>
+                    <div class="col-sm-9">
                     <textarea class="form-control" rows="5" style="resize: vertical;"
                               wicket:id="description"></textarea>
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    <label class="col-sm-3 col-form-label" wicket:for="parent">
+                        <wicket:message key="parentTagLabel"/>
+                    </label>
+                    <div class="col-sm-9">
+                        <select class="form-control" wicket:id="parent"></select>
+                    </div>
+                </div>
+
+                <div class="form-group form-row">
+                    <label class="col-sm-3 col-form-label">
+                        <wicket:message key="tagOrderingLabel"/>
+                    </label>
+                    <div class="col-sm-9 btn-group-sm small" role="group">
+                        <button class="btn btn-primary btn-sm" wicket:id="up">
+                            <i class="fas fa-arrow-circle-up"></i>
+                            <wicket:message key="moveUp"/>
+                        </button>
+                        <button class="btn btn-primary btn-sm" wicket:id="down">
+                            <i class="fas fa-arrow-circle-down"></i>&nbsp;
+                            <wicket:message key="moveDown"/>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="form-group form-row">
-                <label class="col-sm-3 col-form-label" wicket:id="parentTagLabel"/>
-                <div class="col-sm-9">
-                    <select class="form-control" wicket:id="parent"></select>
-                </div>
-            </div>
-        </div>
-       
-    </form>
+        </form>
+    </div>
+
 </wicket:panel>
 </body>
 </html>

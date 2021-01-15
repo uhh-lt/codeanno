@@ -23,12 +23,18 @@
       <form class="flex-content card" wicket:id="codebookSelectionForm">
         <div class="card-header">
           <wicket:message key="codebooks"/>
-          <span>
-              <a target="_blank" wicket:message="href:layers.help.link">
-                <i class="fas fa-question-circle"></i>
-              </a>
-            </span>
+<!--          <span>-->
+<!--              <a target="_blank" wicket:message="href:layers.help.link">-->
+<!--                <i class="fas fa-question-circle"></i>-->
+<!--              </a>-->
+<!--            </span>-->
           <div class="actions">
+
+            <button class="btn btn-danger" wicket:id="resetOrdering">
+              <i class="fas fa-sort-alpha-down"></i>&nbsp;
+              <wicket:message key="resetOrdering"/>
+            </button>
+
               <span aria-expanded="false" aria-haspopup="true" class="dropdown">
                 <button class="btn btn-action btn-secondary dropdown-toggle flex-content"
                         data-toggle="dropdown" type="button">
@@ -67,7 +73,7 @@
         </div>
 
         <div class="card-body scrolling">
-          <div>
+          <div class="small">
             <button class="btn btn-sm btn-outline-secondary" wicket:id="expandAll">Expand all
             </button>
             <button class="btn btn-sm btn-outline-secondary float-right" wicket:id="collapseAll">
@@ -180,12 +186,12 @@
           <div class="card-body">
             <div class="form-group form-row">
               <label class="col-sm-4 col-form-label">
-                <wicket:message
-                        key="internalName"/>
+                <wicket:message key="internalName"/>
               </label>
               <div class="col-sm-8">
-                    <span class="form-control" readonly=""><wicket:container
-                            wicket:id="name"/></span>
+                    <span class="form-control" readonly>
+                      <wicket:container wicket:id="name"/>
+                    </span>
               </div>
             </div>
           </div>
@@ -194,10 +200,10 @@
     </form>
 
     <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
-      <div class="flex-h-container flex-no-gutter" style="flex: .3;"
-           wicket:id="codebookTagSelector"></div>
+      <div class="flex-h-container flex-no-gutter" style="flex: .3;" wicket:id="codebookTagSelector">
+
+      </div>
       <div class="flex-content flex-h-container flex-no-gutter" wicket:id="codebookTagEditor">
-        Codes
       </div>
     </div>
   </div>

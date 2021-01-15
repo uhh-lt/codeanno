@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -121,6 +122,7 @@ public class ProjectCodebookPanel
 
     private final CodebookTagSelectionPanel tagSelectionPanel;
     private final CodebookTagEditorPanel tagEditorPanel;
+
     private final ImportCodebookForm importCodebookForm;
 
     private final IModel<CodebookTag> selectedTag;
@@ -145,18 +147,18 @@ public class ProjectCodebookPanel
         codebookDetailForm = new CodebookDetailForm("codebookDetailForm", selectedCodebook);
         add(codebookDetailForm);
 
-        // tag editor panel
-        tagEditorPanel = new CodebookTagEditorPanel("codebookTagEditor", selectedCodebook,
-                selectedTag);
-        add(tagEditorPanel);
-
         // tag selection panel
         tagSelectionPanel = new CodebookTagSelectionPanel("codebookTagSelector", selectedCodebook,
                 selectedTag);
+        add(tagSelectionPanel);
+
+        // tag editor panel
+        tagEditorPanel = new CodebookTagEditorPanel("codebookTagEditor", selectedCodebook,
+                selectedTag, tagSelectionPanel);
+        add(tagEditorPanel);
         tagSelectionPanel.setChangeAction(target -> {
             target.add(tagEditorPanel);
         });
-        add(tagSelectionPanel);
 
         // import form
         importCodebookForm = new ImportCodebookForm("importCodebookForm");
@@ -347,6 +349,9 @@ public class ProjectCodebookPanel
                 }
             });
 
+            // reset Ordering button
+            add(new LambdaAjaxLink("resetOrdering", this::actionResetOrdering));
+
             // create and add expand and collapse buttons
             add(new Button("expandAll")
             {
@@ -379,6 +384,18 @@ public class ProjectCodebookPanel
         private void actionCollapse()
         {
             CodebookNodeExpansion.get().collapseAll();
+        }
+
+        private void actionResetOrdering(AjaxRequestTarget aTarget) throws Exception
+        {
+            Project proj = ProjectCodebookPanel.this.getModelObject();
+            List<Codebook> codebooks = codebookService.listCodebook(proj);
+            codebooks.sort(Comparator.comparing(Codebook::getName).reversed());
+            codebooks.forEach(cb -> cb.setOrdering(codebooks.indexOf(cb)));
+            codebooks.forEach(codebookService::createOrUpdateCodebook);
+            projectCodebookTreePanel.initTree(); // we have to think of a better way to update a
+            // tree. this way we init the tree way too often
+            aTarget.add(codebookSelectionForm, projectCodebookTreePanel);
         }
     }
 
@@ -621,5 +638,4 @@ public class ProjectCodebookPanel
             return uiName;
         }
     }
-
 }

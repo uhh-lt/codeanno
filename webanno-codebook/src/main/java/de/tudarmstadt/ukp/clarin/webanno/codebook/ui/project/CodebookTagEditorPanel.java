@@ -24,13 +24,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
@@ -53,8 +53,12 @@ public class CodebookTagEditorPanel
     private final IModel<CodebookTag> selectedTag;
 
     private final ParentSelectionWrapper<CodebookTag> codebookTagParentSelection;
+    private final CodebookTagSelectionPanel tagSelectionPanel;
 
-    public CodebookTagEditorPanel(String aId, IModel<Codebook> aCodebook, IModel<CodebookTag> aTag)
+    public CodebookTagEditorPanel(String aId,
+                                  IModel<Codebook> aCodebook,
+                                  IModel<CodebookTag> aTag,
+                                  CodebookTagSelectionPanel aTagSelectionPanel)
     {
         super(aId, aTag);
 
@@ -63,6 +67,7 @@ public class CodebookTagEditorPanel
 
         selectedCodebook = aCodebook;
         selectedTag = aTag;
+        tagSelectionPanel = aTagSelectionPanel;
 
         Form<CodebookTag> form = new Form<>("form", CompoundPropertyModel.of(aTag));
 
@@ -85,12 +90,27 @@ public class CodebookTagEditorPanel
         this.codebookTagParentSelection = new ParentSelectionWrapper<>("parent", "name",
                 parentTags);
         form.add(this.codebookTagParentSelection.getDropdown().setOutputMarkupPlaceholderTag(true));
-        form.add(new Label("parentTagLabel", "Parent Tag").setOutputMarkupPlaceholderTag(true));
-
         form.add(new LambdaAjaxButton<>("save", this::actionSave));
         form.add(new LambdaAjaxLink("delete", this::actionDelete)
                 .onConfigure(_this -> _this.setVisible(form.getModelObject().getId() != null)));
         form.add(new LambdaAjaxLink("cancel", this::actionCancel));
+
+        form.add(new LambdaAjaxLink("up", (target) -> {
+            moveTag(true);
+            target.add(tagSelectionPanel);
+        })
+        {
+            private static final long serialVersionUID = 5243294213092651657L;
+        });
+
+        form.add(new LambdaAjaxLink("down", (target) -> {
+            moveTag(false);
+            target.add(tagSelectionPanel);
+        })
+        {
+            private static final long serialVersionUID = 5243294213092651657L;
+        });
+
         add(form);
     }
 
@@ -134,6 +154,25 @@ public class CodebookTagEditorPanel
         aTarget.add(getPage());
     }
 
+    private void moveTag(boolean up)
+    {
+        CodebookTag tag = selectedTag.getObject();
+        List<CodebookTag> tags = codebookSchemaService.listTags(tag.getCodebook());
+        int myIdx = tags.indexOf(tag);
+        if (myIdx == -1) // tag is not yet saved and therefore not in the Tag list
+            return;
+        else if ((myIdx == 0 && up) || (myIdx == tags.size() - 1 && !up)) // cant move up or down
+            return;
+        else {
+            int oldOrdering = tag.getTagOrdering();
+            CodebookTag swapTag = tags.get(myIdx + (up ? -1 : 1));
+            tag.setTagOrdering(swapTag.getTagOrdering());
+            swapTag.setTagOrdering(oldOrdering);
+            codebookSchemaService.createOrUpdateCodebookTag(tag);
+            codebookSchemaService.createOrUpdateCodebookTag(swapTag);
+        }
+    }
+
     private class TagExistsValidator
         implements IValidator<String>
     {
@@ -147,8 +186,8 @@ public class CodebookTagEditorPanel
             if (!StringUtils.equals(newName, oldName) && isNotBlank(newName)
                     && codebookSchemaService.existsCodebookTag(newName,
                             selectedCodebook.getObject())) {
-                aValidatable.error(new ValidationError(
-                        "Another tag with the same name exists. Please try a different name"));
+                aValidatable.error(
+                        new ValidationError(new StringResourceModel("tagExistsError").getString()));
             }
         }
     }

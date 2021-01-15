@@ -18,6 +18,7 @@
 package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -64,6 +65,7 @@ public class CodebookTagSelectionPanel
         add(overviewList);
 
         add(new LambdaAjaxLink("create", this::actionCreate));
+        add(new LambdaAjaxLink("resetOrdering", this::actionResetOrdering));
     }
 
     private List<CodebookTag> listTags()
@@ -91,4 +93,11 @@ public class CodebookTagSelectionPanel
         selectedTag.setObject(new CodebookTag());
     }
 
+    protected void actionResetOrdering(AjaxRequestTarget aTarget) throws Exception
+    {
+        List<CodebookTag> tags = listTags();
+        tags.sort(Comparator.comparing(CodebookTag::getName));
+        tags.forEach(t -> t.setTagOrdering(tags.indexOf(t)));
+        tags.forEach(codebookSchemaService::createOrUpdateCodebookTag);
+    }
 }

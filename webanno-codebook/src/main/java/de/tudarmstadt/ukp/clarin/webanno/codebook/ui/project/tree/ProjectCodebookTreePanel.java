@@ -68,9 +68,9 @@ public class ProjectCodebookTreePanel
         this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
     }
 
-    private SortCodebookFolder buildFolderComponent(String id, IModel<CodebookNode> model)
+    private OrderingCodebookFolder buildFolderComponent(String id, IModel<CodebookNode> model)
     {
-        SortCodebookFolder folder = new SortCodebookFolder(id, tree, model)
+        OrderingCodebookFolder folder = new OrderingCodebookFolder(id, tree, model, this)
         {
 
             private static final long serialVersionUID = 1L;

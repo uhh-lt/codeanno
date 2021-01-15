@@ -26,21 +26,24 @@ import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 
-public class SortCodebookFolder
+public class OrderingCodebookFolder
     extends Folder<CodebookNode>
 {
     private static final long serialVersionUID = -7043149283348752066L;
 
-    public SortCodebookFolder(String id, AbstractTree<CodebookNode> tree,
-            IModel<CodebookNode> model)
+    public OrderingCodebookFolder(
+            String id, AbstractTree<CodebookNode> tree, IModel<CodebookNode> model,
+            ProjectCodebookTreePanel parentPanel
+    )
     {
         super(id, tree, model);
         add(new LambdaAjaxLink("up", (target) -> {
             if (tree.getProvider() instanceof CodebookTreeProvider)
                 ((CodebookTreeProvider) tree.getProvider()).move(model.getObject(), true);
-            // FIXME the tree doesn't refresh for notes starting with level 3...
-            // not even by adding tree.getParent() or tree.getPage()!
-            target.add(tree);
+            // we have to think of a better way to update a tree. this way we init the tree way
+            // too often...
+            parentPanel.initTree();
+            target.add(parentPanel);
         })
         {
             private static final long serialVersionUID = 5243294213092651657L;
@@ -49,9 +52,10 @@ public class SortCodebookFolder
         add(new LambdaAjaxLink("down", (target) -> {
             if (tree.getProvider() instanceof CodebookTreeProvider)
                 ((CodebookTreeProvider) tree.getProvider()).move(model.getObject(), false);
-            // FIXME the tree doesn't refresh for notes starting with level 3...
-            // not even by adding tree.getParent() or tree.getPage()!
-            target.add(tree);
+            // we have to think of a better way to update a tree. this way we init the tree way
+            // too often...
+            parentPanel.initTree();
+            target.add(parentPanel);
         })
         {
             private static final long serialVersionUID = 5243294213092651657L;
