@@ -1,13 +1,13 @@
 /*
- * Copyright 2019
- * Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
- * Technische Universität Darmstadt
+ * Licensed to the Technische Universität Darmstadt under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The Technische Universität Darmstadt
+ * licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -83,7 +83,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateImpl;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.PreferencesUtil;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.preferences.AnnotationEditorProperties;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.preferences.UserPreferencesService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.AnnotatorViewportChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.SelectionChangedEvent;
@@ -131,7 +130,6 @@ public class AnnotationPage
     private @SpringBean DocumentService documentService;
     private @SpringBean ProjectService projectService;
     private @SpringBean ConstraintsService constraintsService;
-    private @SpringBean AnnotationEditorProperties defaultPreferences;
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean UserPreferencesService userPreferenceService;
     private @SpringBean UserDao userRepository;
@@ -299,8 +297,7 @@ public class AnnotationPage
      * triggered a change in some feature that might be shown on screen.
      * <p>
      * NOTE: Considering that this is a backend event, we check here if it even applies to the
-     * current view. It might be more efficient to have another event that more closely
-      mimicks
+     * current view. It might be more efficient to have another event that more closely mimicks
      * {@code AnnotationDetailEditorPanel.onChange()}.
      */
     @OnEvent
@@ -594,7 +591,7 @@ public class AnnotationPage
             // Reset the editor (we reload the page content below, so in order not to schedule
             // a double-update, we pass null here)
             detailEditor.reset(null);
-// Populate the layer dropdown box
+            // Populate the layer dropdown box
             detailEditor.loadFeatureEditorModels(aTarget);
             if (aTarget != null) {
                 // Update URL for current document

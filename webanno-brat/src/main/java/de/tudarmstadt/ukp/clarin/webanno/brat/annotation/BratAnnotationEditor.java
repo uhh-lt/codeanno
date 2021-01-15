@@ -1,14 +1,14 @@
 /*
- * Copyright 2012
- * Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
- * Technische Universität Darmstadt
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Technische Universität Darmstadt under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The Technische Universität Darmstadt 
+ * licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.
+ *  
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUt
 import static de.tudarmstadt.ukp.clarin.webanno.brat.metrics.BratMetrics.RenderType.DIFFERENTIAL;
 import static de.tudarmstadt.ukp.clarin.webanno.brat.metrics.BratMetrics.RenderType.FULL;
 import static de.tudarmstadt.ukp.clarin.webanno.brat.metrics.BratMetrics.RenderType.SKIP;
+import static de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil.serverTiming;
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 
 import java.io.IOException;
@@ -75,10 +76,9 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.feature.FeatureSupportRe
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.Selection;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.VID;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.preferences.AnnotationEditorProperties;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.PreRenderer;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.model.VDocument;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
+import de.tudarmstadt.ukp.clarin.webanno.brat.config.BratAnnotationEditorProperties;
 import de.tudarmstadt.ukp.clarin.webanno.brat.message.ArcAnnotationResponse;
 import de.tudarmstadt.ukp.clarin.webanno.brat.message.DoActionResponse;
 import de.tudarmstadt.ukp.clarin.webanno.brat.message.GetCollectionInformationResponse;
@@ -133,31 +133,14 @@ public class BratAnnotationEditor
 
     private static final String ACTION_CONTEXT_MENU = "contextMenu";
 
-    // Controls whether rendering should happen within the AJAX request or after the AJAX
-    // request. Doing it within the request has the benefit of the browser only having to
-    // recalculate the layout once at the end of the AJAX request (at least theoretically)
-    // while deferring the rendering causes the AJAX request to complete faster, but then
-    // the browser needs to recalculate its layout twice - once of any Wicket components
-    // being re-rendered and once for the brat view to re-render.
-    private static final boolean DEFERRED_RENDERING = false;
-
-    // Whether the profiling built into the the brat visualization JS should be enabled. If
-    // this is enabled, profiling data is collected and a report is printed to the browser's
-    // JS console after every rendering action
-    private static final boolean ENABLE_IN_BROWSER_PROFILING = false;
-
-    // Log messages in the browser as part of JS commands
-    private static final boolean ENABLE_IN_BROWSER_TRACE = false;
-
     private final ContextMenu contextMenu;
 
-    private @SpringBean PreRenderer preRenderer;
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean ColoringService coloringService;
     private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
     private @SpringBean FeatureSupportRegistry featureSupportRegistry;
     private @SpringBean BratMetrics metrics;
-    private @SpringBean AnnotationEditorProperties bratProperties;
+    private @SpringBean BratAnnotationEditorProperties bratProperties;
 
     private WebMarkupContainer vis;
     private AbstractAjaxBehavior requestHandler;
@@ -332,8 +315,10 @@ public class BratAnnotationEditor
                             "Wicket.$('" + vis.getMarkupId() + "').temp = " + json + ";");
                 }
 
-                LOG.trace("AJAX-RPC DONE: [{}] completed in {}ms", action,
-                        (System.currentTimeMillis() - timerStart));
+                long duration = System.currentTimeMillis() - timerStart;
+                LOG.trace("AJAX-RPC DONE: [{}] completed in {}ms", action, duration);
+
+                serverTiming("Brat-AJAX", "Brat-AJAX (" + action + ")", duration);
             }
         };
 
@@ -569,6 +554,7 @@ public class BratAnnotationEditor
 
         timer.stop();
         metrics.renderComplete(RenderType.FULL, timer.getTime(), json, null);
+        serverTiming("Brat-JSON", "Brat JSON generation (FULL)", timer.getTime());
 
         return json;
     }
@@ -743,6 +729,7 @@ public class BratAnnotationEditor
         timer.stop();
 
         metrics.renderComplete(renderType, timer.getTime(), json, diffJsonStr);
+        serverTiming("Brat-JSON", "Brat-JSON generation (" + renderType + ")", timer.getTime());
 
         if (SKIP.equals(renderType)) {
             return Optional.empty();
@@ -771,7 +758,7 @@ public class BratAnnotationEditor
         StringBuilder js = new StringBuilder();
 
         js.append("(function() {");
-        if (ENABLE_IN_BROWSER_TRACE) {
+        if (bratProperties.isClientSideTraceLog()) {
             js.append("  console.log('Initializing (" + vis.getMarkupId() + ")...');");
         }
         js.append("  var dispatcher = new Dispatcher();");
@@ -803,7 +790,7 @@ public class BratAnnotationEditor
         String json = toJson(response);
 
         StringBuilder js = new StringBuilder();
-        if (ENABLE_IN_BROWSER_TRACE) {
+        if (bratProperties.isClientSideTraceLog()) {
             js.append("console.log('Loading collection (" + vis.getMarkupId() + ")...');");
         }
         js.append("Wicket.$('" + vis.getMarkupId() + "').dispatcher.post('collectionLoaded', ["
@@ -867,27 +854,27 @@ public class BratAnnotationEditor
             bratRenderCommand(getCasProvider().get()).ifPresent(cmd -> {
                 StringBuilder js = new StringBuilder();
 
-                if (DEFERRED_RENDERING) {
+                if (bratProperties.isDeferredRendering()) {
                     js.append("setTimeout(function() {");
                 }
 
-                if (ENABLE_IN_BROWSER_PROFILING) {
+                if (bratProperties.isClientSideProfiling()) {
                     js.append("Util.profileEnable(true);");
                     js.append("Util.profileClear();");
                 }
 
-                if (ENABLE_IN_BROWSER_TRACE) {
+                if (bratProperties.isClientSideTraceLog()) {
                     js.append("console.log('Rendering (" + vis.getMarkupId() + ")...');");
                 }
 
                 js.append(cmd);
 
-                if (ENABLE_IN_BROWSER_PROFILING) {
+                if (bratProperties.isClientSideProfiling()) {
                     js.append("Util.profileReport();");
                 }
 
-                if (DEFERRED_RENDERING) {
-                    js.append("}, 0);");
+                if (bratProperties.isDeferredRendering()) {
+                    js.append("}, 1);");
                 }
 
                 aTarget.appendJavaScript(js);
