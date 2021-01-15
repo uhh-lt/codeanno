@@ -64,17 +64,20 @@ public class CodebookSchemaServiceImpl
     @Transactional
     public void createOrUpdateCodebook(Codebook codebook)
     {
+        String createOrUpdate;
         if (isNull(codebook.getId())) {
             entityManager.persist(codebook);
+            createOrUpdate = "Created";
         }
         else {
             entityManager.merge(codebook);
+            createOrUpdate = "Updated";
         }
 
         try (MDC.MDCCloseable closable = MDC.putCloseable(Logging.KEY_PROJECT_ID,
                 String.valueOf(codebook.getProject().getId()))) {
             Project project = codebook.getProject();
-            log.info("Created codebook [{}]({}) in project [{}]({})", codebook.getName(),
+            log.info(createOrUpdate + " codebook [{}]({}) in project [{}]({})", codebook.getName(),
                     codebook.getId(), project.getName(), project.getId());
         }
     }
@@ -195,20 +198,23 @@ public class CodebookSchemaServiceImpl
     @Transactional
     public void createOrUpdateCodebookTag(CodebookTag aTag)
     {
+        String createOrUpdate;
         if (isNull(aTag.getId())) {
             entityManager.persist(aTag);
+            createOrUpdate = "Created";
         }
         else {
             entityManager.merge(aTag);
+            createOrUpdate = "Updated";
         }
 
         try (MDC.MDCCloseable closable = MDC.putCloseable(Logging.KEY_PROJECT_ID,
                 String.valueOf(aTag.getCodebook().getProject().getId()))) {
             Codebook codebook = aTag.getCodebook();
             Project project = codebook.getProject();
-            log.info("Created codebook_tag [{}]({}) in codebook [{}]({}) in project [{}]({})",
-                    aTag.getName(), aTag.getId(), codebook.getName(), codebook.getId(),
-                    project.getName(), project.getId());
+            log.info(createOrUpdate + " codebook_tag [{}]({}) in codebook [{}]({}) in project " +
+                     "[{}]({})", aTag.getName(), aTag.getId(), codebook.getName(), codebook.getId(),
+                     project.getName(), project.getId());
         }
     }
 
