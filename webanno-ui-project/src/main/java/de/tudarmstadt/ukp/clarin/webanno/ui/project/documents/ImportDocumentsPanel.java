@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
@@ -66,7 +67,7 @@ import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaModel;
-import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
+import de.tudarmstadt.ukp.clarin.webanno.ui.core.settings.ProjectSettingsPanelBase;
 
 public class ImportDocumentsPanel
     extends Panel {
