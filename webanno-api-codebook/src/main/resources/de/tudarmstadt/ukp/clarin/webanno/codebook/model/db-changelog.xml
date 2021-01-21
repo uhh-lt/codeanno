@@ -16,12 +16,9 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
 -->
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
-  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="
-    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
-    http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
    
   <!-- CODEBOOK schema -->
@@ -220,6 +217,69 @@
 	<changeSet author="CodeAnno Team" id="1512223050574-30.12">
 		<renameColumn tableName="codebook" oldColumnName="codebookorder"
 					  newColumnName="codebookOrdering" columnDataType="INT"/>
+	</changeSet>
+
+
+
+	<!-- create cba_tag_label_mapping table -->
+	<changeSet author="CodeAnno Team" id="2021-01-21T10:55:24+01:00">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="cba_tag_label_mapping" />
+			</not>
+		</preConditions>
+		<createTable tableName="cba_tag_label_mapping">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="model_version" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="label" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="tag" type="BIGINT" />
+		</createTable>
+
+	</changeSet>
+
+	<!-- Add UC for cba_tag_label_mapping -->
+	<changeSet author="CodeAnno Team" id="2021-01-21T11:05:50+01:00">
+		<addUniqueConstraint tableName="cba_tag_label_mapping"
+							 constraintName="UC_cba_tag_label_mapping"
+							 columnNames="model_version, label, tag" />
+	</changeSet>
+
+	<!-- Add index on tag column on cba_tag_label_mapping -->
+	<changeSet author="CodeAnno Team" id="2021-01-21T11:03:33+01:00">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="cba_tag_label_mapping" indexName="IDX_cba_tag_label_mapping"/>
+			</not>
+		</preConditions>
+		<createIndex tableName="cba_tag_label_mapping" indexName="IDX_cba_tag_label_mapping" >
+			<column name="tag" />
+		</createIndex>
+	</changeSet>
+
+	<!-- Add FKC on cba_tag_label_mapping -->
+	<changeSet author="CodeAnno Team" id="2021-01-21T11:07:00+01:00">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<foreignKeyConstraintExists foreignKeyTableName="cba_tag_label_mapping"
+											foreignKeyName="FKC_cba_tag_label_mapping" />
+			</not>
+		</preConditions>
+		<addForeignKeyConstraint baseColumnNames="tag"
+								 baseTableName="cba_tag_label_mapping"
+								 referencedColumnNames="id"
+								 referencedTableName="codebook_tag"
+								 constraintName="FKC_cba_tag_label_mapping"
+								 deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="CASCADE"
+								 onUpdate="NO ACTION"
+		/>
 	</changeSet>
 
 </databaseChangeLog>
