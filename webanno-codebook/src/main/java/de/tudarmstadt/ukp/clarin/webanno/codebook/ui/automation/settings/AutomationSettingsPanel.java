@@ -358,7 +358,7 @@ public class AutomationSettingsPanel
         List<String> labelChoices = new ArrayList<>();
         if (metadata != null)
             for (Map.Entry<String, String> e : metadata.getLabels().entrySet())
-                labelChoices.add(e.getKey());
+                labelChoices.add(e.getValue());
 
         List<CodebookTag> tags = codebookSchemaService.listTags(cb);
         tagLabelMappingForm.addOrReplace(new ListView<>("tagsListView", tags)

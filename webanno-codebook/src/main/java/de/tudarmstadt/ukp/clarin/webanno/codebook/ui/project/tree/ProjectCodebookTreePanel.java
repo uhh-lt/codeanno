@@ -125,19 +125,6 @@ public class ProjectCodebookTreePanel
             }
         };
 
-        // remove tree theme specific styling of the labels
-        // folder.streamChildren().forEach(
-        // component -> component.add(new AttributeModifier("class", new Model<>("tree-label"))
-        // {
-        // private static final long serialVersionUID = -3206327021544384435L;
-        //
-        // @Override
-        // protected String newValue(String currentValue, String valueToRemove)
-        // {
-        // return currentValue.replaceAll(valueToRemove, "");
-        // }
-        // }));
-
         return folder;
     }
 
