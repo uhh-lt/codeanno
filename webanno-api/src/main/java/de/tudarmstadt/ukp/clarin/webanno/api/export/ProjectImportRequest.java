@@ -27,17 +27,13 @@ import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 public class ProjectImportRequest
     implements Serializable
 {
-    private static final long serialVersionUID = -4486934192675904995L;
-
     public static final String FORMAT_AUTO = "AUTO";
-
-    public int progress = 0;
-
+    private static final long serialVersionUID = -4486934192675904995L;
     private final Queue<String> messages = new ConcurrentLinkedQueue<>();
-
     private final boolean createMissingUsers;
     private final boolean importPermissions;
     private final Optional<User> manager;
+    public int progress = 0;
 
     /**
      * Request the import of a project, optionally creating any users referenced in the project but

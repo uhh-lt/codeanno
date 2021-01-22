@@ -50,16 +50,16 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationExce
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.event.DocumentStateChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.automation.generated.apiclient.ApiException;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.automation.generated.apiclient.model.PredictionResult;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.automation.service.CodebookAutomationService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.ApiException;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.generated.apiclient.model.PredictionResult;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.automation.service.CodebookAutomationService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookNodePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.annotation.CodebookTagSelectionComboBox;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
@@ -247,9 +247,8 @@ public class CodebookCorrectionNodePanel
 
     }
 
-    private void writeCodebookToCas(
-            CodebookCasAdapter aAdapter, CodebookFeature feature, String value,
-            CAS aJCas)
+    private void writeCodebookToCas(CodebookCasAdapter aAdapter, CodebookFeature feature,
+            String value, CAS aJCas)
         throws IOException, AnnotationException
     {
 
@@ -318,11 +317,6 @@ public class CodebookCorrectionNodePanel
     public CodebookNodePanel getParentNodePanel()
     {
         return null;
-    }
-
-    public CodebookNode getNode()
-    {
-        return node;
     }
 
     @EventListener

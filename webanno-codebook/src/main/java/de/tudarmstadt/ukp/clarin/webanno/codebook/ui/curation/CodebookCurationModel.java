@@ -20,12 +20,8 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookFeatureState;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.suggestion.CodebookSuggestion;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 
@@ -33,8 +29,6 @@ public class CodebookCurationModel
     implements Serializable
 {
     private static final long serialVersionUID = -7826210722492638188L;
-    private final List<CodebookFeatureState> codebookFeatureStates = new ArrayList<>();
-    private final List<CodebookCurations> codebookCurations = new ArrayList<>();
     private final List<CodebookSuggestion> codebookSuggestions = new ArrayList<>();
     private List<Codebook> codebooks;
     private SourceDocument document;
@@ -51,16 +45,6 @@ public class CodebookCurationModel
         this.codebooks = aCodebooks;
         this.document = aDocument;
         this.project = aProject;
-    }
-
-    public CodebookFeatureState getCodebookFeatureState(CodebookFeature aFeature)
-    {
-        for (CodebookFeatureState f : codebookFeatureStates) {
-            if (Objects.equals(f.feature.getId(), aFeature.getId())) {
-                return f;
-            }
-        }
-        return null;
     }
 
     public List<Codebook> getCodebooks()

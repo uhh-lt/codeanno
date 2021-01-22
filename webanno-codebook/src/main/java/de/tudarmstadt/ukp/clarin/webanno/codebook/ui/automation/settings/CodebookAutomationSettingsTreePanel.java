@@ -28,12 +28,14 @@ import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.extensions.markup.html.repeater.tree.content.Folder;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNodeExpansion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 
 public class CodebookAutomationSettingsTreePanel
@@ -44,6 +46,8 @@ public class CodebookAutomationSettingsTreePanel
 
     private final CodebookAutomationSettingsPanel codebookAutomationSettingsPanel;
     private final CodebookAutomationSettingsPanel.CodebookSelectionForm codebookSelectionForm;
+
+    private @SpringBean CodebookSchemaService codebookSchemaService;
 
     public CodebookAutomationSettingsTreePanel(String aId, IModel<?> aModel,
             CodebookAutomationSettingsPanel codebookAutomationSettingsPanel,
@@ -59,8 +63,8 @@ public class CodebookAutomationSettingsTreePanel
     {
         Project project = (Project) this.getDefaultModelObject();
         // get all codebooks and init the provider
-        List<Codebook> codebooks = this.codebookService.listCodebook(project);
-        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
+        List<Codebook> codebooks = this.codebookSchemaService.listCodebook(project);
+        this.provider = new CodebookTreeProvider(codebooks);
     }
 
     private Folder<CodebookNode> buildFolderComponent(String id, IModel<CodebookNode> model)

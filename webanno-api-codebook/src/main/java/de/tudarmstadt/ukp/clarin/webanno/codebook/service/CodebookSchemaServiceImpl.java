@@ -315,4 +315,15 @@ public class CodebookSchemaServiceImpl
 
         return tsd;
     }
+
+    @Override
+    public void swapCodebookOrderings(Codebook a, Codebook b)
+    {
+        int tmp = a.getOrdering();
+        a.setOrdering(b.getOrdering());
+        b.setOrdering(tmp);
+
+        this.createOrUpdateCodebook(a);
+        this.createOrUpdateCodebook(b);
+    }
 }

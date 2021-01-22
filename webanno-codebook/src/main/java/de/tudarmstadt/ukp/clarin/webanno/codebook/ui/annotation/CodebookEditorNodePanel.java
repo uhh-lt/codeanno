@@ -32,11 +32,10 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookNodePanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
 
@@ -160,11 +159,6 @@ public class CodebookEditorNodePanel
     public CodebookEditorPanel getParentEditor()
     {
         return parentEditor;
-    }
-
-    public CodebookNode getNode()
-    {
-        return node;
     }
 
     @Override

@@ -69,19 +69,19 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapRadioChoic
 import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.api.CasStorageService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConst;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConstants;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.config.CodebookLayoutCssResourceBehavior;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.event.CodebookConfigurationChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.export.CodebookExporter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.export.ExportedCodebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.tree.ProjectCodebookTreePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
@@ -275,7 +275,7 @@ public class ProjectCodebookPanel
                         + "codebook has been created.");
                 return;
             }
-            String internalName = CodebookConst.CODEBOOK_NAME_PREFIX + codebookName;
+            String internalName = CodebookConstants.CODEBOOK_NAME_PREFIX + codebookName;
             if (codebookService.existsCodebook(internalName, project)) {
                 error("A codebook with the name [" + internalName
                         + "] already exists in this project.");

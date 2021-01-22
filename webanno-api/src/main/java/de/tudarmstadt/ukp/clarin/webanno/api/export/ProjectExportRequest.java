@@ -25,10 +25,8 @@ import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 public class ProjectExportRequest
     implements Serializable
 {
-    private static final long serialVersionUID = -4486934192675904995L;
-
     public static final String FORMAT_AUTO = "AUTO";
-
+    private static final long serialVersionUID = -4486934192675904995L;
     private Project project;
     private String format;
     private boolean includeInProgress;
@@ -57,29 +55,19 @@ public class ProjectExportRequest
         includeInProgress = aIncludeInProgress;
     }
 
-    public void setProject(Project aProject)
-    {
-        project = aProject;
-    }
-
     public Project getProject()
     {
         return project;
     }
 
-    /**
-     * Set the ID of the export format.
-     * 
-     * @see FormatSupport#getId()
-     */
-    public void setFormat(String aFormat)
+    public void setProject(Project aProject)
     {
-        format = aFormat;
+        project = aProject;
     }
 
     /**
      * Get the ID of the export format.
-     * 
+     *
      * @see FormatSupport#getId()
      */
     public String getFormat()
@@ -87,14 +75,24 @@ public class ProjectExportRequest
         return format;
     }
 
-    public void setIncludeInProgress(boolean aIncludeInProgress)
+    /**
+     * Set the ID of the export format.
+     *
+     * @see FormatSupport#getId()
+     */
+    public void setFormat(String aFormat)
     {
-        includeInProgress = aIncludeInProgress;
+        format = aFormat;
     }
 
     public boolean isIncludeInProgress()
     {
         return includeInProgress;
+    }
+
+    public void setIncludeInProgress(boolean aIncludeInProgress)
+    {
+        includeInProgress = aIncludeInProgress;
     }
 
     public String getFilenameTag()

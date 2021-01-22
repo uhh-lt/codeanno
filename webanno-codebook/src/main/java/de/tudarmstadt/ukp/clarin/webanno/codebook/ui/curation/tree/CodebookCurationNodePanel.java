@@ -46,12 +46,12 @@ import de.tudarmstadt.ukp.clarin.webanno.api.event.DocumentStateChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.adapter.CodebookCasAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookNodePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.annotation.CodebookTagSelectionComboBox;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookUserSuggestion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodePanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTagSelectionComboBox;
 import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState;
@@ -222,8 +222,7 @@ public class CodebookCurationNodePanel
 
     }
 
-    private void writeCodebookToCas(
-            CodebookCasAdapter aAdapter, CodebookFeature feature,
+    private void writeCodebookToCas(CodebookCasAdapter aAdapter, CodebookFeature feature,
             String tagValue, CAS aJCas)
         throws IOException, AnnotationException
     {
@@ -290,11 +289,6 @@ public class CodebookCurationNodePanel
     {
         // TODO
         return null;
-    }
-
-    public CodebookNode getNode()
-    {
-        return node;
     }
 
     @EventListener

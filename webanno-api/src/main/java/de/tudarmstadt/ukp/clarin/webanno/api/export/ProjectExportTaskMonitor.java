@@ -83,15 +83,15 @@ public class ProjectExportTaskMonitor
         return progress;
     }
 
+    public synchronized void setProgress(int aProgress)
+    {
+        progress = aProgress;
+    }
+
     public synchronized void setStateAndProgress(ProjectExportTaskState aState, int aProgress)
     {
         setState(aState);
         setProgress(aProgress);
-    }
-
-    public synchronized void setProgress(int aProgress)
-    {
-        progress = aProgress;
     }
 
     public void addMessage(LogMessage aMessage)

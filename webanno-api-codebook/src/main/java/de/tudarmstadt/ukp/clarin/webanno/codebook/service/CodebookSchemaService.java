@@ -40,6 +40,7 @@ public interface CodebookSchemaService
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     void createOrUpdateCodebook(Codebook codebook);
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     void createOrUpdateCodebookFeature(CodebookFeature aFeature);
 
     /**
@@ -144,5 +145,7 @@ public interface CodebookSchemaService
      */
     TypeSystemDescription getCodebookTypeSystemForExport(Project aProject)
         throws ResourceInitializationException;
+
+    void swapCodebookOrderings(Codebook a, Codebook b);
 
 }

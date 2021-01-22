@@ -66,7 +66,8 @@ public class AnnotationFeature
     private String type;
 
     @ManyToOne
-    @JoinColumn(name = "annotation_type", foreignKey = @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "annotation_type", foreignKey =
+        @ForeignKey(name = "none", value = ConstraintMode.NO_CONSTRAINT))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private AnnotationLayer layer;
 

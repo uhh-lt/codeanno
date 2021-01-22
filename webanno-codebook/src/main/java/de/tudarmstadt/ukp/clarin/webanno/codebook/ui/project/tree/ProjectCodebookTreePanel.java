@@ -25,15 +25,17 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNodeExpansion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookTagEditorPanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookTagSelectionPanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.ProjectCodebookPanel;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 
 public class ProjectCodebookTreePanel
@@ -46,6 +48,9 @@ public class ProjectCodebookTreePanel
     private final ProjectCodebookPanel.CodebookDetailForm codebookDetailForm;
     private final CodebookTagSelectionPanel tagSelectionPanel;
     private final CodebookTagEditorPanel tagEditorPanel;
+
+    @SpringBean
+    CodebookSchemaService codebookSchemaService;
 
     public ProjectCodebookTreePanel(String aId, IModel<?> aModel,
             ProjectCodebookPanel projectCodebookPanel,
@@ -64,13 +69,14 @@ public class ProjectCodebookTreePanel
     {
         Project project = (Project) this.getDefaultModelObject();
         // get all codebooks and init the provider
-        List<Codebook> codebooks = this.codebookService.listCodebook(project);
-        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
+        List<Codebook> codebooks = this.codebookSchemaService.listCodebook(project);
+        this.provider = new CodebookTreeProvider(codebooks);
     }
 
     private OrderingCodebookFolder buildFolderComponent(String id, IModel<CodebookNode> model)
     {
-        OrderingCodebookFolder folder = new OrderingCodebookFolder(id, tree, model, this)
+        OrderingCodebookFolder folder = new OrderingCodebookFolder(id, tree, model, this,
+                codebookSchemaService)
         {
 
             private static final long serialVersionUID = 1L;

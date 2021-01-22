@@ -26,14 +26,16 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNodeExpansion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookTreePanel;
 
 public class CodebookEditorTreePanel
     extends CodebookTreePanel
@@ -42,6 +44,8 @@ public class CodebookEditorTreePanel
 
     private final CodebookEditorPanel parentEditor;
     private final Map<CodebookNode, CodebookEditorNodePanel> nodePanels;
+
+    private @SpringBean CodebookSchemaService codebookSchemaService;
 
     public CodebookEditorTreePanel(String aId, IModel<CodebookEditorModel> aModel,
             CodebookEditorPanel parentEditor)
@@ -82,8 +86,8 @@ public class CodebookEditorTreePanel
         // throw new IOException("Model must not be null and of type 'CodebookEditorModel'!");
 
         // get all codebooks and init the provider
-        List<Codebook> codebooks = this.codebookService.listCodebook(model.getProject());
-        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
+        List<Codebook> codebooks = this.codebookSchemaService.listCodebook(model.getProject());
+        this.provider = new CodebookTreeProvider(codebooks);
     }
 
     @Override

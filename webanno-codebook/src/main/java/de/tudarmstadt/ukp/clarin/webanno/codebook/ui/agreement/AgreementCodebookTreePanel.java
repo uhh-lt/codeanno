@@ -40,13 +40,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConst;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConstants;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNodeExpansion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationLayer;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
@@ -59,6 +61,8 @@ public class AgreementCodebookTreePanel
     private Project project;
     private final CodebookAgreementPage parentPage;
     private CodebookNode selected;
+
+    private @SpringBean CodebookSchemaService codebookSchemaService;
 
     public AgreementCodebookTreePanel(String aId, IModel<?> aModel, Project project,
             CodebookAgreementPage parentPage)
@@ -99,8 +103,8 @@ public class AgreementCodebookTreePanel
         AnnotationLayer neLayer = new AnnotationLayer(selected.getName(), selected.getUiName(),
                 SPAN_TYPE, project, false, TOKENS, ANY_OVERLAP);
 
-        return new AnnotationFeature(project, neLayer, CodebookConst.CODEBOOK_FEATURE_NAME,
-                CodebookConst.CODEBOOK_FEATURE_NAME, CAS.TYPE_NAME_STRING,
+        return new AnnotationFeature(project, neLayer, CodebookConstants.CODEBOOK_FEATURE_NAME,
+                CodebookConstants.CODEBOOK_FEATURE_NAME, CAS.TYPE_NAME_STRING,
                 selected.getCodebook().getDescription(), null);
     }
 
@@ -149,8 +153,8 @@ public class AgreementCodebookTreePanel
     public void initCodebookTreeProvider()
     {
         // get all codebooks and init the provider
-        List<Codebook> codebooks = this.codebookService.listCodebook(this.project);
-        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
+        List<Codebook> codebooks = this.codebookSchemaService.listCodebook(this.project);
+        this.provider = new CodebookTreeProvider(codebooks);
     }
 
     // TODO we could also put this into CodebookTreePanel and make the onClick callback abstract

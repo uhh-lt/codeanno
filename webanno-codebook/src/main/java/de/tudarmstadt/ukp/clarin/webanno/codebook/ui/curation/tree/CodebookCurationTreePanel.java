@@ -25,16 +25,18 @@ import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.googlecode.wicket.kendo.ui.markup.html.link.Link;
 
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNodeExpansion;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.ui.CodebookTreePanel;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookCurationPage;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.curation.CodebookUserSuggestion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookNodeExpansion;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.tree.CodebookTreePanel;
 
 public class CodebookCurationTreePanel
     extends CodebookTreePanel
@@ -44,6 +46,8 @@ public class CodebookCurationTreePanel
     private final CodebookCurationPage parentPage;
     private final Map<CodebookNode, CodebookCurationNodePanel> nodePanels;
     private transient Map<Codebook, List<CodebookUserSuggestion>> userSuggestions;
+
+    private @SpringBean CodebookSchemaService codebookSchemaService;
 
     public CodebookCurationTreePanel(String aId, CodebookCurationPage parentPage)
     {
@@ -77,9 +81,9 @@ public class CodebookCurationTreePanel
     public void initCodebookTreeProvider()
     {
         // get all codebooks and init the provider
-        List<Codebook> codebooks = this.codebookService
+        List<Codebook> codebooks = this.codebookSchemaService
                 .listCodebook(parentPage.getModelObject().getProject());
-        this.provider = new CodebookTreeProvider(codebooks, this.codebookService);
+        this.provider = new CodebookTreeProvider(codebooks);
     }
 
     @Override

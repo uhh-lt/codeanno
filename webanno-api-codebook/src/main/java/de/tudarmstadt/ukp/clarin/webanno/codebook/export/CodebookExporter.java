@@ -50,13 +50,13 @@ import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportRequest;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportTaskMonitor;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExporter;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectImportRequest;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConst;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConstants;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookFeature;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTag;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookTreeProvider;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.CodebookTreeProvider;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.csv.WebannoCsvWriter;
 import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedProject;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
@@ -114,7 +114,8 @@ public class CodebookExporter
         List<Codebook> codebooks = codebookService.listCodebook(project);
 
         boolean withHeader = true;
-        File codebookFile = new File(codebookDir, project.getName() + CodebookConst.CODEBOOK_EXT);
+        File codebookFile = new File(codebookDir,
+                project.getName() + CodebookConstants.CODEBOOK_EXT);
 
         for (SourceDocument sourceDocument : documents) {
 
@@ -232,7 +233,7 @@ public class CodebookExporter
     @Override
     public List<ExportedCodebook> exportCodebooks(List<Codebook> codebooks)
     {
-        CodebookTreeProvider tree = new CodebookTreeProvider(codebooks, this.codebookService);
+        CodebookTreeProvider tree = new CodebookTreeProvider(codebooks);
         return createExportedCodebooks(tree);
     }
 
@@ -376,7 +377,7 @@ public class CodebookExporter
 
         // Update type system the CAS
         // quick fix works by simply commenting out the line below. First tests also work properly
-//        annotationService.upgradeCas(cas, aDocument, aUser);
+        // annotationService.upgradeCas(cas, aDocument, aUser);
 
         String documentName = aDocument.getName();
         File exportFile = exportCodebooksToFile(cas, aDocument, aFileName, aExportDir, aWithHeaders,

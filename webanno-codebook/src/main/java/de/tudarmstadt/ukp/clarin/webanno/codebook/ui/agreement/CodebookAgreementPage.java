@@ -69,8 +69,8 @@ import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
+import de.tudarmstadt.ukp.clarin.webanno.codebook.tree.model.CodebookNode;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
@@ -120,12 +120,14 @@ public class CodebookAgreementPage
     private transient Map<String, List<CAS>> cachedCASes;
     private transient Project cachedProject;
     private transient boolean cachedLimitToFinishedDocuments;
+
     public CodebookAgreementPage()
     {
         super();
 
         commonInit();
     }
+
     public CodebookAgreementPage(final PageParameters aPageParameters)
     {
         super(aPageParameters);
