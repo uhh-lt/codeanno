@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - master
-    - 3.6.x
 
 jobs:
   build:
@@ -18,6 +17,6 @@ jobs:
       with:
         java-version: 11
     - name: Build with Maven and publish SNAPSHOT to GitHub packages
-      run: mvn --file pom.xml -B -DdeployAtEnd=true -DaltDeploymentRepository=github::https://maven.pkg.github.com/webanno/webanno package org.apache.maven.plugins:maven-deploy-plugin:3.0.0-M1:deploy
+      run: mvn --file pom.xml -B -DdeployAtEnd=true -DaltDeploymentRepository=github::https://maven.pkg.github.com/uhh-lt/codeanno package org.apache.maven.plugins:maven-deploy-plugin:3.0.0-M1:deploy
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
