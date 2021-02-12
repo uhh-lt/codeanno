@@ -26,10 +26,12 @@
   <artifactId>webanno</artifactId>
   <version>4.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>WebAnno</name>
-  <url>https://webanno.github.io/</url>
-  <inceptionYear>2012</inceptionYear>
-  <description>WebAnno is a general purpose web-based annotation tool for a wide range of linguistic annotations including various layers of morphological, syntactical, and semantic annotations.Additionaly, custom annotation layers can be defined, allowing WebAnno to be used also for non-linguistic annotation tasks.</description>
+  <name>CodeAnno</name>
+  <url>https://codeanno.github.io/</url>
+  <inceptionYear>2021</inceptionYear>
+  <description>
+    CodeAnno is a general purpose web-based document-level (Codebook) annotation tool build on top of WebAnno.
+  </description>
   <licenses>
     <license>
       <name>Apache License Version 2.0</name>
@@ -38,13 +40,13 @@
     </license>
   </licenses>
   <issueManagement>
-    <url>https://github.com/webanno/webanno/issues</url>
+    <url>https://github.com/uhh-lt/codeanno/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
   <scm>
-    <connection>scm:git:https://github.com/webanno/webanno.git</connection>
-    <developerConnection>scm:git:https://github.com/webanno/webanno.git</developerConnection>
-    <url>https://github.com/webanno/webanno</url>
+    <connection>scm:git:https://github.com/uhh-lt/codeanno.git</connection>
+    <developerConnection>scm:git:https://github.com/uhh-lt/codeanno.git</developerConnection>
+    <url>https://github.com/uhh-lt/codeanno</url>
     <tag>HEAD</tag>
   </scm>
   <distributionManagement>
