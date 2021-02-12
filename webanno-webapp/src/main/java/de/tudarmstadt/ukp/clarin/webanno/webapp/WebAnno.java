@@ -46,8 +46,8 @@ import de.tudarmstadt.ukp.clarin.webanno.plugin.impl.PluginManagerImpl;
 import de.tudarmstadt.ukp.clarin.webanno.support.SettingsUtil;
 import de.tudarmstadt.ukp.clarin.webanno.support.standalone.LoadingSplashScreen;
 import de.tudarmstadt.ukp.clarin.webanno.support.standalone.ShutdownDialogAvailableEvent;
+import de.tudarmstadt.ukp.clarin.webanno.webapp.config.CodeAnnoBanner;
 import de.tudarmstadt.ukp.clarin.webanno.webapp.config.WebAnnoApplicationContextInitializer;
-import de.tudarmstadt.ukp.clarin.webanno.webapp.config.WebAnnoBanner;
 
 /**
  * Boots WebAnno in standalone JAR or WAR modes.
@@ -126,7 +126,7 @@ public class WebAnno
         // WebAnno relies on FS IDs being stable, so we need to enable this
         System.setProperty(CASImpl.ALWAYS_HOLD_ONTO_FSS, "true");
 
-        aBuilder.banner(new WebAnnoBanner());
+        aBuilder.banner(new CodeAnnoBanner());
         aBuilder.initializers(new WebAnnoApplicationContextInitializer());
         aBuilder.headless(false);
 
