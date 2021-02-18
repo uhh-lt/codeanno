@@ -15,4 +15,4 @@ git:
 
 script:
   - java --version
-  - ./mvn clean verify install
+  - mvn clean verify install -B -V
