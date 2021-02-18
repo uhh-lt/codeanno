@@ -37,6 +37,51 @@ public class OrderingCodebookFolder
 
     private CodebookSchemaService codebookSchemaService;
 
+    private LambdaAjaxLink upBtn;
+    private LambdaAjaxLink downBtn;
+
+    private CodebookTreeProvider treeProvider;
+
+    public OrderingCodebookFolder(String id, AbstractTree<CodebookNode> tree,
+            IModel<CodebookNode> model, ProjectCodebookTreePanel parentPanel,
+            CodebookSchemaService codebookSchemaService)
+    {
+        super(id, tree, model);
+
+        this.codebookSchemaService = codebookSchemaService;
+        if (tree.getProvider() instanceof CodebookTreeProvider) // should always be true
+            this.treeProvider = (CodebookTreeProvider) tree.getProvider();
+        else
+            this.treeProvider = null;
+
+        this.upBtn = new LambdaAjaxLink("up", (target) -> {
+            if (this.treeProvider != null) {
+                this.move(model.getObject(), this.treeProvider, true);
+
+                // we have to think of a better way to update a tree. this way we init the tree way
+                // too often...
+                parentPanel.initTree();
+                target.add(parentPanel);
+            }
+        });
+        this.upBtn.setOutputMarkupId(true);
+        this.upBtn.setVisible(!isOnlyChild(this.getModelObject()));
+        add(upBtn);
+
+        this.downBtn = new LambdaAjaxLink("down", (target) -> {
+            if (this.treeProvider != null) {
+                this.move(model.getObject(), this.treeProvider, false);
+                // we have to think of a better way to update a tree. this way we init the tree way
+                // too often...
+                parentPanel.initTree();
+                target.add(parentPanel);
+            }
+        });
+        this.downBtn.setOutputMarkupId(true);
+        this.downBtn.setVisible(!isOnlyChild(this.getModelObject()));
+        add(downBtn);
+    }
+
     private void move(CodebookNode node, CodebookTreeProvider provider, boolean up)
     {
         List<CodebookNode> sibs = provider.getSiblings(node);
@@ -64,41 +109,8 @@ public class OrderingCodebookFolder
         provider.sortNodes();
     }
 
-    public OrderingCodebookFolder(String id, AbstractTree<CodebookNode> tree,
-            IModel<CodebookNode> model, ProjectCodebookTreePanel parentPanel,
-            CodebookSchemaService codebookSchemaService)
-    {
-        super(id, tree, model);
-
-        this.codebookSchemaService = codebookSchemaService;
-
-        add(new LambdaAjaxLink("up", (target) -> {
-            if (tree.getProvider() instanceof CodebookTreeProvider) {
-                CodebookTreeProvider provider = (CodebookTreeProvider) tree.getProvider();
-                this.move(model.getObject(), provider, true);
-
-                // we have to think of a better way to update a tree. this way we init the tree way
-                // too often...
-                parentPanel.initTree();
-                target.add(parentPanel);
-            }
-        })
-        {
-            private static final long serialVersionUID = 5243294213092651657L;
-        });
-
-        add(new LambdaAjaxLink("down", (target) -> {
-            if (tree.getProvider() instanceof CodebookTreeProvider) {
-                CodebookTreeProvider provider = (CodebookTreeProvider) tree.getProvider();
-                this.move(model.getObject(), provider, false);
-                // we have to think of a better way to update a tree. this way we init the tree way
-                // too often...
-                parentPanel.initTree();
-                target.add(parentPanel);
-            }
-        })
-        {
-            private static final long serialVersionUID = 5243294213092651657L;
-        });
+    private boolean isOnlyChild(CodebookNode node) {
+        if (node == null) return true;
+        return this.treeProvider.getSiblings(node).size() == 1;
     }
 }

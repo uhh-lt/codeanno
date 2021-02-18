@@ -180,6 +180,7 @@ public class CodebookTreeProvider
     {
         if (node.getParent() == null)
             return roots;
+        // node is sibling of it self
         return node.getParent().getChildren();
     }
 
