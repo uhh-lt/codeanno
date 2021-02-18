@@ -245,7 +245,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-agreement</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1097,7 +1097,6 @@
     <module>webanno-remote</module>
     <module>webanno-security</module>
     <module>webanno-curation</module>
-    <module>webanno-agreement</module>
     <module>webanno-telemetry</module>
     <module>webanno-codebook</module>
     <module>webanno-api-codebook</module>
