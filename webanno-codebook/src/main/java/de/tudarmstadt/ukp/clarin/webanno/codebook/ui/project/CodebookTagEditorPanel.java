@@ -20,6 +20,7 @@ package de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,10 @@ public class CodebookTagEditorPanel
 
     private final ParentSelectionWrapper<CodebookTag> codebookTagParentSelection;
     private final CodebookTagSelectionPanel tagSelectionPanel;
+
+    private LambdaAjaxLink upBtn;
+    private LambdaAjaxLink downBtn;
+
 
     public CodebookTagEditorPanel(String aId,
                                   IModel<Codebook> aCodebook,
@@ -95,21 +100,24 @@ public class CodebookTagEditorPanel
                 .onConfigure(_this -> _this.setVisible(form.getModelObject().getId() != null)));
         form.add(new LambdaAjaxLink("cancel", this::actionCancel));
 
-        form.add(new LambdaAjaxLink("up", (target) -> {
+        // buttons to sort
+        upBtn = new LambdaAjaxLink("up", (target) -> {
             moveTag(true);
-            target.add(tagSelectionPanel);
-        })
-        {
-            private static final long serialVersionUID = 5243294213092651657L;
+            this.setVisible(tagIsMovable(true));
+            target.add(tagSelectionPanel, this, CodebookTagEditorPanel.this);
         });
+        upBtn.setOutputMarkupId(true);
+        upBtn.setVisible(tagIsMovable(true));
+        form.add(upBtn);
 
-        form.add(new LambdaAjaxLink("down", (target) -> {
+        downBtn = new LambdaAjaxLink("down", (target) -> {
             moveTag(false);
-            target.add(tagSelectionPanel);
-        })
-        {
-            private static final long serialVersionUID = 5243294213092651657L;
+            this.setVisible(tagIsMovable(false));
+            target.add(tagSelectionPanel, this, CodebookTagEditorPanel.this);
         });
+        downBtn.setOutputMarkupId(true);
+        downBtn.setVisible(tagIsMovable(false));
+        form.add(downBtn);
 
         add(form);
     }
@@ -124,6 +132,9 @@ public class CodebookTagEditorPanel
             parentTags = codebookSchemaService.listTags(selectedCodebook.getObject().getParent());
         }
         this.codebookTagParentSelection.updateParents(parentTags);
+
+        upBtn.setVisible(tagIsMovable(true));
+        downBtn.setVisible(tagIsMovable(false));
     }
 
     private void actionSave(AjaxRequestTarget aTarget, Form<CodebookTag> aForm)
@@ -158,19 +169,28 @@ public class CodebookTagEditorPanel
     {
         CodebookTag tag = selectedTag.getObject();
         List<CodebookTag> tags = codebookSchemaService.listTags(tag.getCodebook());
-        int myIdx = tags.indexOf(tag);
-        if (myIdx == -1) // tag is not yet saved and therefore not in the Tag list
-            return;
-        else if ((myIdx == 0 && up) || (myIdx == tags.size() - 1 && !up)) // cant move up or down
-            return;
-        else {
+        int tagIdx = tags.indexOf(tag);
+        if (tagIsMovable(up)) {
             int oldOrdering = tag.getTagOrdering();
-            CodebookTag swapTag = tags.get(myIdx + (up ? -1 : 1));
+            CodebookTag swapTag = tags.get(tagIdx + (up ? -1 : 1));
             tag.setTagOrdering(swapTag.getTagOrdering());
             swapTag.setTagOrdering(oldOrdering);
             codebookSchemaService.createOrUpdateCodebookTag(tag);
             codebookSchemaService.createOrUpdateCodebookTag(swapTag);
         }
+    }
+
+    private boolean tagIsMovable(boolean up) {
+        CodebookTag tag = selectedTag.getObject();
+        List<CodebookTag> tags = Collections.emptyList();
+        if (tag != null)
+            tags = codebookSchemaService.listTags(tag.getCodebook());
+        int tagIdx = tags.indexOf(tag);
+
+        if (tagIdx == -1) // tag is not yet saved and therefore not in the Tag list
+            return false;
+        // first cant move up and last cant move down
+        else return (tagIdx != 0 || !up) && (tagIdx != tags.size() - 1 || up);
     }
 
     private class TagExistsValidator
