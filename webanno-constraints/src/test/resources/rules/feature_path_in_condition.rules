@@ -1,5 +1,0 @@
-import de.tud.Prof as Prof;
-
-Prof{
-boss.fullName="Hans Juergen Proeml" -> professorName="Iryna Gurevych";
-}
