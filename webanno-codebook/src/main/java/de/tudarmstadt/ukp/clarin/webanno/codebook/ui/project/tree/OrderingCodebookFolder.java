@@ -37,18 +37,67 @@ public class OrderingCodebookFolder
 
     private CodebookSchemaService codebookSchemaService;
 
-    private void move(CodebookNode node, CodebookTreeProvider provider, boolean up)
+    private LambdaAjaxLink upBtn;
+    private LambdaAjaxLink downBtn;
+
+    private CodebookTreeProvider treeProvider;
+
+    public OrderingCodebookFolder(String id, AbstractTree<CodebookNode> tree,
+            IModel<CodebookNode> model, ProjectCodebookTreePanel parentPanel,
+            CodebookSchemaService codebookSchemaService)
     {
-        List<CodebookNode> sibs = provider.getSiblings(node);
-        int myIdx = sibs.indexOf(node);
-        // first cant move up and last cant move down
-        if ((up && myIdx == 0) || (!up && myIdx == sibs.size() - 1))
+        super(id, tree, model);
+
+        this.codebookSchemaService = codebookSchemaService;
+        if (tree.getProvider() instanceof CodebookTreeProvider) // should always be true
+            this.treeProvider = (CodebookTreeProvider) tree.getProvider();
+        else
+            this.treeProvider = null;
+
+        CodebookNode node = this.getModelObject();
+        List<CodebookNode> sibs = this.treeProvider.getSiblings(node);
+        int nodeIdx = sibs.indexOf(node);
+
+
+        this.upBtn = new LambdaAjaxLink("up", (target) -> {
+            if (this.treeProvider != null) {
+                this.move(node, true);
+
+                // we have to think of a better way to update a tree. this way we init the tree way
+                // too often...
+                parentPanel.initTree();
+                target.add(parentPanel);
+            }
+        });
+        this.upBtn.setOutputMarkupId(true);
+        this.upBtn.setVisible(!isOnlyChild(this.getModelObject()) && canMove(sibs, nodeIdx, true));
+        add(upBtn);
+
+        this.downBtn = new LambdaAjaxLink("down", (target) -> {
+            if (this.treeProvider != null) {
+                this.move(node, false);
+                // we have to think of a better way to update a tree. this way we init the tree way
+                // too often...
+                parentPanel.initTree();
+                target.add(parentPanel);
+            }
+        });
+        this.downBtn.setOutputMarkupId(true);
+        this.downBtn.setVisible(!isOnlyChild(node) && canMove(sibs, nodeIdx, false));
+        add(downBtn);
+    }
+
+    private void move(CodebookNode node, boolean up)
+    {
+        List<CodebookNode> sibs = this.treeProvider.getSiblings(node);
+        int nodeIdx = sibs.indexOf(node);
+        if (!canMove(sibs, nodeIdx, up)) // should never happen
             return;
 
         // swap orderings (simple inc/dec wont do the job when changing tree structure, i.e.
         // change a parent)
         int tmp = node.getOrdering();
-        CodebookNode swapSib = sibs.get(myIdx + (up ? -1 : 1)); // 0 is highest leN
+        CodebookNode swapSib = sibs.get(nodeIdx + (up ? -1 : 1)); // 0 is highest leN
         node.setOrdering(swapSib.getOrdering());
         swapSib.setOrdering(tmp);
 
@@ -61,44 +110,16 @@ public class OrderingCodebookFolder
         cb.setOrdering(swapSib.getOrdering());
         this.codebookSchemaService.createOrUpdateCodebook(cb);
 
-        provider.sortNodes();
+        this.treeProvider.sortNodes();
     }
 
-    public OrderingCodebookFolder(String id, AbstractTree<CodebookNode> tree,
-            IModel<CodebookNode> model, ProjectCodebookTreePanel parentPanel,
-            CodebookSchemaService codebookSchemaService)
-    {
-        super(id, tree, model);
+    private boolean canMove(List<CodebookNode> sibs, int nodeIdx, boolean up) {
+        // first cant move up and last cant move down
+        return (!up || nodeIdx != 0) && (up || nodeIdx != sibs.size() - 1);
+    }
 
-        this.codebookSchemaService = codebookSchemaService;
-
-        add(new LambdaAjaxLink("up", (target) -> {
-            if (tree.getProvider() instanceof CodebookTreeProvider) {
-                CodebookTreeProvider provider = (CodebookTreeProvider) tree.getProvider();
-                this.move(model.getObject(), provider, true);
-
-                // we have to think of a better way to update a tree. this way we init the tree way
-                // too often...
-                parentPanel.initTree();
-                target.add(parentPanel);
-            }
-        })
-        {
-            private static final long serialVersionUID = 5243294213092651657L;
-        });
-
-        add(new LambdaAjaxLink("down", (target) -> {
-            if (tree.getProvider() instanceof CodebookTreeProvider) {
-                CodebookTreeProvider provider = (CodebookTreeProvider) tree.getProvider();
-                this.move(model.getObject(), provider, false);
-                // we have to think of a better way to update a tree. this way we init the tree way
-                // too often...
-                parentPanel.initTree();
-                target.add(parentPanel);
-            }
-        })
-        {
-            private static final long serialVersionUID = 5243294213092651657L;
-        });
+    private boolean isOnlyChild(CodebookNode node) {
+        if (node == null) return true;
+        return this.treeProvider.getSiblings(node).size() == 1;
     }
 }

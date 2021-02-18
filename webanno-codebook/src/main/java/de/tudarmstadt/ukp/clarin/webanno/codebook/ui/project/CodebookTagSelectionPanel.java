@@ -71,7 +71,13 @@ public class CodebookTagSelectionPanel
     private List<CodebookTag> listTags()
     {
         if (selectedCodebook.getObject() != null) {
-            return codebookSchemaService.listTags(selectedCodebook.getObject());
+            List<CodebookTag> tags = codebookSchemaService.listTags(selectedCodebook.getObject());
+            // init the ordering if necessary
+            boolean initNecessary =
+                    tags.stream().filter(tag -> tag.getTagOrdering() == 0).count() > 1;
+            if (initNecessary)
+                actionResetOrdering(null);
+            return tags;
         }
         else {
             return Collections.emptyList();
@@ -93,11 +99,16 @@ public class CodebookTagSelectionPanel
         selectedTag.setObject(new CodebookTag());
     }
 
-    protected void actionResetOrdering(AjaxRequestTarget aTarget) throws Exception
+    protected void actionResetOrdering(AjaxRequestTarget aTarget)
     {
-        List<CodebookTag> tags = listTags();
+        List<CodebookTag> tags = selectedCodebook.getObject() != null ?
+                                 codebookSchemaService.listTags(selectedCodebook.getObject()) :
+                                 Collections.emptyList();
         tags.sort(Comparator.comparing(CodebookTag::getName));
         tags.forEach(t -> t.setTagOrdering(tags.indexOf(t)));
         tags.forEach(codebookSchemaService::createOrUpdateCodebookTag);
+
+        if (aTarget != null)
+            aTarget.add(this, overviewList);
     }
 }

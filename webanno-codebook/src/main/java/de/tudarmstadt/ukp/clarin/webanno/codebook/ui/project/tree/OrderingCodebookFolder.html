@@ -20,12 +20,17 @@
 
 <wicket:panel>
 
-    <a wicket:id="link">
-        <span class="tree-label" wicket:id="label"></span>
-    </a>
-
-    <a href="#" wicket:id="up"><i class="fas fa-arrow-circle-up"></i></a>
-    <a href="#" wicket:id="down"><i class="fas fa-arrow-circle-down"></i></a>
+    <div class="flex-h-container">
+        <div class="flex-grow-1">
+            <a wicket:id="link">
+                <span class="tree-label" wicket:id="label"></span>
+            </a>
+        </div>
+        <div>
+            <a href="#" wicket:id="up"><i class="fas fa-arrow-circle-up"></i></a>
+            <a href="#" wicket:id="down"><i class="fas fa-arrow-circle-down"></i></a>
+        </div>
+    </div>
 
 </wicket:panel>
 
