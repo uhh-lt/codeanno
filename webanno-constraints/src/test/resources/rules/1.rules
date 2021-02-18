@@ -1,3 +1,0 @@
-POS{
-ruleFactor  =  "close" -> showPath = "all" (!);
-}
