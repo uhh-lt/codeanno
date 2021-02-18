@@ -54,9 +54,14 @@ public class OrderingCodebookFolder
         else
             this.treeProvider = null;
 
+        CodebookNode node = this.getModelObject();
+        List<CodebookNode> sibs = this.treeProvider.getSiblings(node);
+        int nodeIdx = sibs.indexOf(node);
+
+
         this.upBtn = new LambdaAjaxLink("up", (target) -> {
             if (this.treeProvider != null) {
-                this.move(model.getObject(), this.treeProvider, true);
+                this.move(node, true);
 
                 // we have to think of a better way to update a tree. this way we init the tree way
                 // too often...
@@ -65,12 +70,12 @@ public class OrderingCodebookFolder
             }
         });
         this.upBtn.setOutputMarkupId(true);
-        this.upBtn.setVisible(!isOnlyChild(this.getModelObject()));
+        this.upBtn.setVisible(!isOnlyChild(this.getModelObject()) && canMove(sibs, nodeIdx, true));
         add(upBtn);
 
         this.downBtn = new LambdaAjaxLink("down", (target) -> {
             if (this.treeProvider != null) {
-                this.move(model.getObject(), this.treeProvider, false);
+                this.move(node, false);
                 // we have to think of a better way to update a tree. this way we init the tree way
                 // too often...
                 parentPanel.initTree();
@@ -78,22 +83,21 @@ public class OrderingCodebookFolder
             }
         });
         this.downBtn.setOutputMarkupId(true);
-        this.downBtn.setVisible(!isOnlyChild(this.getModelObject()));
+        this.downBtn.setVisible(!isOnlyChild(node) && canMove(sibs, nodeIdx, false));
         add(downBtn);
     }
 
-    private void move(CodebookNode node, CodebookTreeProvider provider, boolean up)
+    private void move(CodebookNode node, boolean up)
     {
-        List<CodebookNode> sibs = provider.getSiblings(node);
-        int myIdx = sibs.indexOf(node);
-        // first cant move up and last cant move down
-        if ((up && myIdx == 0) || (!up && myIdx == sibs.size() - 1))
+        List<CodebookNode> sibs = this.treeProvider.getSiblings(node);
+        int nodeIdx = sibs.indexOf(node);
+        if (!canMove(sibs, nodeIdx, up)) // should never happen
             return;
 
         // swap orderings (simple inc/dec wont do the job when changing tree structure, i.e.
         // change a parent)
         int tmp = node.getOrdering();
-        CodebookNode swapSib = sibs.get(myIdx + (up ? -1 : 1)); // 0 is highest leN
+        CodebookNode swapSib = sibs.get(nodeIdx + (up ? -1 : 1)); // 0 is highest leN
         node.setOrdering(swapSib.getOrdering());
         swapSib.setOrdering(tmp);
 
@@ -106,7 +110,12 @@ public class OrderingCodebookFolder
         cb.setOrdering(swapSib.getOrdering());
         this.codebookSchemaService.createOrUpdateCodebook(cb);
 
-        provider.sortNodes();
+        this.treeProvider.sortNodes();
+    }
+
+    private boolean canMove(List<CodebookNode> sibs, int nodeIdx, boolean up) {
+        // first cant move up and last cant move down
+        return (!up || nodeIdx != 0) && (up || nodeIdx != sibs.size() - 1);
     }
 
     private boolean isOnlyChild(CodebookNode node) {
