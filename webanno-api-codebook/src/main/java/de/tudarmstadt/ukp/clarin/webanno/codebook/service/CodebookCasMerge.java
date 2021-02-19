@@ -285,7 +285,7 @@ public class CodebookCasMerge
             LOG.trace("Processing {} codebook positions on layer {}", positions.size(), codeName);
             for (CodebookPosition position : positions) {
                 LOG.trace(" |   processing {}", position);
-                ConfigurationSet cfgs = aDiff.getConfigurationSet(position);
+                ConfigurationSet cfgs = aDiff.getConfigurtionSet(position);
 
                 if (!shouldMerge(aDiff, cfgs)) {
                     continue;
