@@ -10,5 +10,6 @@
 # Please keep the list sorted.
 
 Florian Schider [@floschne]
+Fynn Schröder [@fynnos]
 Seid Muhie Yimam [@seyyaw]
 Richard Eckart de Castilho <richard.eckart@gmail.com> [@reckart]
