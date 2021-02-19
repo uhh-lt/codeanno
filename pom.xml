@@ -225,7 +225,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-api</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1088,7 +1088,6 @@
     <module>webanno-io-csv</module>
     <!-- Core -->
     <module>webanno-model</module>
-    <module>webanno-api</module>
     <module>webanno-api-annotation</module>
     <module>webanno-api-formats</module>
     <module>webanno-api-dao</module>
