@@ -348,7 +348,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-support</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1077,7 +1077,6 @@
     <module>webanno-api-annotation</module>
     <module>webanno-api-formats</module>
     <module>webanno-api-dao</module>
-    <module>webanno-support</module>
     <module>webanno-remote</module>
     <module>webanno-telemetry</module>
     <module>webanno-codebook</module>
