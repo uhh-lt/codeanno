@@ -358,7 +358,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-ui-core</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1084,7 +1084,6 @@
     <module>webanno-codebook-automation</module>
     <module>webanno-codebook-model</module>
     <!-- UI -->
-    <module>webanno-ui-core</module>
     <module>webanno-ui-project</module>
     <module>webanno-ui-curation</module>
     <module>webanno-ui-correction</module>
