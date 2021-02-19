@@ -263,7 +263,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-io-text</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1071,7 +1071,6 @@
     <!-- Build -->
     <module>webanno-build</module>
     <!-- IO -->
-    <module>webanno-io-text</module>
     <module>webanno-io-tsv</module>
     <module>webanno-io-csv</module>
     <!-- Core -->
