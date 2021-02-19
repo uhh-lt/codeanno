@@ -305,7 +305,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-model</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -405,7 +405,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-model-export</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1086,11 +1086,9 @@
     <module>webanno-io-tsv</module>
     <module>webanno-io-csv</module>
     <!-- Core -->
-    <module>webanno-model</module>
     <module>webanno-api-annotation</module>
     <module>webanno-api-formats</module>
     <module>webanno-api-dao</module>
-    <module>webanno-model-export</module>
     <module>webanno-support</module>
     <module>webanno-remote</module>
     <module>webanno-security</module>
