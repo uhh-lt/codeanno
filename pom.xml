@@ -255,7 +255,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-doc</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1110,8 +1110,6 @@
     <module>webanno-ui-automation</module>
     <module>webanno-ui-tagsets</module>
     <module>webanno-webapp</module>
-    <!-- Documentation -->
-    <module>webanno-doc</module>
   </modules>
   <build>
     <plugins>
