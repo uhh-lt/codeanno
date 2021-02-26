@@ -300,6 +300,14 @@ public class CodebookSchemaServiceImpl
     }
 
     @Override
+    public TypeDescription getCodebookTypeDescription(Codebook codebook,
+                                                      TypeSystemDescription tsd) {
+        TypeDescription td = tsd.addType(codebook.getName(), codebook.getDescription(),
+                                         CAS.TYPE_NAME_ANNOTATION);
+        return td;
+    }
+
+    @Override
     public TypeSystemDescription getCodebookTypeSystemForExport(Project aProject)
         throws ResourceInitializationException
     {
@@ -308,8 +316,7 @@ public class CodebookSchemaServiceImpl
         TypeSystemDescription tsd = new TypeSystemDescription_impl();
 
         for (Codebook codebook : this.listCodebook(aProject)) {
-            TypeDescription td = tsd.addType(codebook.getName(), codebook.getDescription(),
-                    CAS.TYPE_NAME_ANNOTATION);
+            TypeDescription td = getCodebookTypeDescription(codebook, tsd);
             this.generateFeatures(tsd, td, codebook);
         }
 

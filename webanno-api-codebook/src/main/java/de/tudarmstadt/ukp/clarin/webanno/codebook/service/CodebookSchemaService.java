@@ -139,6 +139,7 @@ public interface CodebookSchemaService
 
     void generateFeatures(TypeSystemDescription aTSD, TypeDescription aTD, Codebook aCodebook);
 
+    TypeDescription getCodebookTypeDescription(Codebook codebook, TypeSystemDescription tsd);
     /**
      * Returns a type system with all the codebook types that should be present in an exported CAS.
      * This means in particular that type internal to the application should <b>not</b> be included.
