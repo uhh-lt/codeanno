@@ -87,7 +87,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.SentenceOrientedP
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.RenderAnnotationsEvent;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.SelectionChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.brat.annotation.BratAnnotationEditor;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.ConstraintsService;
 import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
@@ -132,7 +131,6 @@ public class CurationPage
     private @SpringBean CurationDocumentService curationDocumentService;
     private @SpringBean ProjectService projectService;
     private @SpringBean ConstraintsService constraintsService;
-    private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean UserDao userRepository;
 
@@ -579,7 +577,7 @@ public class CurationPage
 
             SuggestionBuilder builder = new SuggestionBuilder(casStorageService, documentService,
                     correctionDocumentService, curationDocumentService, annotationService,
-                    codebookService, userRepository);
+                    userRepository);
             curationContainer = builder.buildCurationContainer(state);
             curationContainer.setState(state);
             editor.reset(aTarget);
@@ -634,7 +632,6 @@ public class CurationPage
                 correctionDocumentService,
                 curationDocumentService,
                 annotationService,
-                codebookService,
                 userRepository);
 
         Map<String, CAS> casses = cb.listCassesforCuration(finishedAnnotationDocuments,
