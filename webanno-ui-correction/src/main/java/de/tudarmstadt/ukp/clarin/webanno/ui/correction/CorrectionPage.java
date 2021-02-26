@@ -65,7 +65,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.RenderAn
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
 import de.tudarmstadt.ukp.clarin.webanno.brat.annotation.BratAnnotationEditor;
 import de.tudarmstadt.ukp.clarin.webanno.brat.util.BratAnnotatorUtility;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.ConstraintsService;
 import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
@@ -110,7 +109,6 @@ public class CorrectionPage
     private @SpringBean DocumentService documentService;
     private @SpringBean CurationDocumentService curationDocumentService;
     private @SpringBean CorrectionDocumentService correctionDocumentService;
-    private @SpringBean CodebookSchemaService codebookService;
     private @SpringBean ProjectService projectService;
     private @SpringBean ConstraintsService constraintsService;
     private @SpringBean AnnotationSchemaService annotationService;
@@ -267,7 +265,7 @@ public class CorrectionPage
                     // info(bratAnnotatorModel.getMessage());
                     SuggestionBuilder builder = new SuggestionBuilder(casStorageService,
                             documentService, correctionDocumentService, curationDocumentService,
-                            annotationService, codebookService, userRepository);
+                            annotationService, userRepository);
                     curationContainer = builder.buildCurationContainer(state);
                     setCurationSegmentBeginEnd(editorCas);
                     curationContainer.setState(state);
@@ -461,7 +459,7 @@ public class CorrectionPage
             AnnotatorState state = getModelObject();
             SuggestionBuilder builder = new SuggestionBuilder(casStorageService, documentService,
                     correctionDocumentService, curationDocumentService, annotationService,
-                    codebookService, userRepository);
+                    userRepository);
             curationContainer = builder.buildCurationContainer(state);
             setCurationSegmentBeginEnd(getEditorCas());
             curationContainer.setState(state);

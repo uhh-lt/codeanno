@@ -60,9 +60,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookCasMerge;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookDiff;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.CasDiff.Configuration;
 import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.CasDiff.ConfigurationSet;
 import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.CasDiff.DiffResult;
@@ -96,7 +93,6 @@ public class SuggestionBuilder
 
     private final AnnotationSchemaService schemaService;
     private final DocumentService documentService;
-    private final CodebookSchemaService codebookService;
     private final CorrectionDocumentService correctionDocumentService;
     private final CurationDocumentService curationDocumentService;
     private final UserDao userRepository;
@@ -108,8 +104,7 @@ public class SuggestionBuilder
     public SuggestionBuilder(CasStorageService aCasStorageService, DocumentService aDocumentService,
             CorrectionDocumentService aCorrectionDocumentService,
             CurationDocumentService aCurationDocumentService,
-            AnnotationSchemaService aAnnotationService,
-            CodebookSchemaService aCodebookService, UserDao aUserDao)
+            AnnotationSchemaService aAnnotationService, UserDao aUserDao)
     {
         documentService = aDocumentService;
         correctionDocumentService = aCorrectionDocumentService;
@@ -117,7 +112,6 @@ public class SuggestionBuilder
         schemaService = aAnnotationService;
         userRepository = aUserDao;
         casStorageService = aCasStorageService;
-        codebookService = aCodebookService;
     }
 
     public CurationContainer buildCurationContainer(AnnotatorState aState)
@@ -452,18 +446,6 @@ public class SuggestionBuilder
             casMerge.reMergeCas(diff, aState.getDocument(), aState.getUser().getUsername(),
                     mergeCas, aCasses);
         }
-
-        try (StopWatch watch = new StopWatch(log, "CasMerge (codebook)")) {
-           // entryTypes = CurationUtil.getCodebookTypes(mergeCas,
-           //         codebookService.listCodebook(aState.getProject()));
-            diff = CodebookDiff.doCodebookDiff(codebookService, aState.getProject(),// entryTypes,
-                    null, aCasses, 0, 0);
-            CodebookCasMerge casMerge = new CodebookCasMerge(codebookService);
-            casMerge.setMergeIncompleteAnnotations(aMergeIncompleteAnnotations);
-            casMerge.reMergeCas(diff, aState.getDocument(), aState.getUser().getUsername(),
-                    mergeCas, aCasses);
-        }
-
 
         curationDocumentService.writeCurationCas(mergeCas, aRandomAnnotationDocument.getDocument(),
                 false);
