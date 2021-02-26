@@ -373,7 +373,7 @@
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-ui-automation</artifactId>
-        <version>${codebook.version}</version>
+        <version>${webanno.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -1087,7 +1087,6 @@
     <module>webanno-ui-project</module>
     <module>webanno-ui-curation</module>
     <module>webanno-ui-annotation</module>
-    <module>webanno-ui-automation</module>
     <module>webanno-webapp</module>
   </modules>
   <build>
