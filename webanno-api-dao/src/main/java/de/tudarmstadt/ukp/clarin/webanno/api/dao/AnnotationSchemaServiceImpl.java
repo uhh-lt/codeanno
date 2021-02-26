@@ -961,8 +961,7 @@ public class AnnotationSchemaServiceImpl
 
         if (codebookService != null) // FIXME check necessary for testing
             for (Codebook codebook : codebookService.listCodebook(aProject)) {
-                TypeDescription td = tsd.addType(codebook.getName(), codebook.getDescription(),
-                        CAS.TYPE_NAME_ANNOTATION);
+                TypeDescription td = codebookService.getCodebookTypeDescription(codebook, tsd);
                 codebookService.generateFeatures(tsd, td, codebook);
             }
 
@@ -1010,7 +1009,7 @@ public class AnnotationSchemaServiceImpl
         {
             TypeSystemDescription tsd = new TypeSystemDescription_impl();
             for (Codebook codebook : codebookService.listCodebook(aProject)) {
-                TypeDescription td = tsd.addType(codebook.getName(), "", CAS.TYPE_NAME_ANNOTATION);
+                TypeDescription td = codebookService.getCodebookTypeDescription(codebook, tsd);
                 codebookService.generateFeatures(tsd, td, codebook);
             }
             allTsds.add(tsd);
