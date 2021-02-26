@@ -1069,7 +1069,6 @@
   </dependencyManagement>
   <modules>
     <!-- Build -->
-    <module>webanno-build</module>
     <!-- IO -->
     <module>webanno-io-tsv</module>
     <module>webanno-io-csv</module>
