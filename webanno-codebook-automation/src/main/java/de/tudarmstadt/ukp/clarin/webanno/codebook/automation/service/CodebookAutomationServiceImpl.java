@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.squareup.okhttp.Call;
@@ -109,10 +110,10 @@ public class CodebookAutomationServiceImpl
     public CodebookAutomationServiceImpl(DocumentService documentService,
             ProjectService projectService, CodebookSchemaService codebookService,
             CorrectionDocumentService correctionDocumentService, UserDao userService,
-            ApplicationEventPublisher eventPublisher)
+            ApplicationEventPublisher eventPublisher, Environment env)
         throws MalformedURLException
     {
-        String baseUrl = this.getApiBaseURL().toString();
+        String baseUrl = this.getApiBaseURL(env).toString();
         logger.info("Using CBA API base URL: " + baseUrl);
 
         predictionApi = new PredictionApi();
@@ -137,7 +138,8 @@ public class CodebookAutomationServiceImpl
         this.tagLabelMappings = new HashMap<>();
         this.predictionInProgress = new ConcurrentHashMap<>();
 
-        this.performHeartbeatCheck();
+        if (!this.performHeartbeatCheck())
+            logger.warn("Cannot reach Codebook Automation API");
         this.documentService = documentService;
         this.projectService = projectService;
         this.codebookService = codebookService;
@@ -148,10 +150,10 @@ public class CodebookAutomationServiceImpl
         this.lock = new Object();
     }
 
-    private URL getApiBaseURL() throws MalformedURLException
+    private URL getApiBaseURL(Environment env) throws MalformedURLException
     {
-        String host = System.getProperty(CBA_API_HOST_ENV_VAR);
-        int port = Integer.parseInt(System.getProperty(CBA_API_PORT_ENV_VAR));
+        String host = env.getProperty("cba.api.host");
+        int port = Integer.parseInt(env.getProperty("cba.api.port"));
         return new URL("http", host, port, "");
     }
 

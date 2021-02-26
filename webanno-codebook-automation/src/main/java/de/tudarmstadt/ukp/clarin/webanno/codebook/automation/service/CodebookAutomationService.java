@@ -42,9 +42,6 @@ public interface CodebookAutomationService
 
     String SERVICE_NAME = "codebookAutomationService";
 
-    String CBA_API_HOST_ENV_VAR = "CBA_API_HOST";
-    String CBA_API_PORT_ENV_VAR = "CBA_API_PORT";
-
     boolean performHeartbeatCheck();
 
     void updateTagLabelMapping(Codebook cb, String tag, String label);
