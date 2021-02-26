@@ -139,7 +139,8 @@ public class CodebookAutomationServiceImpl
         this.tagLabelMappings = new HashMap<>();
         this.predictionInProgress = new ConcurrentHashMap<>();
 
-        this.performHeartbeatCheck();
+        if (!this.performHeartbeatCheck())
+            logger.warn("Cannot reach Codebook Automation API");
         this.documentService = documentService;
         this.projectService = projectService;
         this.codebookService = codebookService;
