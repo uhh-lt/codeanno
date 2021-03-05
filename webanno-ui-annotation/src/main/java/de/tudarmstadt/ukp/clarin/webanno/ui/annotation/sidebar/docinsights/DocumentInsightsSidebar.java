@@ -20,10 +20,10 @@ package de.tudarmstadt.ukp.clarin.webanno.ui.annotation.sidebar.docinsights;
 import org.apache.wicket.model.IModel;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.analysis.ngramstats.NGramTabsPanel;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.ui.annotation.AnnotationPage;
 import de.tudarmstadt.ukp.clarin.webanno.ui.annotation.sidebar.AnnotationSidebar_ImplBase;
+import de.uhh.lt.codeanno.ui.analysis.ngramstats.NGramTabsPanel;
 
 public class DocumentInsightsSidebar
     extends AnnotationSidebar_ImplBase

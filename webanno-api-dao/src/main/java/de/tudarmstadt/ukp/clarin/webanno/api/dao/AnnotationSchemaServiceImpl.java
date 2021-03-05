@@ -95,8 +95,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.dao.casstorage.CasStorageSession;
 import de.tudarmstadt.ukp.clarin.webanno.api.event.TagCreatedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.api.event.TagDeletedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.api.event.TagUpdatedEvent;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.model.Codebook;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationLayer;
@@ -111,6 +109,8 @@ import de.tudarmstadt.ukp.clarin.webanno.model.TagSet;
 import de.tudarmstadt.ukp.clarin.webanno.support.logging.Logging;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
+import de.uhh.lt.codeanno.model.Codebook;
 
 /**
  * Implementation of methods defined in the {@link AnnotationSchemaService} interface
