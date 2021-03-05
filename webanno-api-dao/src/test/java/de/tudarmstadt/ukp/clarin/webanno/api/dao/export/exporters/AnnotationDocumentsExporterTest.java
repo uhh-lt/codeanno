@@ -50,13 +50,13 @@ import de.tudarmstadt.ukp.clarin.webanno.api.dao.CasStorageServiceImpl;
 import de.tudarmstadt.ukp.clarin.webanno.api.dao.ImportExportServiceImpl;
 import de.tudarmstadt.ukp.clarin.webanno.api.dao.export.ProjectExportServiceImpl;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectImportRequest;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.export.CodebookImportExportService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedProject;
 import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedSourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.xmi.XmiFormatSupport;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 
 public class AnnotationDocumentsExporterTest
 {

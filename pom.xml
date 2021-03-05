@@ -22,11 +22,11 @@
     <version>25</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-  <artifactId>webanno</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <groupId>de.uhh.lt.codeanno</groupId>
+  <artifactId>codeanno</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <name>CodeAnno</name>
+  <packaging>pom</packaging>
   <url>https://codeanno.github.io/</url>
   <inceptionYear>2021</inceptionYear>
   <description>
@@ -56,12 +56,12 @@
     </repository>
   </distributionManagement>
   <properties>
+    <java.version></java.version>
     <maven.surefire.heap>6g</maven.surefire.heap>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
   
-    <codebook.version>4.0.0-SNAPSHOT</codebook.version>
     <webanno.version>4.0.0-beta-22</webanno.version>
     <mockito.version>3.7.0</mockito.version>
     <assertj.version>3.18.1</assertj.version>
@@ -102,6 +102,18 @@
       <releases>
         <enabled>true</enabled>
       </releases>
+    </repository>
+    
+    <repository>
+      <id>codeanno-local</id>
+      <url>file:/home/p0w3r/gitrepos/codeanno_fork/repo</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
     -->
     <repository>
@@ -186,59 +198,79 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.13.1</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-io-csv</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${mockito.version}</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-remote</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.assertj</groupId>
-        <artifactId>assertj-core</artifactId>
-        <version>${assertj.version}</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-webapp</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.uima</groupId>
-        <artifactId>uimaj-core</artifactId>
-        <version>${uima.version}</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-ui-annotation</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.uima</groupId>
-        <artifactId>uimaj-json</artifactId>
-        <version>${uima.version}</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-ui-project</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.uima</groupId>
-        <artifactId>uimaj-document-annotation</artifactId>
-        <version>${uima.version}</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-ui</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.uima</groupId>
-        <artifactId>uimafit-core</artifactId>
-        <version>${uimafit.version}</version>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-automation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-tree</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-api-annotation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-api-formats</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-api-dao</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>webanno-io-tsv</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-api</artifactId>
         <version>${webanno.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-api-annotation</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-api-formats</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-api-dao</artifactId>
-        <version>${codebook.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -267,11 +299,6 @@
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-io-tsv</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-io-conll</artifactId>
         <version>${webanno.version}</version>
       </dependency>
@@ -284,16 +311,6 @@
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-telemetry</artifactId>
         <version>${webanno.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-io-csv</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-remote</artifactId>
-        <version>${codebook.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -342,11 +359,6 @@
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-webapp</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-support</artifactId>
         <version>${webanno.version}</version>
       </dependency>
@@ -364,11 +376,6 @@
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-ui-menu</artifactId>
         <version>${webanno.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-ui-annotation</artifactId>
-        <version>${codebook.version}</version>
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -392,11 +399,6 @@
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-ui-project</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-constraints</artifactId>
         <version>${webanno.version}</version>
       </dependency>
@@ -417,31 +419,6 @@
       </dependency>
       <dependency>
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-codebook</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-api-codebook</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-codebook-model</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-codebook-automation</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-        <artifactId>webanno-codebook-tree</artifactId>
-        <version>${codebook.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-ui-tagsets</artifactId>
         <version>${webanno.version}</version>
       </dependency>
@@ -454,6 +431,42 @@
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno-plugin-manager</artifactId>
         <version>${webanno.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.uima</groupId>
+        <artifactId>uimaj-core</artifactId>
+        <version>${uima.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.uima</groupId>
+        <artifactId>uimaj-json</artifactId>
+        <version>${uima.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.uima</groupId>
+        <artifactId>uimaj-document-annotation</artifactId>
+        <version>${uima.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.uima</groupId>
+        <artifactId>uimafit-core</artifactId>
+        <version>${uimafit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.json</groupId>
@@ -1071,21 +1084,21 @@
     <!-- Build -->
     <!-- IO -->
     <module>webanno-io-tsv</module>
-    <module>webanno-io-csv</module>
+    <module>codeanno-io-csv</module>
     <!-- Core -->
     <module>webanno-api-annotation</module>
     <module>webanno-api-formats</module>
     <module>webanno-api-dao</module>
     <module>webanno-remote</module>
-    <module>webanno-codebook</module>
-    <module>webanno-api-codebook</module>
-    <module>webanno-codebook-tree</module>
-    <module>webanno-codebook-automation</module>
-    <module>webanno-codebook-model</module>
+    <module>codeanno-api</module>
+    <module>codeanno-tree</module>
+    <module>codeanno-automation</module>
+    <module>codeanno-model</module>
     <!-- UI -->
+    <module>codeanno-ui</module>
     <module>webanno-ui-project</module>
     <module>webanno-ui-annotation</module>
-    <module>webanno-webapp</module>
+    <module>codeanno-webapp</module>
   </modules>
   <build>
     <plugins>
@@ -1447,7 +1460,7 @@
                 <dependency>
                   <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
                   <artifactId>webanno-build</artifactId>
-                  <version>${project.version}</version>
+                  <version>4.0.0-SNAPSHOT</version>
                 </dependency>
                 <dependency>
                   <groupId>com.puppycrawl.tools</groupId>

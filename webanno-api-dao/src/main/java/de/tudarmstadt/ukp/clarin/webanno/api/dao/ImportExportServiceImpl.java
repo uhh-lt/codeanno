@@ -91,8 +91,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil;
 import de.tudarmstadt.ukp.clarin.webanno.api.casstorage.CasAccessMode;
 import de.tudarmstadt.ukp.clarin.webanno.api.dao.casstorage.CasStorageSession;
 import de.tudarmstadt.ukp.clarin.webanno.api.format.FormatSupport;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.export.CodebookImportExportService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.clarin.webanno.model.Mode;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
@@ -103,6 +101,8 @@ import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.TagsetDescription;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 
 @Component(ImportExportService.SERVICE_NAME)
 public class ImportExportServiceImpl
@@ -174,7 +174,7 @@ public class ImportExportServiceImpl
         // }
         // else {
         // FormatSupport format = new FormatSupportDescription(formatId, formatName,
-        // readerClass, writerClass);
+        // readerClass, writerClass);f
         // formatMap.put(format.getId(), format);
         // log.info("Found format (format.properties): {} ({})", formatId,
         // readWriteMsg(format));
@@ -298,7 +298,7 @@ public class ImportExportServiceImpl
 
         // Convert the source document to CAS
         FormatSupport format = getReadableFormatById(aFormatId).orElseThrow(
-            () -> new IOException("No reader available for format [" + aFormatId + "]"));
+                () -> new IOException("No reader available for format [" + aFormatId + "]"));
         CollectionReaderDescription readerDescription = format.getReaderDescription(tsd);
         addConfigurationParameters(readerDescription,
                 ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION,

@@ -54,11 +54,6 @@ import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.ImportExportService;
 import de.tudarmstadt.ukp.clarin.webanno.api.format.FormatSupport;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.CodebookConstants;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookAnnotationDocument;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.ui.project.CodebookDocumentUtil;
-import de.tudarmstadt.ukp.clarin.webanno.csv.WebAnnoCsvFormatSupport;
-import de.tudarmstadt.ukp.clarin.webanno.csv.WebAnnoExcelFormatSupport;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
@@ -67,6 +62,11 @@ import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaModel;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
+import de.uhh.lt.codeanno.api.CodebookConstants;
+import de.uhh.lt.codeanno.csv.WebAnnoCsvFormatSupport;
+import de.uhh.lt.codeanno.csv.WebAnnoExcelFormatSupport;
+import de.uhh.lt.codeanno.ui.project.CodebookAnnotationDocument;
+import de.uhh.lt.codeanno.ui.project.CodebookDocumentUtil;
 
 public class ImportDocumentsPanel
     extends Panel
