@@ -236,6 +236,11 @@
       </dependency>
       <dependency>
         <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-ui-automation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
         <artifactId>codeanno-api</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1061,8 +1066,18 @@
         <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
         <artifactId>webanno</artifactId>
         <version>${webanno.version}</version>
-        <type>pom</type>
         <scope>import</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+            <artifactId>webanno-io-tsv</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+            <artifactId>webanno-io-csv</artifactId>
+          </exclusion>
+        </exclusions>
+        <type>pom</type>
       </dependency>
       
       <dependency>
@@ -1113,10 +1128,11 @@
     <module>codeanno-model</module>
     <!-- UI -->
     <module>codeanno-ui</module>
+    <module>codeanno-ui-agreement</module>
+    <module>codeanno-ui-automation</module>
     <module>webanno-ui-project</module>
     <module>webanno-ui-annotation</module>
     <module>codeanno-webapp</module>
-    <module>codeanno-ui-agreement</module>
   </modules>
   <build>
     <plugins>

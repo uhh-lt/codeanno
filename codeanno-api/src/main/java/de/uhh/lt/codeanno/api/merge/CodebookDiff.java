@@ -1,7 +1,5 @@
 /*
- * Copyright 2019
- * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt  
- *  and Language Technology Group  Universität Hamburg 
+ * Copyright 2019 Language Technology Group (LT) Universität Hamburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uhh.lt.codeanno.api.service;
+package de.uhh.lt.codeanno.api.merge;
 
 import static java.util.Arrays.asList;
 
@@ -40,14 +38,15 @@ import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.api.DiffAdapter;
 import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.api.DiffAdapter_ImplBase;
 import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.api.Position;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.model.Codebook;
 
 public class CodebookDiff
 {
     public static DiffResult doCodebookDiff(CodebookSchemaService aService, Project aProject,
-           // List<Type> aEntryTypes, 
-            LinkCompareBehavior aLinkCompareBehavior,
-            Map<String, CAS> aCasMap, int aBegin, int aEnd)
+            // List<Type> aEntryTypes,
+            LinkCompareBehavior aLinkCompareBehavior, Map<String, CAS> aCasMap, int aBegin,
+            int aEnd)
     {
         List<DiffAdapter> adapters = new ArrayList<>();
         for (Codebook codebook : aService.listCodebook(aProject)) {
@@ -56,17 +55,16 @@ public class CodebookDiff
             adapters.add(new CodebookDiffAdapter(codebook.getName(), codebookFeatures));
         }
 
-  //      List<String> entryTypes = new ArrayList<>();
-    //    for (Type t : aEntryTypes) {
-    //        entryTypes.add(t.getName());
-    //    }
+        // List<String> entryTypes = new ArrayList<>();
+        // for (Type t : aEntryTypes) {
+        // entryTypes.add(t.getName());
+        // }
 
         Map<String, List<CAS>> casMap = new LinkedHashMap<>();
         for (Entry<String, CAS> e : aCasMap.entrySet()) {
             casMap.put(e.getKey(), asList(e.getValue()));
         }
-        return CasDiff.doDiff(adapters, aLinkCompareBehavior, casMap, aBegin, aEnd)
-                .toResult();
+        return CasDiff.doDiff(adapters, aLinkCompareBehavior, casMap, aBegin, aEnd).toResult();
     }
 
     public static class CodebookDiffAdapter

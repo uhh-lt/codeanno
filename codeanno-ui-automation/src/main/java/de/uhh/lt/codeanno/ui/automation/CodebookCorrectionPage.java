@@ -96,7 +96,6 @@ import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.ui.automation.tree.CodebookCorrectionTreePanel;
-import de.uhh.lt.codeanno.ui.curation.DocumentNamePanel;
 
 @MountPath("/codebookcorrection.html")
 public class CodebookCorrectionPage

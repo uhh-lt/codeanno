@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.preferences.UserPreferencesActionBarExtension;
-import de.uhh.lt.codeanno.ui.automation.CodebookCorrectionPage;
 import de.uhh.lt.codeanno.ui.curation.CodebookCurationPage;
 
 @Order(500)
@@ -42,7 +41,7 @@ public class CodebookCurationUserPreferencesActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage || aPage instanceof CodebookCorrectionPage;
+        return aPage instanceof CodebookCurationPage;
     }
 
     @Override

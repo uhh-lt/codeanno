@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package de.uhh.lt.codeanno.ui.curation.actionbar;
+package de.uhh.lt.codeanno.ui.automation.actionbar;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -25,11 +25,11 @@ import org.springframework.stereotype.Component;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.PagingActionBarExtension;
-import de.uhh.lt.codeanno.ui.curation.CodebookCurationPage;
+import de.uhh.lt.codeanno.ui.automation.CodebookCorrectionPage;
 
 @Order(500)
 @Component
-public class CodebookCurationPagingActionBarExtension
+public class CodebookCorrectionPagingActionBarExtension
     implements ActionBarExtension
 {
 
@@ -42,7 +42,7 @@ public class CodebookCurationPagingActionBarExtension
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage;
+        return aPage instanceof CodebookCorrectionPage;
     }
 
     @Override

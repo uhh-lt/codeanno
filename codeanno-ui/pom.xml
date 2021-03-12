@@ -27,18 +27,31 @@
 	<name>CodeAnno - UI</name>
 	<packaging>jar</packaging>
 	<dependencies>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+	    <dependency>
+			<groupId>de.uhh.lt.codeanno</groupId>
+			<artifactId>codeanno-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<groupId>de.uhh.lt.codeanno</groupId>
+			<artifactId>codeanno-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>de.uhh.lt.codeanno</groupId>
+			<artifactId>codeanno-tree</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+			<artifactId>webanno-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+			<artifactId>webanno-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+			<artifactId>webanno-constraints</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
 			<artifactId>webanno-api-annotation</artifactId>
@@ -55,35 +68,28 @@
 			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
 			<artifactId>webanno-ui-core</artifactId>
 		</dependency>
-	    <dependency>
-			<groupId>de.uhh.lt.codeanno</groupId>
-			<artifactId>codeanno-api</artifactId>
-		</dependency>
 		<dependency>
-			<groupId>de.uhh.lt.codeanno</groupId>
-			<artifactId>codeanno-model</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.uhh.lt.codeanno</groupId>
-			<artifactId>codeanno-tree</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.uhh.lt.codeanno</groupId>
-			<artifactId>codeanno-api-automation</artifactId>
+			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+			<artifactId>webanno-agreement</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-			<artifactId>webanno-support</artifactId>
+			<artifactId>webanno-api</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-			<artifactId>webanno-security</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-			<artifactId>webanno-constraints</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -169,10 +175,6 @@
 			<artifactId>commons-csv</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-			<artifactId>webanno-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>javax.persistence-api</artifactId>
 		</dependency>
@@ -198,15 +200,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dkpro.core</groupId>
-			<artifactId>dkpro-core-api-metadata-asl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.dkpro.core</groupId>
 			<artifactId>dkpro-core-api-segmentation-asl</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-            <artifactId>webanno-agreement</artifactId>
-        </dependency>
     </dependencies>
 </project>
