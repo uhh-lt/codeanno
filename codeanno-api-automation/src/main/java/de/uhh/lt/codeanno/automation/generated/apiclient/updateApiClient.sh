@@ -17,8 +17,7 @@ echo "adding licence headers"
 read -d '' licence <<EOF
 /*
  * Copyright 2021
- * Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
- * Technische Universität Darmstadt
+ * Language Technology (LT) Universität Hamburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

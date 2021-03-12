@@ -1099,6 +1099,7 @@
     <module>webanno-ui-project</module>
     <module>webanno-ui-annotation</module>
     <module>codeanno-webapp</module>
+    <module>codeanno-ui-agreement</module>
   </modules>
   <build>
     <plugins>
