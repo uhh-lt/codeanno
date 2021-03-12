@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uhh.lt.codeanno.ui.curation.actionbar;
+package de.uhh.lt.codeanno.ui.automation.actionbar;
 
 import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState.CURATION_FINISHED;
 import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition.CURATION_IN_PROGRESS_TO_CURATION_FINISHED;
@@ -41,7 +41,7 @@ import de.tudarmstadt.ukp.clarin.webanno.support.dialog.ConfirmationDialog;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.uhh.lt.codeanno.api.merge.CodebookCasMergeService;
 
-public class CodebookCurationWorkflowActionBarItemGroup
+public class CodebookCorrectionWorkflowActionBarItemGroup
     extends Panel
 {
     private static final long serialVersionUID = 8596786586955459711L;
@@ -54,7 +54,7 @@ public class CodebookCurationWorkflowActionBarItemGroup
     private @SpringBean CurationDocumentService curationDocumentService;
     private @SpringBean CodebookCasMergeService codebookCasMergeService;
 
-    public CodebookCurationWorkflowActionBarItemGroup(String aId, AnnotationPageBase aPage)
+    public CodebookCorrectionWorkflowActionBarItemGroup(String aId, AnnotationPageBase aPage)
     {
         super(aId);
 

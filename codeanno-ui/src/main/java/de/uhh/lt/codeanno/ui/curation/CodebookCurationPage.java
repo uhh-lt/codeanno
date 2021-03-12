@@ -17,7 +17,6 @@
  */
 package de.uhh.lt.codeanno.ui.curation;
 
-import static de.tudarmstadt.ukp.clarin.webanno.api.CasUpgradeMode.AUTO_CAS_UPGRADE;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.CURATION_USER;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_DOCUMENT_ID;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_FOCUS;
@@ -25,9 +24,6 @@ import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_PROJ
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.updateDocumentTimestampAfterWrite;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.verifyAndUpdateDocumentTimestamp;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.FocusPosition.TOP;
-import static de.tudarmstadt.ukp.clarin.webanno.api.casstorage.CasAccessMode.SHARED_READ_ONLY_ACCESS;
-import static de.tudarmstadt.ukp.clarin.webanno.api.casstorage.CasAccessMode.UNMANAGED_ACCESS;
-import static de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocumentState.FINISHED;
 import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentState.CURATION_FINISHED;
 import static de.tudarmstadt.ukp.clarin.webanno.model.SourceDocumentStateTransition.ANNOTATION_IN_PROGRESS_TO_CURATION_IN_PROGRESS;
 import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.visibleWhen;
@@ -42,9 +38,7 @@ import java.util.Optional;
 
 import javax.persistence.NoResultException;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -79,21 +73,17 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.SentenceOrientedPagingStrategy;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.rendering.event.SelectionChangedEvent;
 import de.tudarmstadt.ukp.clarin.webanno.constraints.ConstraintsService;
-import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.CasDiff;
 import de.tudarmstadt.ukp.clarin.webanno.curation.storage.CurationDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocument;
-import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationDocumentState;
 import de.tudarmstadt.ukp.clarin.webanno.model.Mode;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
-import de.tudarmstadt.ukp.clarin.webanno.support.StopWatch;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.DecoratedObject;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.WicketUtil;
 import de.uhh.lt.codeanno.api.adapter.CodebookCasAdapter;
-import de.uhh.lt.codeanno.api.service.CodebookCasMerge;
-import de.uhh.lt.codeanno.api.service.CodebookDiff;
+import de.uhh.lt.codeanno.api.merge.CodebookCasMergeService;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.model.Codebook;
 import de.uhh.lt.codeanno.model.CodebookFeature;
@@ -116,6 +106,7 @@ public class CodebookCurationPage
     private @SpringBean CurationDocumentService curationDocumentService;
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
+    private @SpringBean CodebookCasMergeService codebookCasMergeService;
     private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
     private @SpringBean ConstraintsService constraintsService;
     private @SpringBean CasStorageService casStorageService;
@@ -253,7 +244,7 @@ public class CodebookCurationPage
         if (state.getDocument() != null) {
             try {
                 documentService.createSourceDocument(state.getDocument());
-                upgradeCasAndSave(state.getDocument(), username);
+                codebookCasMergeService.upgradeCasAndSave(state.getDocument(), username);
 
                 actionLoadDocument(aTarget);
             }
@@ -277,24 +268,6 @@ public class CodebookCurationPage
                 .getCurationCasTimestamp(state.getDocument());
         if (diskTimestamp.isPresent()) {
             state.setAnnotationDocumentTimestamp(diskTimestamp.get());
-        }
-    }
-
-    public void upgradeCasAndSave(SourceDocument aDocument, String aUsername) throws IOException
-    {
-        User user = userRepository.get(aUsername);
-        if (documentService.existsAnnotationDocument(aDocument, user)) {
-            AnnotationDocument annotationDocument = documentService.getAnnotationDocument(aDocument,
-                    user);
-            try {
-                CAS cas = documentService.readAnnotationCas(annotationDocument);
-                annotationService.upgradeCas(cas, annotationDocument);
-                documentService.writeAnnotationCas(cas, annotationDocument, false);
-            }
-            catch (Exception e) {
-                // no need to catch, it is acceptable that no curation document
-                // exists to be upgraded while there are annotation documents
-            }
         }
     }
 
@@ -341,7 +314,7 @@ public class CodebookCurationPage
             }
 
             // prepare merge cas
-            prepareMergeCAS(false, false);
+            codebookCasMergeService.prepareMergeCAS(getModelObject(), false, false);
 
             // Initialize timestamp in state
             updateDocumentTimestampAfterWrite(state,
@@ -352,7 +325,8 @@ public class CodebookCurationPage
             List<AnnotationDocument> annotationDocuments = documentService
                     .listAnnotationDocuments(getModelObject().getDocument());
             for (AnnotationDocument annotationDocument : annotationDocuments)
-                upgradeCasAndSave(annotationDocument.getDocument(), annotationDocument.getUser());
+                codebookCasMergeService.upgradeCasAndSave(annotationDocument.getDocument(),
+                        annotationDocument.getUser());
 
             currentProjectId = state.getProject().getId();
 
@@ -366,166 +340,6 @@ public class CodebookCurationPage
         }
 
         LOG.info("END LOAD_DOCUMENT_ACTION");
-    }
-
-    public void prepareMergeCAS(boolean aMergeIncompleteAnnotations, boolean aForceRecreateCas)
-        throws IOException, UIMAException, ClassNotFoundException, AnnotationException
-    {
-        AnnotatorState state = getModelObject();
-
-        List<AnnotationDocument> finishedAnnotationDocuments = new ArrayList<>();
-
-        // FIXME: This is slow and should be done via a proper SQL query
-        for (AnnotationDocument annotationDocument : documentService
-                .listAnnotationDocuments(state.getDocument())) {
-            if (annotationDocument.getState().equals(FINISHED)) {
-                finishedAnnotationDocuments.add(annotationDocument);
-            }
-        }
-
-        if (finishedAnnotationDocuments.isEmpty()) {
-            throw new IllegalStateException("This document has the state "
-                    + state.getDocument().getState() + " but "
-                    + "there are no finished annotation documents! This "
-                    + "can for example happen when curation on a document has already started "
-                    + "and afterwards all annotators have been remove from the project, have been "
-                    + "disabled or if all were put back into " + AnnotationDocumentState.IN_PROGRESS
-                    + " mode. It can "
-                    + "also happen after importing a project when the users and/or permissions "
-                    + "were not imported (only admins can do this via the projects page in the) "
-                    + "administration dashboard and if none of the imported users have been "
-                    + "enabled via the users management page after the import (also something "
-                    + "that only administrators can do).");
-        }
-
-        AnnotationDocument randomAnnotationDocument = finishedAnnotationDocuments.get(0);
-
-        // upgrade CASes for each user
-        // TODO what if new type is added once the user finished
-        // annotation
-        for (AnnotationDocument ad : finishedAnnotationDocuments) {
-            upgradeCasAndSave(ad.getDocument(), ad.getUser());
-        }
-
-        Map<String, CAS> curationCASes = listCASesForCuration(finishedAnnotationDocuments);
-
-        createMergeCas(state, state.getDocument(), curationCASes, randomAnnotationDocument, true,
-                aForceRecreateCas, aMergeIncompleteAnnotations);
-    }
-
-    /**
-     * Fetches the CAS that the user will be able to edit. In AUTOMATION/CORRECTION mode, this is
-     * the CAS for the CORRECTION_USER and in CURATION mode it is the CAS for the CURATION user.
-     *
-     * @param aState
-     *            the model.
-     * @param aDocument
-     *            the source document.
-     * @param aCasses
-     *            the CASes.
-     * @return the CAS.
-     * @throws UIMAException
-     *             hum?
-     * @throws ClassNotFoundException
-     *             hum?
-     * @throws IOException
-     *             if an I/O error occurs.
-     * @throws AnnotationException
-     *             hum?
-     */
-    private CAS createMergeCas(AnnotatorState aState, SourceDocument aDocument,
-            Map<String, CAS> aCasses, AnnotationDocument randomAnnotationDocument, boolean aUpgrade,
-            boolean aMergeIncompleteAnnotations, boolean aForceRecreateCas)
-        throws UIMAException, ClassNotFoundException, IOException, AnnotationException
-    {
-
-        // Upgrading should be an explicit action during the opening of a document at
-        // the
-        // end of the open dialog - it must not happen during editing because the CAS
-        // addresses are used as IDs in the UI
-        CAS mergeCas = null;
-        try {
-            mergeCas = curationDocumentService.readCurationCas(aDocument);
-            if (aUpgrade) {
-                curationDocumentService.upgradeCurationCas(mergeCas, aDocument);
-                curationDocumentService.writeCurationCas(mergeCas, aDocument, true);
-                updateDocumentTimestampAfterWrite(aState,
-                        curationDocumentService.getCurationCasTimestamp(aState.getDocument()));
-            }
-        }
-        // Create JCas, if it could not be loaded from the file system
-        catch (Exception e) {
-            mergeCas = createCurationCas(aState, randomAnnotationDocument, aCasses,
-                    aMergeIncompleteAnnotations);
-            updateDocumentTimestampAfterWrite(aState,
-                    curationDocumentService.getCurationCasTimestamp(aState.getDocument()));
-        }
-
-        return mergeCas;
-    }
-
-    /**
-     * For the first time a curation page is opened, create a MergeCas that contains only agreeing
-     * annotations Using the CAS of the curator user.
-     *
-     * @param aState
-     *            the annotator state
-     * @param aRandomAnnotationDocument
-     *            an annotation document.
-     * @param aCasses
-     *            the CASes
-     * @return the CAS.
-     * @throws IOException
-     *             if an I/O error occurs.
-     */
-    private CAS createCurationCas(AnnotatorState aState,
-            AnnotationDocument aRandomAnnotationDocument, Map<String, CAS> aCasses,
-            boolean aMergeIncompleteAnnotations)
-        throws IOException, UIMAException, AnnotationException
-    {
-        Validate.notNull(aState, "State must be specified");
-        Validate.notNull(aRandomAnnotationDocument, "Annotation document must be specified");
-
-        // We need a modifiable copy of some annotation document which we can use to initialize
-        // the curation CAS. This is an exceptional case where BYPASS is the correct choice
-        CAS mergeCas = documentService.readAnnotationCas(aRandomAnnotationDocument,
-                UNMANAGED_ACCESS);
-        CasDiff.DiffResult diff;
-        try (StopWatch watch = new StopWatch(LOG, "CasDiff (codebook curation)")) {
-            // codebook cas diff
-            diff = CodebookDiff.doCodebookDiff(codebookService, aState.getProject(), null, aCasses,
-                    0, 0);
-        }
-        try (StopWatch watch = new StopWatch(LOG, "CasMerge (codebook curation)")) {
-            // cas merge
-            CodebookCasMerge casMerge = new CodebookCasMerge(codebookService);
-            casMerge.setMergeIncompleteAnnotations(aMergeIncompleteAnnotations);
-            casMerge.reMergeCas(diff, aState.getDocument(), aState.getUser().getUsername(),
-                    mergeCas, aCasses);
-        }
-
-        curationDocumentService.writeCurationCas(mergeCas, aRandomAnnotationDocument.getDocument(),
-                false);
-
-        return mergeCas;
-    }
-
-    public Map<String, CAS> listCASesForCuration(List<AnnotationDocument> annotationDocuments)
-        throws UIMAException, ClassNotFoundException, IOException
-    {
-        Map<String, CAS> casses = new HashMap<>();
-        for (AnnotationDocument annotationDocument : annotationDocuments) {
-            String username = annotationDocument.getUser();
-
-            if (!annotationDocument.getState().equals(AnnotationDocumentState.FINISHED)) {
-                continue;
-            }
-
-            CAS cas = documentService.readAnnotationCas(annotationDocument.getDocument(),
-                    annotationDocument.getUser(), AUTO_CAS_UPGRADE, SHARED_READ_ONLY_ACCESS);
-            casses.put(username, cas);
-        }
-        return casses;
     }
 
     @Override
@@ -556,34 +370,6 @@ public class CodebookCurationPage
         return getModelObject().getUser();
     }
 
-    /**
-     * @return a map of all users and their corresponding CASes for the current document )
-     */
-    private Map<String, CAS> getUserCASes()
-    {
-        Map<String, CAS> curationCASes = new HashMap<>();
-
-        // get all annotation documents of all users of the current doc
-        List<AnnotationDocument> annotationDocuments = documentService
-                .listAnnotationDocuments(getModelObject().getDocument());
-
-        for (AnnotationDocument annotationDocument : annotationDocuments) {
-            String username = annotationDocument.getUser();
-            if (annotationDocument.getState().equals(AnnotationDocumentState.FINISHED)) {
-                CAS cas;
-                try {
-                    cas = documentService.readAnnotationCas(annotationDocument);
-                    curationCASes.put(username, cas);
-                }
-                catch (IOException e) {
-                    error("Unable to load the curation CASes: " + e.getMessage());
-                }
-            }
-        }
-
-        return curationCASes;
-    }
-
     public Map<Codebook, List<CodebookUserSuggestion>> getUserSuggestionsOfCurrentDocument()
     {
         Project currentProject = getModelObject().getProject();
@@ -595,7 +381,8 @@ public class CodebookCurationPage
 
         Map<Codebook, List<CodebookUserSuggestion>> userSuggestions = new HashMap<>();
 
-        Map<String, CAS> curationCASes = getUserCASes();
+        Map<String, CAS> curationCASes = codebookCasMergeService
+                .getUserCASes(getModelObject().getDocument());
 
         // get all codebooks of the current project (this are also all the available
         // codebooks of the current document!)

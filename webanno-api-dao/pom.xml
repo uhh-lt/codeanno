@@ -27,6 +27,14 @@
   <dependencies>
     <dependency>
       <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-io-tsv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-io-csv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
       <artifactId>webanno-api-formats</artifactId>
     </dependency>
     <dependency>
@@ -36,14 +44,6 @@
     <dependency>
       <groupId>de.uhh.lt.codeanno</groupId>
       <artifactId>codeanno-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>webanno-io-tsv</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>codeanno-io-csv</artifactId>
     </dependency>
     <dependency>
       <groupId>de.uhh.lt.codeanno</groupId>

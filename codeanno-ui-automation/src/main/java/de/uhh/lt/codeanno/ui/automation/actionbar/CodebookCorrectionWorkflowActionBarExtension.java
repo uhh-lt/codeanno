@@ -14,40 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.uhh.lt.codeanno.ui.automation.actionbar;
 
-package de.uhh.lt.codeanno.ui.curation.actionbar;
+import static java.lang.Integer.MAX_VALUE;
 
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.actionbar.ActionBarExtension;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.AnnotationPageBase;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.paging.PagingActionBarExtension;
-import de.uhh.lt.codeanno.ui.curation.CodebookCurationPage;
+import de.uhh.lt.codeanno.ui.automation.CodebookCorrectionPage;
 
-@Order(500)
+@Order(1000)
 @Component
-public class CodebookCurationPagingActionBarExtension
+public class CodebookCorrectionWorkflowActionBarExtension
     implements ActionBarExtension
 {
+    @Override
+    public String getRole()
+    {
+        // FIXME dirty hack in order to avoid circular dependency
+        return "de.tudarmstadt.ukp.clarin.webanno.ui.annotation.DefaultWorkflowActionBarExtension";
+        // DefaultWorkflowActionBarExtension.class.getName();
+    }
 
     @Override
     public Panel createActionBarItem(String aId, AnnotationPageBase aPage)
     {
-        return new EmptyPanel(aId);
+        return new CodebookCorrectionWorkflowActionBarItemGroup(aId, aPage);
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return MAX_VALUE;
     }
 
     @Override
     public boolean accepts(AnnotationPageBase aPage)
     {
-        return aPage instanceof CodebookCurationPage;
-    }
-
-    @Override
-    public String getRole()
-    {
-        return PagingActionBarExtension.class.getName();
+        return aPage instanceof CodebookCorrectionPage;
     }
 }
