@@ -16,7 +16,7 @@
         <artifactId>codeanno</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>codeanno-automation</artifactId>
+    <artifactId>codeanno-api-automation</artifactId>
     <name>CodeAnno - Automation</name>
     <packaging>jar</packaging>
     <dependencies>

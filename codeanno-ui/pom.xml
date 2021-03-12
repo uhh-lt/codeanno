@@ -70,7 +70,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.uhh.lt.codeanno</groupId>
-			<artifactId>codeanno-automation</artifactId>
+			<artifactId>codeanno-api-automation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>

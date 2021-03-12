@@ -239,7 +239,7 @@
       </dependency>
       <dependency>
         <groupId>de.uhh.lt.codeanno</groupId>
-        <artifactId>codeanno-automation</artifactId>
+        <artifactId>codeanno-api-automation</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1092,7 +1092,7 @@
     <module>webanno-remote</module>
     <module>codeanno-api</module>
     <module>codeanno-tree</module>
-    <module>codeanno-automation</module>
+    <module>codeanno-api-automation</module>
     <module>codeanno-model</module>
     <!-- UI -->
     <module>codeanno-ui</module>
