@@ -30,6 +30,27 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-ui-annotation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-ui-project</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-ui</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-ui-agreement</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-remote</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-automation</artifactId>
     </dependency>
@@ -66,24 +87,12 @@
       <artifactId>webanno-ui-monitoring</artifactId>
     </dependency>
     <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>webanno-ui-annotation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>webanno-ui-project</artifactId>
-    </dependency>
-    <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-ui-correction</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-ui-tagsets</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>webanno-remote</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -177,16 +186,20 @@
     
     <!-- READER/WRITER DEPENDENCIES -->
     <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-io-tsv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-io-csv</artifactId>
+    </dependency>
+    <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-io-tei</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-io-conll</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>webanno-io-tsv</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
@@ -203,10 +216,6 @@
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-io-xmi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.uhh.lt.codeanno</groupId>
-      <artifactId>codeanno-io-csv</artifactId>
     </dependency>
 
     <!-- DATABASE / HIBERNATE -->
@@ -450,6 +459,8 @@
               <!-- WebAnno UI Modules - they auto-register via reflection -->
               <usedDependency>de.uhh.lt.codeanno:webanno-ui-annotation</usedDependency>
               <usedDependency>de.uhh.lt.codeanno:webanno-ui-project</usedDependency>
+              <usedDependency>de.uhh.lt.codeanno:codeanno-ui</usedDependency>
+              <usedDependency>de.uhh.lt.codeanno:codeanno-ui-agreement</usedDependency>
               <usedDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-ui-automation</usedDependency>
               <usedDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-ui-correction</usedDependency>
               <usedDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-ui-tagsets</usedDependency>
