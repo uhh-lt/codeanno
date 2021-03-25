@@ -48,6 +48,10 @@
       <artifactId>codeanno-ui</artifactId>
     </dependency>
     <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-ui-analysis</artifactId>
+    </dependency>
+    <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-support</artifactId>
     </dependency>
