@@ -234,6 +234,11 @@
       </dependency>
       <dependency>
         <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-ui-project</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
         <artifactId>codeanno-ui-automation</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1116,6 +1121,7 @@
     <module>codeanno-model</module>
     <!-- UI -->
     <module>codeanno-ui</module>
+    <module>codeanno-ui-project</module>
     <module>codeanno-ui-agreement</module>
     <module>codeanno-ui-automation</module>
     <module>webanno-ui-project</module>

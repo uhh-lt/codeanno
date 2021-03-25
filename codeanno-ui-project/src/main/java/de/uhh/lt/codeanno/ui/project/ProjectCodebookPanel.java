@@ -92,7 +92,6 @@ import de.uhh.lt.codeanno.model.CodebookTag;
 import de.uhh.lt.codeanno.tree.CodebookTreeProvider;
 import de.uhh.lt.codeanno.tree.model.CodebookNode;
 import de.uhh.lt.codeanno.tree.model.CodebookNodeExpansion;
-import de.uhh.lt.codeanno.ui.config.CodebookLayoutCssResourceBehavior;
 import de.uhh.lt.codeanno.ui.project.tree.ProjectCodebookTreePanel;
 
 /**
