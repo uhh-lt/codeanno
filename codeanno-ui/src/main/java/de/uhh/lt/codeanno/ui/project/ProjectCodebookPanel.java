@@ -133,7 +133,6 @@ public class ProjectCodebookPanel
     {
         super(id, aProjectModel);
         setOutputMarkupId(true);
-        add(CodebookLayoutCssResourceBehavior.get());
 
         selectedTag = Model.of();
         Model<Codebook> selectedCodebook = Model.of();

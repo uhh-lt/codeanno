@@ -39,10 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.googlecode.wicket.kendo.ui.form.combobox.ComboBox;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
-import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.AnnotationEditorExtensionRegistry;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.uhh.lt.codeanno.api.adapter.CodebookCasAdapter;
 import de.uhh.lt.codeanno.api.service.CodebookFeatureState;
@@ -51,7 +48,6 @@ import de.uhh.lt.codeanno.model.Codebook;
 import de.uhh.lt.codeanno.model.CodebookFeature;
 import de.uhh.lt.codeanno.model.CodebookTag;
 import de.uhh.lt.codeanno.tree.model.CodebookNode;
-import de.uhh.lt.codeanno.ui.config.CodebookLayoutCssResourceBehavior;
 
 public abstract class CodebookEditorPanel
     extends Panel
@@ -69,11 +65,8 @@ public abstract class CodebookEditorPanel
     private static final long serialVersionUID = -9151455840010092452L;
     private static final Logger LOG = LoggerFactory.getLogger(CodebookEditorPanel.class);
 
-    private @SpringBean ProjectService projectRepository;
     private @SpringBean DocumentService documentService;
-    private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
-    private @SpringBean AnnotationEditorExtensionRegistry extensionRegistry;
 
     private final CodebookEditorTreePanel codebookEditorTreePanel;
 
@@ -82,7 +75,6 @@ public abstract class CodebookEditorPanel
         super(id, aModel);
 
         setOutputMarkupId(true);
-        add(CodebookLayoutCssResourceBehavior.get());
 
         this.setDefaultModel(aModel);
 
