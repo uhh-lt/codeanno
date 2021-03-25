@@ -55,6 +55,10 @@
     </dependency>
     <dependency>
       <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-ui-curation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
       <artifactId>codeanno-ui-automation</artifactId>
     </dependency>
     <dependency>
@@ -475,6 +479,7 @@
               <usedDependency>de.uhh.lt.codeanno:codeanno-ui-project</usedDependency>
               <usedDependency>de.uhh.lt.codeanno:codeanno-ui-analysis</usedDependency>
               <usedDependency>de.uhh.lt.codeanno:codeanno-ui-agreement</usedDependency>
+              <usedDependency>de.uhh.lt.codeanno:codeanno-ui-curation</usedDependency>
               <usedDependency>de.uhh.lt.codeanno:codeanno-ui-automation</usedDependency>
               <usedDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-ui-automation</usedDependency>
               <usedDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-ui-correction</usedDependency>

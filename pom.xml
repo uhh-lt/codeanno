@@ -236,6 +236,11 @@
       </dependency>
       <dependency>
         <groupId>de.uhh.lt.codeanno</groupId>
+        <artifactId>codeanno-ui-curation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.uhh.lt.codeanno</groupId>
         <artifactId>codeanno-ui-analysis</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1145,6 +1150,7 @@
     <module>webanno-ui-annotation</module>
     <module>codeanno-webapp</module>
     <module>codeanno-ui-analysis</module>
+    <module>codeanno-ui-curation</module>
   </modules>
   <build>
     <plugins>
