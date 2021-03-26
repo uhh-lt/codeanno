@@ -54,13 +54,13 @@ import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
 import de.tudarmstadt.ukp.clarin.webanno.api.RepositoryProperties;
 import de.tudarmstadt.ukp.clarin.webanno.api.dao.casstorage.CasStorageSession;
 import de.tudarmstadt.ukp.clarin.webanno.api.type.CASMetadata;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.export.CodebookImportExportService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaService;
-import de.tudarmstadt.ukp.clarin.webanno.codebook.service.CodebookSchemaServiceImpl;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.xmi.XmiFormatSupport;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaServiceImpl;
 
 public class ImportExportServiceImplTest
 {

@@ -231,8 +231,8 @@ public class AnnotationDocumentExporter
                     format = new WebAnnoTsv3FormatSupport();
                 }
                 // Export annotations from regular users
-                for (AnnotationDocument annDoc :
-                    srcToAnnIdx.computeIfAbsent(srcDoc, key -> emptyList())) {
+                for (AnnotationDocument annDoc : srcToAnnIdx.computeIfAbsent(srcDoc,
+                        key -> emptyList())) {
 
                     // copy annotation document only for existing users and the state of the
                     // annotation document is not NEW/IGNORE

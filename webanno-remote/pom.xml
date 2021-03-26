@@ -18,13 +18,63 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-    <artifactId>webanno</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <groupId>de.uhh.lt.codeanno</groupId>
+    <artifactId>codeanno</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>webanno-remote</artifactId>
   <name>WebAnno - Core - Remote API</name>
+  <packaging>jar</packaging>
   <dependencies>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-io-tsv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-api-dao</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-api-annotation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>codeanno-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-api-formats</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <artifactId>webanno-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <artifactId>webanno-export</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <artifactId>webanno-curation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <artifactId>webanno-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <artifactId>webanno-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <artifactId>webanno-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.persistence</groupId>
+      <artifactId>javax.persistence-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -56,51 +106,6 @@
     <dependency>
       <groupId>com.github.openjson</groupId>
       <artifactId>openjson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api-formats</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-export</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api-annotation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-io-tsv</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-curation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-support</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api-codebook</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>javax.persistence-api</artifactId>
     </dependency>
 
     <!-- Spring -->
@@ -240,11 +245,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api-dao</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
@@ -283,9 +283,11 @@
               <ignoredDependency>org.springframework.boot:spring-boot-starter-data-jpa</ignoredDependency>
               <ignoredDependency>com.jayway.jsonpath:json-path</ignoredDependency>
               <ignoredDependency>com.h2database:h2</ignoredDependency>
+              <ignoredDependency>de.uhh.lt.codeanno:webanno-io-tsv</ignoredDependency>
+              <ignoredDependency>de.uhh.lt.codeanno:codeanno-io-csv</ignoredDependency>
               <ignoredDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-io-text</ignoredDependency>
               <ignoredDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-project</ignoredDependency>
-              <ignoredDependency>de.tudarmstadt.ukp.clarin.webanno:webanno-api-dao</ignoredDependency>
+              <ignoredDependency>de.uhh.lt.codeanno:webanno-api-dao</ignoredDependency>
               <ignoredDependency>org.springframework.boot:spring-boot-test-autoconfigure</ignoredDependency>
               <ignoredDependency>org.springframework.security:spring-security-config</ignoredDependency>
             </ignoredDependencies>
