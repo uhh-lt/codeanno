@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<!--
+#Copyright 2019
+#Ubiquitous Knowledge Processing (UKP) Lab  Technische Universität Darmstadt and Language Technology Universität Hamburg
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel>
+  <div class="scrolling flex-content flex-h-container flex-gutter">
+    <div class="flex-v-container flex-gutter" style="flex-basis: 20%;">
+      <form class="flex-content card" wicket:id="codebookSelectionForm">
+        <div class="card-header">
+          <wicket:message key="codebooks"/>
+<!--          <span>-->
+<!--              <a target="_blank" wicket:message="href:layers.help.link">-->
+<!--                <i class="fas fa-question-circle"></i>-->
+<!--              </a>-->
+<!--            </span>-->
+          <div class="actions">
+
+            <button class="btn btn-danger" wicket:id="resetOrdering">
+              <i class="fas fa-sort-alpha-down"></i>&nbsp;
+              <wicket:message key="resetOrdering"/>
+            </button>
+
+              <span aria-expanded="false" aria-haspopup="true" class="dropdown">
+                <button class="btn btn-action btn-secondary dropdown-toggle flex-content"
+                        data-toggle="dropdown" type="button">
+                  <i class="fas fa-file-upload"></i>&nbsp;
+                  <wicket:message key="import"/>
+                </button>
+                <div class="dropdown-menu shadow-lg pt-0 pb-0" role="menu"
+                     style="min-width: 440px;">
+                  <form wicket:id="importCodebookForm">
+                    <div class="card-header">
+                      <wicket:message key="import.codebooks"/>
+                    </div>
+                    <div class="card-body">
+                      <div class="form-group form-row">
+                        <label class="col-sm-4 col-form-label">
+                          <wicket:message key="filesToImport"/>
+                        </label>
+                        <div class="col-sm-8">
+                          <input multiple type="file" wicket:id="content"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-footer text-right">
+                      <button class="btn btn-primary" wicket:id="import">
+                        <i class="fas fa-file-upload"></i>&nbsp;
+                        <wicket:message key="import"/>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </span>
+
+            <input class="btn btn-primary" type="submit" wicket:id="create"
+                   wicket:message="value:new.codebook.create"/>
+          </div>
+        </div>
+
+        <div class="card-body scrolling">
+          <div class="small">
+            <button class="btn btn-sm btn-outline-secondary" wicket:id="expandAll">Expand all
+            </button>
+            <button class="btn btn-sm btn-outline-secondary float-right" wicket:id="collapseAll">
+              Collapse all
+            </button>
+          </div>
+          <hr/>
+          <div wicket:id="projectCodebookTreePanel">[projectCodebookTreePanel]</div>
+        </div>
+      </form>
+    </div>
+
+    <form class="flex-content flex-v-container flex-gutter" wicket:id="codebookDetailForm">
+      <div class="flex-content card">
+        <div class="card-header">
+          <wicket:message key="codebook.details"/>
+          <div class="actions">
+            <button class="btn btn-primary" wicket:id="save">
+              <i class="fas fa-save"></i>&nbsp;
+              <wicket:message key="save"/>
+            </button>
+            <button class="btn btn-danger" wicket:id="delete">
+              <i class="fas fa-times"></i>&nbsp;
+              <wicket:message key="delete"/>
+            </button>
+            <button class="btn btn-secondary" wicket:id="close">
+              <i class="fas fa-times"></i>&nbsp;
+              <wicket:message key="close"/>
+            </button>
+
+            <span aria-expanded="false" aria-haspopup="true" class="dropdown">
+                <button class="btn btn-secondary btn-action dropdown-toggle flex-content"
+                        data-toggle="dropdown" type="button">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <wicket:message key="export"/>
+                </button>
+                <div class="dropdown-menu shadow-lg pt-0 pb-0" role="menu"
+                     style="min-width: 220px;">
+                  <div class="container">
+                    <div class="form-group form-row">
+                      <div class="small" wicket:id="exportMode"></div>
+                    </div>
+                    <div class="form-group form-row">
+                      <button class="btn btn-sm btn-primary col-sm-12" wicket:id="export">
+                        <i class="fas fa-download"></i>&nbsp;
+                        <wicket:message key="export"/>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </span>
+
+          </div>
+        </div>
+        <div wicket:id="confirmationDialog"></div>
+
+        <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
+          <div class="card min-content-height">
+            <div class="card-header small">
+              <wicket:message key="properties"/>
+              <a target="_blank" wicket:message="href:properties.help.link">
+                <i class="fas fa-question-circle"></i>
+              </a>
+            </div>
+
+            <div class="card-body">
+              <div class="form-group form-row">
+                <label class="col-sm-4 col-form-label" wicket:for="uiName">
+                  <wicket:label key="name"/>
+                </label>
+                <div class="col-sm-8">
+                  <input class="form-control" wicket:id="uiName"/>
+                </div>
+              </div>
+              <div class="form-group form-row">
+                <label class="col-sm-4 col-form-label" wicket:for="description">
+                  <wicket:label key="description"/>
+                </label>
+                <div class="col-sm-8">
+                  <textarea class="form-control" rows="4" wicket:id="description"></textarea>
+                </div>
+              </div>
+              <div class="form-group form-row">
+                <label class="col-sm-4 control-label" wicket:for="parent">
+                  <wicket:label key="parentSelection"/>
+                </label>
+                <div class="col-sm-8">
+                  <select class="form-control" wicket:id="parent"></select>
+                </div>
+              </div>
+              <div class="form-group form-row">
+                <label class="col-sm-4 control-label" wicket:for="createTag">
+                  <wicket:label key="createTag"/>
+                </label>
+                <div class="col-sm-8">
+                  <input checked class="form-control-md" type="checkbox" wicket:id="createTag"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card min-content-height">
+          <div class="card-header small">
+            <wicket:message key="technicalProperties"/>
+            <a target="_blank" wicket:message="href:properties.help.link">
+              <i class="fas fa-question-circle"></i>
+            </a>
+          </div>
+          <div class="card-body">
+            <div class="form-group form-row">
+              <label class="col-sm-4 col-form-label">
+                <wicket:message key="internalName"/>
+              </label>
+              <div class="col-sm-8">
+                    <span class="form-control" readonly>
+                      <wicket:container wicket:id="name"/>
+                    </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="scrolling card-body flex-v-container flex-gutter flex-only-internal-gutter">
+      <div class="flex-h-container flex-no-gutter" style="flex: .3;" wicket:id="codebookTagSelector">
+
+      </div>
+      <div class="flex-content flex-h-container flex-no-gutter" wicket:id="codebookTagEditor">
+      </div>
+    </div>
+  </div>
+</wicket:panel>
+</body>
+</html>

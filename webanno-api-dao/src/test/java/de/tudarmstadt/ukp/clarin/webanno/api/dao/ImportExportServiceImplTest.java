@@ -58,6 +58,9 @@ import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.xmi.XmiFormatSupport;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaServiceImpl;
 
 public class ImportExportServiceImplTest
 {
@@ -67,6 +70,8 @@ public class ImportExportServiceImplTest
     private CasStorageSession casStorageSession;
     private @Spy AnnotationSchemaService schemaService;
 
+    private @Spy CodebookImportExportService codebookImportExportService;
+    private CodebookSchemaService codebookService;
     public @Rule TemporaryFolder testFolder = new TemporaryFolder();
 
     private ImportExportServiceImpl sut;
@@ -78,6 +83,7 @@ public class ImportExportServiceImplTest
 
         // schemaService = mock(AnnotationSchemaServiceImpl.class);
         schemaService = Mockito.spy(new AnnotationSchemaServiceImpl());
+codebookService = new CodebookSchemaServiceImpl();
 
         backupProperties = new BackupProperties();
 
@@ -88,7 +94,7 @@ public class ImportExportServiceImplTest
                 backupProperties);
 
         sut = new ImportExportServiceImpl(repositoryProperties, asList(new XmiFormatSupport()),
-                storageService, schemaService);
+                storageService, schemaService, codebookImportExportService, codebookService);
         sut.onContextRefreshedEvent();
 
         doReturn(emptyList()).when(schemaService).listAnnotationLayer(any());

@@ -46,6 +46,10 @@ public class AnnotationPreference
     public static final int SIDEBAR_SIZE_MAX = 50;
     public static final int SIDEBAR_SIZE_DEFAULT = 20;
 
+    // TODO
+    //  this actually makes no sense here and needs to be refactored into the curations module
+    //  where a own CurationPreference similar to AnnotationPreference needs to be implemented!
+    private boolean showEditor = true;
     // Id of annotation layers, to be stored in the properties file comma separated: 12, 34,....
     @Deprecated
     private List<Long> annotationLayers;
@@ -70,7 +74,8 @@ public class AnnotationPreference
 
     private Map<Long, ColoringStrategyType> colorPerLayer = new HashMap<>();
 
-    private ReadonlyColoringBehaviour readonlyLayerColoringBehaviour = ReadonlyColoringBehaviour.LEGACY;
+    private ReadonlyColoringBehaviour readonlyLayerColoringBehaviour =
+            ReadonlyColoringBehaviour.LEGACY;
 
     private int sidebarSize;
     private int fontZoom;
@@ -81,7 +86,7 @@ public class AnnotationPreference
 
     /**
      * working with preferred layers is deprecated, use hidden layers instead
-     * 
+     *
      * @return
      */
     @Deprecated
@@ -92,7 +97,7 @@ public class AnnotationPreference
 
     /**
      * working with preferred layers is deprecated, use hidden layers instead
-     * 
+     *
      * @param aAnnotationLayers
      */
     @Deprecated()
@@ -244,6 +249,14 @@ public class AnnotationPreference
     public long getDefaultLayer()
     {
         return defaultLayer;
+    }
+
+    public boolean isShowEditor() {
+        return showEditor;
+    }
+
+    public void setShowEditor(boolean aShowEditor) {
+        this.showEditor = aShowEditor;
     }
 
     public boolean isCollapseArcs()

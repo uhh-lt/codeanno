@@ -2,13 +2,13 @@
  * Licensed to the Technische Universität Darmstadt under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The Technische Universität Darmstadt 
+ * regarding copyright ownership.  The Technische Universität Darmstadt
  * licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.
- *  
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -104,6 +104,8 @@ import de.tudarmstadt.ukp.clarin.webanno.support.wicketstuff.UrlParametersReceiv
 import de.tudarmstadt.ukp.clarin.webanno.ui.annotation.component.DocumentNamePanel;
 import de.tudarmstadt.ukp.clarin.webanno.ui.annotation.detail.AnnotationDetailEditorPanel;
 import de.tudarmstadt.ukp.clarin.webanno.ui.annotation.sidebar.SidebarPanel;
+import de.uhh.lt.codeanno.ui.annotation.CodebookEditorModel;
+import de.uhh.lt.codeanno.ui.annotation.CodebookEditorPanel;
 
 /**
  * A wicket page for the Brat Annotation/Visualization page. Included components for pagination,
@@ -112,7 +114,8 @@ import de.tudarmstadt.ukp.clarin.webanno.ui.annotation.sidebar.SidebarPanel;
 @MountPath(value = "/annotation.html", alt = { "/annotate/${" + PAGE_PARAM_PROJECT_ID + "}",
         "/annotate/${" + PAGE_PARAM_PROJECT_ID + "}/${" + PAGE_PARAM_DOCUMENT_ID + "}",
         "/annotate-by-name/${" + PAGE_PARAM_PROJECT_ID + "}/${" + PAGE_PARAM_DOCUMENT_NAME + "}",
-        "/annotate-by-project-and-document-name/${" + PAGE_PARAM_PROJECT_NAME + "}/${"
+        "/annotate-by-project-and-document-name/${" + PAGE_PARAM_PROJECT_NAME +
+        "}/${"
                 + PAGE_PARAM_DOCUMENT_NAME + "}" })
 @ProjectType(id = WebAnnoConst.PROJECT_TYPE_ANNOTATION, prio = 100)
 public class AnnotationPage
@@ -141,6 +144,8 @@ public class AnnotationPage
     private AnnotationEditorBase annotationEditor;
     private AnnotationDetailEditorPanel detailEditor;
     private SidebarPanel leftSidebar;
+
+    private CodebookEditorPanel codebookEditorPanel;
 
     public AnnotationPage()
     {
@@ -212,7 +217,7 @@ public class AnnotationPage
         actionBar = new ActionBar("actionBar");
         centerArea.add(actionBar);
 
-        add(createRightSidebar());
+        createRightSidebar();
 
         createAnnotationEditor(null);
 
@@ -325,6 +330,39 @@ public class AnnotationPage
         actionRefreshDocument(aEvent.getRequestHandler());
     }
 
+
+    private CodebookEditorPanel createCodebookEditorPanel(AjaxRequestTarget aTarget)
+    {
+        CodebookEditorPanel editorPanel = new CodebookEditorPanel("codebookEditorPanel",
+                Model.of(getCodebookEditorModel()))
+        {
+            private static final long serialVersionUID = 2857345299480098279L;
+
+            @Override
+            protected void onConfigure()
+            {
+                super.onConfigure();
+                setModel(aTarget, getCodebookEditorModel());
+            }
+
+            @Override
+            protected CAS onGetJCas() throws IOException
+            {
+                return getEditorCas();
+            }
+
+            @Override
+            protected void onJCasUpdate(Long aTimeStamp)
+            {
+                AnnotationPage.this.getModelObject().setAnnotationDocumentTimestamp(aTimeStamp);
+            }
+        };
+
+        if (aTarget != null)
+            aTarget.add(editorPanel);
+
+        return editorPanel;
+    }
     private void createAnnotationEditor(IPartialPageRequestHandler aTarget)
     {
         AnnotatorState state = getModelObject();
@@ -365,14 +403,23 @@ public class AnnotationPage
     private SidebarPanel createLeftSidebar()
     {
         SidebarPanel leftSidebar = new SidebarPanel("leftSidebar", getModel(), detailEditor,
-                () -> getEditorCas(), AnnotationPage.this);
+                this::getEditorCas, AnnotationPage.this);
         // Override sidebar width from preferences
         leftSidebar.add(new AttributeModifier("style", LambdaModel.of(() -> String
                 .format("flex-basis: %d%%;", getModelObject().getPreferences().getSidebarSize()))));
         return leftSidebar;
     }
 
-    private WebMarkupContainer createRightSidebar()
+    private void updateLeftSidebar(AjaxRequestTarget aTarget) {
+
+        leftSidebar = createLeftSidebar();
+        addOrReplace(leftSidebar);
+
+        if (aTarget != null)
+            aTarget.add(leftSidebar);
+    }
+
+    private void createRightSidebar()
     {
         WebMarkupContainer rightSidebar = new WebMarkupContainer("rightSidebar");
         rightSidebar.setOutputMarkupId(true);
@@ -381,7 +428,9 @@ public class AnnotationPage
                 .format("flex-basis: %d%%;", getModelObject().getPreferences().getSidebarSize()))));
         detailEditor = createDetailEditor();
         rightSidebar.add(detailEditor);
-        return rightSidebar;
+        rightSidebar.add(visibleWhen(() -> getModelObject().getPreferences().isShowEditor()));
+
+        add(rightSidebar);
     }
 
     @Override
@@ -509,6 +558,9 @@ public class AnnotationPage
             // type is set in the preferences.
             createAnnotationEditor(aTarget);
 
+            // update the CodebookEditor
+            createCodebookEditorPanel(aTarget);
+
             // Initialize the visible content - this has to happen after the annotation editor
             // component has been created because only then the paging strategy is known
             state.moveToUnit(editorCas, aFocus + 1, TOP);
@@ -539,7 +591,8 @@ public class AnnotationPage
             // Reset the editor (we reload the page content below, so in order not to schedule
             // a double-update, we pass null here)
             detailEditor.reset(null);
-
+            // Populate the layer dropdown box
+            detailEditor.loadFeatureEditorModels(aTarget);
             if (aTarget != null) {
                 // Update URL for current document
                 updateUrlFragment(aTarget);
@@ -877,4 +930,21 @@ public class AnnotationPage
     private Long urlFragmentLastProjectId;
     private Long urlFragmentLastDocumentId;
     private int urlFragmentLastFocusUnitIndex;
+
+    private CodebookEditorModel getCodebookEditorModel()
+    {
+        CodebookEditorModel model = new CodebookEditorModel();
+        model.setDocument(AnnotationPage.this.getModelObject().getDocument());
+        model.setUser(AnnotationPage.this.getModelObject().getUser());
+        model.setProject(AnnotationPage.this.getModelObject().getProject());
+        return model;
+    }
+
+    public WebMarkupContainer getCodebookEditorPanel()
+    {
+        codebookEditorPanel = createCodebookEditorPanel(null);
+        codebookEditorPanel.setOutputMarkupId(true);
+
+        return codebookEditorPanel;
+    }
 }

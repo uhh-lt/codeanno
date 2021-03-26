@@ -101,6 +101,8 @@ import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.TagsetDescription;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 
 @Component(ImportExportService.SERVICE_NAME)
 public class ImportExportServiceImpl
@@ -114,18 +116,25 @@ public class ImportExportServiceImpl
     private final CasStorageService casStorageService;
     private final AnnotationSchemaService annotationService;
 
+    private final CodebookImportExportService codebookImportExportService;
+    private final CodebookSchemaService codebookService;
+
     private final List<FormatSupport> formatsProxy;
     private Map<String, FormatSupport> formats;
 
     public ImportExportServiceImpl(@Autowired RepositoryProperties aRepositoryProperties,
             @Lazy @Autowired(required = false) List<FormatSupport> aFormats,
             @Autowired CasStorageService aCasStorageService,
-            @Autowired AnnotationSchemaService aAnnotationService)
+            @Autowired AnnotationSchemaService aAnnotationService,
+            @Autowired CodebookImportExportService codebookImportExportService,
+            @Autowired CodebookSchemaService codebookService)
     {
         repositoryProperties = aRepositoryProperties;
         casStorageService = aCasStorageService;
         annotationService = aAnnotationService;
         formatsProxy = aFormats;
+        this.codebookImportExportService = codebookImportExportService;
+        this.codebookService = codebookService;
     }
 
     @EventListener(ContextRefreshedEvent.class)
@@ -165,7 +174,7 @@ public class ImportExportServiceImpl
         // }
         // else {
         // FormatSupport format = new FormatSupportDescription(formatId, formatName,
-        // readerClass, writerClass);
+        // readerClass, writerClass);f
         // formatMap.put(format.getId(), format);
         // log.info("Found format (format.properties): {} ({})", formatId,
         // readWriteMsg(format));
@@ -206,7 +215,7 @@ public class ImportExportServiceImpl
             FormatSupport aFormat, String aFileName, Mode aMode)
         throws UIMAException, IOException, ClassNotFoundException
     {
-        return exportAnnotationDocument(aDocument, aUser, aFormat, aFileName, aMode, true);
+        return exportAnnotationDocument(aDocument, aUser, aFormat, aFileName, aMode, false);
     }
 
     @Override
@@ -253,6 +262,7 @@ public class ImportExportServiceImpl
         }
 
         Project project = aDocument.getProject();
+
         try (MDC.MDCCloseable closable = MDC.putCloseable(KEY_PROJECT_ID,
                 String.valueOf(project.getId()))) {
             log.info(
@@ -289,7 +299,6 @@ public class ImportExportServiceImpl
         // Convert the source document to CAS
         FormatSupport format = getReadableFormatById(aFormatId).orElseThrow(
                 () -> new IOException("No reader available for format [" + aFormatId + "]"));
-
         CollectionReaderDescription readerDescription = format.getReaderDescription(tsd);
         addConfigurationParameters(readerDescription,
                 ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION,
@@ -452,7 +461,12 @@ public class ImportExportServiceImpl
         TypeSystemDescription exportTypeSystem = (TypeSystemDescription) bulkOperationContext
                 .get(exportTypeSystemKey);
         if (exportTypeSystem == null) {
-            exportTypeSystem = annotationService.getTypeSystemForExport(project);
+
+            if (aFormat.isDocumentLevel())
+                exportTypeSystem = codebookService.getCodebookTypeSystemForExport(project);
+            else
+                exportTypeSystem = annotationService.getTypeSystemForExport(project);
+
             bulkOperationContext.put(exportTypeSystemKey, exportTypeSystem);
         }
 
@@ -463,35 +477,40 @@ public class ImportExportServiceImpl
             session.add(EXPORT_CAS, CasAccessMode.EXCLUSIVE_WRITE_ACCESS, exportCas);
             annotationService.prepareCasForExport(aCas, exportCas, aDocument, exportTypeSystem);
 
-            // Update the source file name in case it is changed for some reason. This is necessary
-            // for the writers to create the files under the correct names.
-            File currentDocumentUri = new File(repositoryProperties.getPath().getAbsolutePath()
-                    + "/" + PROJECT_FOLDER + "/" + project.getId() + "/" + DOCUMENT_FOLDER + "/"
-                    + aDocument.getId() + "/" + SOURCE_FOLDER);
-            DocumentMetaData documentMetadata = DocumentMetaData.get(exportCas.getJCas());
-            documentMetadata
-                    .setDocumentBaseUri(currentDocumentUri.toURI().toURL().toExternalForm());
-            documentMetadata.setDocumentUri(
-                    new File(currentDocumentUri, aFileName).toURI().toURL().toExternalForm());
-            documentMetadata.setCollectionId(currentDocumentUri.toURI().toURL().toExternalForm());
-            documentMetadata.setDocumentId(aFileName);
+            if (!aFormat.isDocumentLevel()) { // we don't need to do this for codebooks only
+                // Update the source file name in case it is changed for some reason. This is
+                // necessary
+                // for the writers to create the files under the correct names.
+                File currentDocumentUri = new File(repositoryProperties.getPath().getAbsolutePath()
+                        + "/" + PROJECT_FOLDER + "/" + project.getId() + "/" + DOCUMENT_FOLDER + "/"
+                        + aDocument.getId() + "/" + SOURCE_FOLDER);
+                DocumentMetaData documentMetadata = DocumentMetaData.get(exportCas.getJCas());
+                documentMetadata
+                        .setDocumentBaseUri(currentDocumentUri.toURI().toURL().toExternalForm());
+                documentMetadata.setDocumentUri(
+                        new File(currentDocumentUri, aFileName).toURI().toURL().toExternalForm());
+                documentMetadata
+                        .setCollectionId(currentDocumentUri.toURI().toURL().toExternalForm());
+                documentMetadata.setDocumentId(aFileName);
 
-            // update with the correct tagset name
-            Pair<Project, String> annotationFeaturesKey = Pair.of(project, "annotationFeatures");
-            @SuppressWarnings("unchecked")
-            List<AnnotationFeature> features = (List<AnnotationFeature>) bulkOperationContext
-                    .get(annotationFeaturesKey);
-            if (features == null) {
-                features = annotationService.listAnnotationFeature(project);
-                bulkOperationContext.put(annotationFeaturesKey, features);
-            }
-            for (AnnotationFeature feature : features) {
-                TagSet tagSet = feature.getTagset();
-                if (tagSet == null || CHAIN_TYPE.equals(feature.getLayer().getType())) {
-                    continue;
+                // update with the correct tagset name
+                Pair<Project, String> annotationFeaturesKey = Pair.of(project,
+                        "annotationFeatures");
+                @SuppressWarnings("unchecked")
+                List<AnnotationFeature> features = (List<AnnotationFeature>) bulkOperationContext
+                        .get(annotationFeaturesKey);
+                if (features == null) {
+                    features = annotationService.listAnnotationFeature(project);
+                    bulkOperationContext.put(annotationFeaturesKey, features);
                 }
+                for (AnnotationFeature feature : features) {
+                    TagSet tagSet = feature.getTagset();
+                    if (tagSet == null || CHAIN_TYPE.equals(feature.getLayer().getType())) {
+                        continue;
+                    }
 
-                updateCasWithTagSet(exportCas, feature.getLayer().getName(), tagSet.getName());
+                    updateCasWithTagSet(exportCas, feature.getLayer().getName(), tagSet.getName());
+                }
             }
 
             File exportTempDir = createTempFile("webanno", "export");

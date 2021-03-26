@@ -1,4 +1,4 @@
-# This is the list of people who have contributed code to the WebAnno repository.
+# This is the list of people who have contributed code to the CodeAnno repository.
 #
 # This list is to be used in favor over author attributions in individual files,
 # e.g. via @author tags. 
@@ -8,16 +8,8 @@
 # third party code should be avoided.
 
 # Please keep the list sorted.
-    
-Aakash Sharma <aakash.y.sharma@gmail.com> [@aakashysharma]
-Aleks Stier [@astier]
-Andreas Straninger
-Anshul Tak [@anshul-tak]
-Benjamin Milde [@bmilde]
-Darina Benikova 
-Erik-Lân Do Dinh
-Richard Eckart de Castilho <richard.eckart@gmail.com> [@reckart]
-Sarah Holschneider [@sholschneider]
+
+Florian Schider [@floschne]
+Fynn Schröder [@fynnos]
 Seid Muhie Yimam [@seyyaw]
-Steffen Remus [@remstef]
-Sushil Jain 
+Richard Eckart de Castilho <richard.eckart@gmail.com> [@reckart]
