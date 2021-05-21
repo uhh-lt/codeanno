@@ -42,6 +42,7 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.apache.uima.util.CasCreationUtils;
+import org.dkpro.core.api.io.JCasFileWriter_ImplBase;
 import org.dkpro.core.testing.DkproTestContext;
 import org.junit.Rule;
 import org.junit.Test;
@@ -137,15 +138,18 @@ public class WebAnnoCsvReaderWriterTest
         // TODO use Codebook instances not Strings...
         List<String> codebooks = Arrays.asList("webanno.codebook.TestingCodebook1",
                 "webanno.codebook.TestingCodebook2");
-        String docName = "sampleCsvDoc.txt";
-        String annotator = "testUser";
+        String aDocumentName = "sampleCsvDoc.txt";
+        String aAnnotator = "florian";
+        boolean aWithHeaders = true;
+        boolean aWithText = true;
 
         // setup the CSVWriter
         AnalysisEngineDescription writer = createEngineDescription(WebannoCsvWriter.class,
-                WebannoCsvWriter.PARAM_TARGET_LOCATION, targetFolder,
-                WebannoCsvWriter.PARAM_FILENAME, targetFileName, WebannoCsvWriter.WITH_HEADERS,
-                true, WebannoCsvWriter.PARAM_WITH_TEXT, true, WebannoCsvWriter.PARAM_DOCUMENT_NAME,
-                docName);
+                                                                   JCasFileWriter_ImplBase.PARAM_TARGET_LOCATION, targetFolder,
+                                                                   WebannoCsvWriter.PARAM_FILENAME, targetFileName, WebannoCsvWriter.PARAM_WITH_HEADERS,
+                                                                   aWithHeaders, WebannoCsvWriter.PARAM_WITH_TEXT, aWithText,
+                                                                   WebannoCsvWriter.PARAM_ANNOTATOR, aAnnotator, WebannoCsvWriter.PARAM_DOCUMENT_NAME,
+                                                                   aDocumentName);
 
         // read the example.csv and write it to writerOutput.csv
         JCas exampleInputCas = executeReader(inputFolder, inputFileName);

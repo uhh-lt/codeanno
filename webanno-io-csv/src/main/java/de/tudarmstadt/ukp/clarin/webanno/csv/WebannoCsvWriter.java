@@ -48,8 +48,8 @@ public class WebannoCsvWriter
     @ConfigurationParameter(name = PARAM_ENCODING, mandatory = true, defaultValue = "UTF-8")
     private String encoding;
 
-    public static final String WITH_HEADERS = "withHeaders";
-    @ConfigurationParameter(name = WITH_HEADERS, mandatory = true, defaultValue = "true")
+    public static final String PARAM_WITH_HEADERS = "withHeaders";
+    @ConfigurationParameter(name = PARAM_WITH_HEADERS, mandatory = true, defaultValue = "true")
     private boolean withHeaders;
 
     public static final String PARAM_WITH_TEXT = "withText";
@@ -60,9 +60,16 @@ public class WebannoCsvWriter
     @ConfigurationParameter(name = PARAM_FILENAME, mandatory = true, defaultValue = "codebooks")
     private String filename;
 
-    public static final String PARAM_DOCUMENT_NAME = "DocumentName";
-    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = true, defaultValue = "testDocument.txt")
+    public static final String PARAM_DOCUMENT_NAME = "documentName";
+    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = true,
+                            defaultValue = "defaultDocName.txt")
     private String documentName;
+
+    public static final String PARAM_ANNOTATOR = "annotator";
+    @ConfigurationParameter(name = PARAM_ANNOTATOR,
+                            mandatory = true,
+                            defaultValue = "defaultAnnotator")
+    private String annotator;
 
     private static final String NEW_LINE_SEPARATOR = "\n";
 
@@ -108,9 +115,9 @@ public class WebannoCsvWriter
         List<String> headers = new ArrayList<>();
 
         headers.add(PARAM_DOCUMENT_NAME);
+        headers.add(PARAM_ANNOTATOR);
 
         // find codebook types
-        TypeSystem cbooks = aJCas.getTypeSystem();
         aJCas.getTypeSystem().getTypeIterator().forEachRemaining(type -> {
             if (type.getName().startsWith("webanno.codebook")) {
                 codebookTypes.add(type);
@@ -130,6 +137,7 @@ public class WebannoCsvWriter
 
         List<String> cellValues = new ArrayList<>();
         cellValues.add(documentName);
+        cellValues.add(annotator);
 
         for (Type codebookType : codebookTypes) {
             for (Feature feature : codebookType.getFeatures()) {

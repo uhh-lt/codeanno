@@ -21,6 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +45,16 @@ public class WebAnnoCsvReader
 
         try (InputStream is = new BufferedInputStream(res.getInputStream())) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.withIgnoreHeaderCase()
-                    .parse(new InputStreamReader(is, "UTF-8"));
+                    .parse(new InputStreamReader(is, StandardCharsets.UTF_8));
             List<String> headers = new ArrayList<>();
             for (CSVRecord record : records) {
                 if (headers.isEmpty()) {
                     String documentName = record.get(0);
+                    String annotator = record.get(1);
 
                     headers.add(documentName);
-                    for (int c = 1; c < record.size(); c++) {
+                    headers.add(annotator);
+                    for (int c = 2; c < record.size(); c++) {
                         headers.add(record.get(c));
                     }
                 }
@@ -79,9 +82,9 @@ public class WebAnnoCsvReader
         throws IOException
     {
         AnnotationFS codebookAnnotation;
-        // start with 1 since the 1st header is the document name.
+        // start with 2 since the 1st header is the document name and the 2nd is the user
         // Also the last header entry (text of the document) is ignored.
-        for (int i = 1; i < record.size() - 1; i++) {
+        for (int i = 2; i < record.size() - 1; i++) {
             String[] splits =  headers.get(i).split("\\.");
             String cbName = splits[0] + "." + splits[1] + "." + splits[splits.length - 1];
             Type codebook = aJCas.getTypeSystem().getType(cbName);

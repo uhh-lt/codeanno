@@ -107,34 +107,34 @@ public class CodebookExporter
     }
 
     public File appendCodebooks(Project project, File codebookDir)
-        throws IOException, UIMAException, ClassNotFoundException
+        throws IOException, UIMAException
     {
 
         List<SourceDocument> documents = documentService.listSourceDocuments(project);
         List<Codebook> codebooks = codebookService.listCodebook(project);
 
-        boolean withHeader = true;
-        File codebookFile = new File(codebookDir,
-                project.getName() + CodebookConstants.CODEBOOK_EXT);
+        File codebookFile = new File(codebookDir,project.getName() + CodebookConstants.CODEBOOK_EXT);
+
+        boolean withHeader = true;// for the first doc we need the headers in the CSV
 
         for (SourceDocument sourceDocument : documents) {
-
             boolean withText = false;// do not write the text for each annotation document
+            // there is one anno doc per user plus CURATION, MERGE, AGREEMENT anno docs
             for (AnnotationDocument annotationDocument : documentService
                     .listAnnotationDocuments(sourceDocument)) {
                 if (userRepository.get(annotationDocument.getUser()) != null
                         && !annotationDocument.getState().equals(AnnotationDocumentState.NEW)
                         && !annotationDocument.getState().equals(AnnotationDocumentState.IGNORE)) {
 
+                    // TODO Flo: I think we can skip this check since every anno doc MUST HAVE a CAS
+                    // would increase performance...
                     File annotationFileAsSerialisedCas = documentService.getCasFile(sourceDocument,
                             annotationDocument.getUser());
-
                     if (annotationFileAsSerialisedCas.exists()) {
                         codebookFile = exportCodebookDocument(sourceDocument,
                                 annotationDocument.getUser(), codebookFile.getAbsolutePath(),
                                 Mode.ANNOTATION, codebookDir, withHeader, withText, codebooks);
-                        withHeader = false;
-                        withText = false;
+                        withHeader = false;// only for the first doc we need the headers
                     }
 
                     log.info("Appending codebook annotation for user ["
@@ -389,21 +389,22 @@ public class CodebookExporter
     @Override
     public File exportCodebooksToFile(CAS cas, SourceDocument aDocument, String aFileName,
             File aExportDir, boolean aWithHeaders, boolean aWithText, List<Codebook> aCodebooks,
-            String aAnnotator, String documentName)
+            String aAnnotator, String aDocumentName)
         throws IOException, UIMAException
     {
 
         AnalysisEngineDescription writer = createEngineDescription(WebannoCsvWriter.class,
-                JCasFileWriter_ImplBase.PARAM_TARGET_LOCATION, aExportDir, "filename", aFileName,
-                "withHeaders", aWithHeaders, "withText", aWithText, "annotator", aAnnotator,
-                "documentName", documentName);
+                JCasFileWriter_ImplBase.PARAM_TARGET_LOCATION, aExportDir,
+                WebannoCsvWriter.PARAM_FILENAME, aFileName, WebannoCsvWriter.PARAM_WITH_HEADERS,
+                aWithHeaders, WebannoCsvWriter.PARAM_WITH_TEXT, aWithText,
+                WebannoCsvWriter.PARAM_ANNOTATOR, aAnnotator, WebannoCsvWriter.PARAM_DOCUMENT_NAME,
+                aDocumentName);
 
         runPipeline(cas, writer);
 
         File exportFile = new File(aFileName);
         // FileUtils.copyFile(aExportDir.listFiles()[0], exportFile);
         return exportFile;
-
     }
 
 }

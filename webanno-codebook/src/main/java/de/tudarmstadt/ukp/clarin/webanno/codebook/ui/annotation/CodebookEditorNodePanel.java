@@ -136,6 +136,8 @@ public class CodebookEditorNodePanel
         Set<CodebookTag> tag = tags.stream().filter(t -> t.getName().equals(tagString))
                 .collect(Collectors.toSet());
         assert tag.size() == 1; // TODO what to throw?
+        // FIXME this happens only if the tagString is not persisted in the DB, i.e., there was an
+        // error while persisting. should be checked before!
         return tag.iterator().next();
     }
 
