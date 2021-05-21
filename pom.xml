@@ -88,6 +88,8 @@
     <tomcat.version>9.0.41</tomcat.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <mysql-driver.version>8.0.20</mysql-driver.version>
+    <postgres-driver.version>42.2.20</postgres-driver.version>
+    <mariadb-driver.version>2.7.3</mariadb-driver.version>
   </properties>
   <repositories>
     <!--
@@ -830,6 +832,16 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>${mysql-driver.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres-driver.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+        <version>${mariadb-driver.version}</version>
       </dependency>
 
       <dependency>
