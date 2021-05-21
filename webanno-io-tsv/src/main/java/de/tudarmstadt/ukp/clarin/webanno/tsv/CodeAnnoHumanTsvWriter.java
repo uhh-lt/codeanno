@@ -1,19 +1,27 @@
+/*
+ * Copyright 2021
+ * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
+ * and  Language Technology Universität Hamburg
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.tudarmstadt.ukp.clarin.webanno.tsv;
 
-import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.Tsv3XCasSchemaAnalyzer;
-import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.LayerType;
-import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvColumn;
-import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema;
-import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
-import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
-import org.apache.uima.cas.FeatureStructure;
-import org.apache.uima.cas.Type;
-import org.apache.uima.cas.text.AnnotationFS;
-import org.apache.uima.fit.descriptor.ConfigurationParameter;
-import org.apache.uima.fit.util.CasUtil;
-import org.apache.uima.jcas.JCas;
-import org.dkpro.core.api.io.JCasFileWriter_ImplBase;
-import org.dkpro.core.api.parameter.ComponentParameters;
+import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.Escaping.escapeValue;
+import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema.CHAIN_FIRST_FEAT;
+import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema.CHAIN_NEXT_FEAT;
+import static org.apache.commons.io.IOUtils.buffer;
+import static org.apache.uima.fit.util.FSUtil.getFeature;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -24,14 +32,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.Escaping.escapeValue;
-import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema.CHAIN_FIRST_FEAT;
-import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema.CHAIN_NEXT_FEAT;
-import static org.apache.commons.io.IOUtils.buffer;
-import static org.apache.uima.fit.util.FSUtil.getFeature;
+import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.FeatureStructure;
+import org.apache.uima.cas.Type;
+import org.apache.uima.cas.text.AnnotationFS;
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.util.CasUtil;
+import org.apache.uima.jcas.JCas;
+import org.dkpro.core.api.io.JCasFileWriter_ImplBase;
+import org.dkpro.core.api.parameter.ComponentParameters;
+
+import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.Tsv3XCasSchemaAnalyzer;
+import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.LayerType;
+import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvColumn;
+import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema;
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 
 public class CodeAnnoHumanTsvWriter
-        extends JCasFileWriter_ImplBase {
+    extends JCasFileWriter_ImplBase
+{
     /**
      * The character encoding used by the input files.
      */
@@ -47,20 +66,21 @@ public class CodeAnnoHumanTsvWriter
     private String filenameSuffix;
 
     @Override
-    public void process(JCas aJCas) throws AnalysisEngineProcessException {
+    public void process(JCas aJCas) throws AnalysisEngineProcessException
+    {
         TsvSchema schema = Tsv3XCasSchemaAnalyzer.analyze(aJCas.getTypeSystem());
         List<TsvColumn> cols = schema.getColumns();
         Map<Type, List<TsvColumn>> map = cols.stream()
                 .collect(Collectors.groupingBy(TsvColumn::getUimaType));
         for (List<TsvColumn> list : map.values()) {
-            List<TsvColumn> tmp = list.stream().filter(a -> a.uimaFeature != null).collect(Collectors.toList());
+            List<TsvColumn> tmp = list.stream().filter(a -> a.uimaFeature != null)
+                    .collect(Collectors.toList());
             list.clear();
             list.addAll(tmp);
         }
 
         final DocumentMetaData meta = DocumentMetaData.get(aJCas);
         final String fileName = meta.getDocumentTitle();
-
 
         try (PrintWriter writer = new PrintWriter(
                 new OutputStreamWriter(buffer(getOutputStream(aJCas, filenameSuffix)), encoding))) {
@@ -77,29 +97,36 @@ public class CodeAnnoHumanTsvWriter
                     if (!elements.isEmpty()) {
                         List<TsvColumn> chainCols = map.get(elements.get(0).getType());
                         chainId++;
-                        Type elementType = headType.getFeatureByBaseName(CHAIN_FIRST_FEAT).getRange();
+                        Type elementType = headType.getFeatureByBaseName(CHAIN_FIRST_FEAT)
+                                .getRange();
                         for (AnnotationFS a : elements)
-                            writeAnnotation(writer, a, fileName, elementType.getShortName(), chainCols, chainId);
+                            writeAnnotation(writer, a, fileName, elementType.getShortName(),
+                                    chainCols, chainId);
                     }
                 }
             }
 
             for (Map.Entry<Type, List<TsvColumn>> entry : map.entrySet()) {
-                if (entry.getValue().size() == 0 || entry.getValue().get(0).layerType == LayerType.CHAIN)
+                if (entry.getValue().size() == 0
+                        || entry.getValue().get(0).layerType == LayerType.CHAIN)
                     continue;
-                Collection<AnnotationFS> annotations = CasUtil.select(aJCas.getCas(), entry.getKey());
+                Collection<AnnotationFS> annotations = CasUtil.select(aJCas.getCas(),
+                        entry.getKey());
                 if (annotations.isEmpty())
                     continue;
                 String layer = entry.getKey().getShortName();
                 for (AnnotationFS a : annotations)
                     writeAnnotation(writer, a, fileName, layer, entry.getValue(), 0);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AnalysisEngineProcessException(e);
         }
     }
 
-    private static void writeAnnotation(PrintWriter writer, AnnotationFS a, String docName, String layerName, List<TsvColumn> columns, int chainId) {
+    private static void writeAnnotation(PrintWriter writer, AnnotationFS a, String docName,
+            String layerName, List<TsvColumn> columns, int chainId)
+    {
         writer.print(docName);
         writer.print('\t');
         writer.print(layerName);
