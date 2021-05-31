@@ -1,7 +1,7 @@
 /*
  * Copyright 2021
  * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
- * and  Language Technology Universität Hamburg
+ * and Language Technology Universität Hamburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.tsv;
 
-import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.Escaping.escapeValue;
 import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema.CHAIN_FIRST_FEAT;
 import static de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema.CHAIN_NEXT_FEAT;
 import static org.apache.commons.io.IOUtils.buffer;
 import static org.apache.uima.fit.util.FSUtil.getFeature;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.FeatureStructure;
 import org.apache.uima.cas.Type;
@@ -46,24 +48,37 @@ import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.Tsv3XCasSchemaAnalyz
 import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.LayerType;
 import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvColumn;
 import de.tudarmstadt.ukp.clarin.webanno.tsv.internal.tsv3x.model.TsvSchema;
-import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 
 public class CodeAnnoHumanTsvWriter
     extends JCasFileWriter_ImplBase
 {
-    /**
-     * The character encoding used by the input files.
-     */
+    private static final String[] searchList = { "\r", "\n", "\t", "\\" };
+    private static final String[] replaceList = { "\\r", "\\n", "\\t", "\\\\" };
+    private static final char recordSep = '\t';
+
     public static final String PARAM_ENCODING = ComponentParameters.PARAM_TARGET_ENCODING;
     @ConfigurationParameter(name = PARAM_ENCODING, mandatory = true, defaultValue = "UTF-8")
     private String encoding;
 
-    /**
-     * Use this filename extension.
-     */
     public static final String PARAM_FILENAME_EXTENSION = ComponentParameters.PARAM_FILENAME_EXTENSION;
     @ConfigurationParameter(name = PARAM_FILENAME_EXTENSION, mandatory = true, defaultValue = ".tsv")
     private String filenameSuffix;
+
+    public static final String PARAM_WITH_HEADERS = "withHeaders";
+    @ConfigurationParameter(name = PARAM_WITH_HEADERS, mandatory = true, defaultValue = "true")
+    private boolean withHeaders;
+
+    public static final String PARAM_FILENAME = "filename";
+    @ConfigurationParameter(name = PARAM_FILENAME, mandatory = false)
+    private String filename;
+
+    public static final String PARAM_DOCUMENT_NAME = "documentName";
+    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = false)
+    private String documentName;
+
+    public static final String PARAM_ANNOTATOR = "annotator";
+    @ConfigurationParameter(name = PARAM_ANNOTATOR, mandatory = false)
+    private String annotator;
 
     @Override
     public void process(JCas aJCas) throws AnalysisEngineProcessException
@@ -79,11 +94,16 @@ public class CodeAnnoHumanTsvWriter
             list.addAll(tmp);
         }
 
-        final DocumentMetaData meta = DocumentMetaData.get(aJCas);
-        final String fileName = meta.getDocumentTitle();
-
-        try (PrintWriter writer = new PrintWriter(
-                new OutputStreamWriter(buffer(getOutputStream(aJCas, filenameSuffix)), encoding))) {
+        File file = null;
+        if (filename != null) {
+            file = new File(this.getTargetLocation() + File.separator + new File(filename).getName()
+                    + filenameSuffix);
+            file.getParentFile().mkdirs();
+        }
+        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(
+                buffer(filename == null ? getOutputStream(aJCas, filenameSuffix)
+                        : new FileOutputStream(file, true)),
+                encoding))) {
 
             int chainId = 0;
             for (Type headType : schema.getChainHeadTypes()) {
@@ -100,23 +120,25 @@ public class CodeAnnoHumanTsvWriter
                         Type elementType = headType.getFeatureByBaseName(CHAIN_FIRST_FEAT)
                                 .getRange();
                         for (AnnotationFS a : elements)
-                            writeAnnotation(writer, a, fileName, elementType.getShortName(),
-                                    chainCols, chainId);
+                            writeAnnotation(writer, a, documentName, annotator,
+                                    elementType.getShortName(), chainCols, chainId);
                     }
                 }
             }
 
             for (Map.Entry<Type, List<TsvColumn>> entry : map.entrySet()) {
                 if (entry.getValue().size() == 0
-                        || entry.getValue().get(0).layerType == LayerType.CHAIN)
+                        || (entry.getValue().get(0).layerType != LayerType.SPAN
+                                && entry.getValue().get(0).layerType != LayerType.RELATION))
                     continue;
                 Collection<AnnotationFS> annotations = CasUtil.select(aJCas.getCas(),
                         entry.getKey());
-                if (annotations.isEmpty())
-                    continue;
                 String layer = entry.getKey().getShortName();
+                if (annotations.isEmpty() || "CASMetadata".equals(layer)) {
+                    continue;
+                }
                 for (AnnotationFS a : annotations)
-                    writeAnnotation(writer, a, fileName, layer, entry.getValue(), 0);
+                    writeAnnotation(writer, a, documentName, annotator, layer, entry.getValue(), 0);
             }
         }
         catch (IOException e) {
@@ -125,24 +147,34 @@ public class CodeAnnoHumanTsvWriter
     }
 
     private static void writeAnnotation(PrintWriter writer, AnnotationFS a, String docName,
-            String layerName, List<TsvColumn> columns, int chainId)
+            String annotator, String layerName, List<TsvColumn> columns, int chainId)
     {
-        writer.print(docName);
-        writer.print('\t');
-        writer.print(layerName);
-        writer.print('\t');
+        if (docName != null) {
+            writer.print(escapeTsv(docName));
+            writer.print(recordSep);
+        }
+        if (annotator != null) {
+            writer.print(escapeTsv(annotator));
+            writer.print(recordSep);
+        }
+        writer.print(escapeTsv(layerName));
+        writer.print(recordSep);
         if (chainId != 0)
             writer.print(chainId);
-        writer.print('\t');
+        writer.print(recordSep);
         for (TsvColumn column : columns) {
             Object value = getFeature(a, column.uimaFeature, Object.class);
             if (value != null) {
-                value = escapeValue(String.valueOf(value));
-                writer.print(value);
+                writer.print(escapeTsv(String.valueOf(value)));
             }
-            writer.print('\t');
+            writer.print(recordSep);
         }
-        writer.print(a.getCoveredText());
+        writer.print(escapeTsv(a.getCoveredText()));
         writer.print('\n');
+    }
+
+    private static String escapeTsv(String text)
+    {
+        return StringUtils.replaceEach(text, searchList, replaceList);
     }
 }
