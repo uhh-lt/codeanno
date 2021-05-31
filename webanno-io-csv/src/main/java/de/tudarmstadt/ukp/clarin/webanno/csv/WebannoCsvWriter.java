@@ -133,7 +133,9 @@ public class WebannoCsvWriter
         }
 
         // write headers
-        aCsvFilePrinter.printRecord(headers.toArray());
+        if (withHeaders) {
+            aCsvFilePrinter.printRecord(headers.toArray());
+        }
 
         List<String> cellValues = new ArrayList<>();
         cellValues.add(documentName);
