@@ -34,7 +34,6 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CASRuntimeException;
 import org.apache.uima.cas.Feature;
 import org.apache.uima.cas.Type;
-import org.apache.uima.cas.TypeSystem;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.util.CasUtil;
 import org.apache.uima.jcas.JCas;
@@ -61,14 +60,11 @@ public class WebannoCsvWriter
     private String filename;
 
     public static final String PARAM_DOCUMENT_NAME = "documentName";
-    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = true,
-                            defaultValue = "defaultDocName.txt")
+    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = true, defaultValue = "defaultDocName.txt")
     private String documentName;
 
     public static final String PARAM_ANNOTATOR = "annotator";
-    @ConfigurationParameter(name = PARAM_ANNOTATOR,
-                            mandatory = true,
-                            defaultValue = "defaultAnnotator")
+    @ConfigurationParameter(name = PARAM_ANNOTATOR, mandatory = true, defaultValue = "defaultAnnotator")
     private String annotator;
 
     private static final String NEW_LINE_SEPARATOR = "\n";
