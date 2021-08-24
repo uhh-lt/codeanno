@@ -15,17 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.tudarmstadt.ukp.clarin.webanno.api.annotation.layer;
+package de.tudarmstadt.ukp.clarin.webanno.api.casstorage;
 
-import java.io.Serializable;
+import org.apache.uima.cas.CAS;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 
-//The @JsonSerialize annotation avoid the "InvalidDefinitionException: No serializer found"
-//exception without having to set SerializationFeature.FAIL_ON_EMPTY_BEANS
-@JsonSerialize
-public class ChainLayerTraits
-    implements Serializable
+@FunctionalInterface
+public interface CasStorageServiceLoader
 {
-    private static final long serialVersionUID = 8030133101616484443L;
+    CAS load(SourceDocument aSourceDocument, String aUser) throws Exception;
 }

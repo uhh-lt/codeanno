@@ -50,6 +50,7 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.apache.uima.util.CasCreationUtils;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.adapter.FeatureFilter;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.LinkWithRoleModel;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationFeature;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
@@ -65,7 +66,7 @@ public class WebAnnoCasUtil
     private static final String PROP_ENFORCE_CAS_THREAD_LOCK = "webanno.debug.enforce_cas_thread_lock";
 
     private static final boolean ENFORCE_CAS_THREAD_LOCK = System
-            .getProperty(PROP_ENFORCE_CAS_THREAD_LOCK, "false").equals("true");
+            .getProperty(PROP_ENFORCE_CAS_THREAD_LOCK, "true").equals("true");
 
     public static CAS createCas(TypeSystemDescription aTSD) throws ResourceInitializationException
     {
@@ -117,7 +118,8 @@ public class WebAnnoCasUtil
     /**
      * Return true if these two annotations agree on every non slot features
      */
-    public static boolean isEquivalentAnnotation(AnnotationFS aFs1, AnnotationFS aFs2)
+    public static boolean isEquivalentSpanAnnotation(AnnotationFS aFs1, AnnotationFS aFs2,
+            FeatureFilter aFilter)
     {
         // Check offsets (because they are excluded by shouldIgnoreFeatureOnMerge())
         if (aFs1.getBegin() != aFs2.getBegin() || aFs1.getEnd() != aFs2.getEnd()) {
@@ -125,13 +127,15 @@ public class WebAnnoCasUtil
         }
 
         // Check the features (basically limiting to the primitive features)
-        for (Feature f : aFs1.getType().getFeatures()) {
-            if (shouldIgnoreFeatureOnMerge(aFs1, f)) {
+        for (Feature f1 : aFs1.getType().getFeatures()) {
+            if (aFilter != null && !aFilter.isAllowed(aFs1, f1)) {
                 continue;
             }
 
-            Object value1 = getFeatureValue(aFs1, f);
-            Object value2 = getFeatureValue(aFs2, f);
+            Object value1 = getFeatureValue(aFs1, f1);
+
+            Feature f2 = aFs2.getType().getFeatureByBaseName(f1.getShortName());
+            Object value2 = f2 != null ? getFeatureValue(aFs2, f2) : getDefaultFeatureValue(f1);
 
             if (!Objects.equals(value1, value2)) {
                 return false;
@@ -140,17 +144,10 @@ public class WebAnnoCasUtil
         return true;
     }
 
-    public static boolean shouldIgnoreFeatureOnMerge(FeatureStructure aFS, Feature aFeature)
-    {
-        return !WebAnnoCasUtil.isPrimitiveType(aFeature.getRange()) || isBasicFeature(aFeature)
-                || aFeature.getName().equals(CAS.FEATURE_FULL_NAME_BEGIN)
-                || aFeature.getName().equals(CAS.FEATURE_FULL_NAME_END);
-    }
-
     /**
      * Do not check on agreement on Position and SOfa feature - already checked
      */
-    private static boolean isBasicFeature(Feature aFeature)
+    public static boolean isBasicFeature(Feature aFeature)
     {
         // FIXME The two parts of this OR statement seem to be redundant. Also the order
         // of the check should be changes such that equals is called on the constant.
@@ -161,7 +158,7 @@ public class WebAnnoCasUtil
     /**
      * Get the feature value of this {@code Feature} on this annotation
      */
-    private static Object getFeatureValue(FeatureStructure aFS, Feature aFeature)
+    public static Object getFeatureValue(FeatureStructure aFS, Feature aFeature)
     {
         switch (aFeature.getRange().getName()) {
         case CAS.TYPE_NAME_STRING:
@@ -177,12 +174,39 @@ public class WebAnnoCasUtil
         case CAS.TYPE_NAME_DOUBLE:
             return aFS.getDoubleValue(aFeature);
         case CAS.TYPE_NAME_LONG:
-            aFS.getLongValue(aFeature);
+            return aFS.getLongValue(aFeature);
         case CAS.TYPE_NAME_SHORT:
-            aFS.getShortValue(aFeature);
+            return aFS.getShortValue(aFeature);
         default:
             return null;
         // return aFS.getFeatureValue(aFeature);
+        }
+    }
+
+    /**
+     * Get the feature value of this {@code Feature} on this annotation
+     */
+    public static Object getDefaultFeatureValue(Feature aFeature)
+    {
+        switch (aFeature.getRange().getName()) {
+        case CAS.TYPE_NAME_STRING:
+            return null;
+        case CAS.TYPE_NAME_BOOLEAN:
+            return false;
+        case CAS.TYPE_NAME_FLOAT:
+            return 0.0f;
+        case CAS.TYPE_NAME_INTEGER:
+            return 0;
+        case CAS.TYPE_NAME_BYTE:
+            return (byte) 0;
+        case CAS.TYPE_NAME_DOUBLE:
+            return 0.0d;
+        case CAS.TYPE_NAME_LONG:
+            return 0l;
+        case CAS.TYPE_NAME_SHORT:
+            return (short) 0;
+        default:
+            return null;
         }
     }
 
