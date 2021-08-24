@@ -478,6 +478,8 @@
               <usedDependency>org.hsqldb:hsqldb</usedDependency>
               <usedDependency>org.liquibase:liquibase-core</usedDependency>
               <usedDependency>org.apache.commons:commons-dbcp2</usedDependency>
+              <usedDependency>org.mariadb.jdbc:mariadb-java-client</usedDependency>
+              <usedDependency>org.postgresql:postgresql</usedDependency>
               <!-- JMX -->
               <usedDependency>org.apache.wicket:wicket-jmx</usedDependency>
               <!-- Themes -->

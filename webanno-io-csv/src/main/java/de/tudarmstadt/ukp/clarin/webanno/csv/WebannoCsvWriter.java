@@ -60,14 +60,11 @@ public class WebannoCsvWriter
     private String filename;
 
     public static final String PARAM_DOCUMENT_NAME = "documentName";
-    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = true,
-                            defaultValue = "defaultDocName.txt")
+    @ConfigurationParameter(name = PARAM_DOCUMENT_NAME, mandatory = true, defaultValue = "defaultDocName.txt")
     private String documentName;
 
     public static final String PARAM_ANNOTATOR = "annotator";
-    @ConfigurationParameter(name = PARAM_ANNOTATOR,
-                            mandatory = true,
-                            defaultValue = "defaultAnnotator")
+    @ConfigurationParameter(name = PARAM_ANNOTATOR, mandatory = true, defaultValue = "defaultAnnotator")
     private String annotator;
 
     private static final String NEW_LINE_SEPARATOR = "\n";
@@ -132,7 +129,9 @@ public class WebannoCsvWriter
         }
 
         // write headers
-        aCsvFilePrinter.printRecord(headers.toArray());
+        if (withHeaders) {
+            aCsvFilePrinter.printRecord(headers.toArray());
+        }
 
         List<String> cellValues = new ArrayList<>();
         cellValues.add(documentName);
