@@ -145,11 +145,11 @@ public class WebAnnoCsvReaderWriterTest
 
         // setup the CSVWriter
         AnalysisEngineDescription writer = createEngineDescription(WebannoCsvWriter.class,
-                                                                   JCasFileWriter_ImplBase.PARAM_TARGET_LOCATION, targetFolder,
-                                                                   WebannoCsvWriter.PARAM_FILENAME, targetFileName, WebannoCsvWriter.PARAM_WITH_HEADERS,
-                                                                   aWithHeaders, WebannoCsvWriter.PARAM_WITH_TEXT, aWithText,
-                                                                   WebannoCsvWriter.PARAM_ANNOTATOR, aAnnotator, WebannoCsvWriter.PARAM_DOCUMENT_NAME,
-                                                                   aDocumentName);
+                JCasFileWriter_ImplBase.PARAM_TARGET_LOCATION, targetFolder,
+                WebannoCsvWriter.PARAM_FILENAME, targetFileName,
+                WebannoCsvWriter.PARAM_WITH_HEADERS, aWithHeaders, WebannoCsvWriter.PARAM_WITH_TEXT,
+                aWithText, WebannoCsvWriter.PARAM_ANNOTATOR, aAnnotator,
+                WebannoCsvWriter.PARAM_DOCUMENT_NAME, aDocumentName);
 
         // read the example.csv and write it to writerOutput.csv
         JCas exampleInputCas = executeReader(inputFolder, inputFileName);
