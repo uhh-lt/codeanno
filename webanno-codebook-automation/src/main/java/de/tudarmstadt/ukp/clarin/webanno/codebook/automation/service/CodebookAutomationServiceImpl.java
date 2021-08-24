@@ -102,6 +102,8 @@ public class CodebookAutomationServiceImpl
     private static final String DEFAULT_VERSION = "default";
     // 1 minute time out.. just in case (could take longer when deployed)
     private static final Integer API_CALL_TIMEOUT_S = 60 * 1000;
+    private static final String CBA_API_HOST_ENV_VAR = "CBA_API_HOST";
+    private static final String CBA_API_PORT_ENV_VAR = "CBA_API_PORT";
 
     private boolean heartbeat;
 
@@ -150,8 +152,8 @@ public class CodebookAutomationServiceImpl
 
     private URL getApiBaseURL() throws MalformedURLException
     {
-        String host = System.getProperty(CBA_API_HOST_ENV_VAR);
-        int port = Integer.parseInt(System.getProperty(CBA_API_PORT_ENV_VAR));
+        String host = System.getenv(CBA_API_HOST_ENV_VAR);
+        int port = Integer.parseInt(System.getenv(CBA_API_PORT_ENV_VAR));
         return new URL("http", host, port, "");
     }
 
