@@ -150,8 +150,8 @@ public class CodebookAutomationServiceImpl
 
     private URL getApiBaseURL() throws MalformedURLException
     {
-        String host = System.getProperty(CBA_API_HOST_ENV_VAR);
-        int port = Integer.parseInt(System.getProperty(CBA_API_PORT_ENV_VAR));
+        String host = System.getenv(CBA_API_HOST_ENV_VAR);
+        int port = Integer.parseInt(System.getenv(CBA_API_PORT_ENV_VAR));
         return new URL("http", host, port, "");
     }
 
