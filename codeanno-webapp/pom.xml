@@ -31,6 +31,10 @@
   <dependencies>
     <dependency>
       <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-ui-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.uhh.lt.codeanno</groupId>
       <artifactId>webanno-ui-annotation</artifactId>
     </dependency>
     <dependency>
@@ -81,10 +85,6 @@
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-doc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-ui-core</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>

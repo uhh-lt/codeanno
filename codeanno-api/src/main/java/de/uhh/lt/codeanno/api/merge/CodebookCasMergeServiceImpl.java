@@ -295,10 +295,11 @@ public class CodebookCasMergeServiceImpl
                 continue;
             }
 
-            log.trace("Processing {} codebook positions on layer {}", positions.size(), codeName);
+            log.trace("Processing {} codebook positions on layer {}", positions.size(), codeName);
             for (CodebookPosition position : positions) {
                 log.trace(" |   processing {}", position);
-                CasDiff.ConfigurationSet cfgs = aDiff.getConfigurtionSet(position);
+
+                CasDiff.ConfigurationSet cfgs = aDiff.getConfigurationSet(position);
 
                 if (!shouldMerge(aDiff, cfgs)) {
                     continue;

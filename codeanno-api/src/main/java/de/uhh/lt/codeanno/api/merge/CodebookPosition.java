@@ -27,6 +27,7 @@ import de.tudarmstadt.ukp.clarin.webanno.curation.casdiff.api.Position_ImplBase;
  *
  */
 public class CodebookPosition extends Position_ImplBase {
+    private static final long serialVersionUID = 2228130524821686328L;
     private final int begin;
     private final int end;
     private final String text;
