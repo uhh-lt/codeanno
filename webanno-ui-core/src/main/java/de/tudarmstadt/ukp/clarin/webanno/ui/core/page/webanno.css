@@ -18,7 +18,8 @@
  * Colors
  */
 .navbar-dark {
-	background-color: #B90F22 !important;
+	/*background-color: #B90F22 !important;*/
+    background-color: #283384 !important;
 }
 
 .navbar-dark .navbar-brand {
