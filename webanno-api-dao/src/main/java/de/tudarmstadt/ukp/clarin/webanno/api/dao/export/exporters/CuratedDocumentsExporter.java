@@ -58,6 +58,7 @@ import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.support.logging.LogMessage;
 import de.tudarmstadt.ukp.clarin.webanno.tsv.WebAnnoTsv3FormatSupport;
+import de.uhh.lt.codeanno.csv.WebAnnoCsvFormatSupport;
 
 @Component
 public class CuratedDocumentsExporter
@@ -88,7 +89,7 @@ public class CuratedDocumentsExporter
 
     /**
      * Copy, if exists, curation documents to a folder that will be exported as Zip file
-     * 
+     *
      * @param aStage
      *            The folder where curated documents are copied to be exported as Zip File
      */
@@ -142,11 +143,14 @@ public class CuratedDocumentsExporter
 
                     // Copy secondary export format for convenience - not used during import
                     try {
-                        File curationFile = importExportService.exportAnnotationDocument(
-                                sourceDocument, CURATION_USER, format, CURATION_USER, CURATION,
-                                true, bulkOperationContext);
-                        copyFileToDirectory(curationFile, curationDir);
-                        forceDelete(curationFile);
+                        if (!format.getClass().getName()
+                                .equals(WebAnnoCsvFormatSupport.class.getName())) {
+                            File curationFile = importExportService.exportAnnotationDocument(
+                                    sourceDocument, CURATION_USER, format, CURATION_USER, CURATION,
+                                    true, bulkOperationContext);
+                            copyFileToDirectory(curationFile, curationDir);
+                            forceDelete(curationFile);
+                        }
                     }
                     catch (Exception e) {
                         // error("Unexpected error while exporting project: " +
@@ -164,7 +168,7 @@ public class CuratedDocumentsExporter
 
     /**
      * Copy curation documents from the exported project
-     * 
+     *
      * @param aZip
      *            the ZIP file.
      * @param aProject
@@ -203,7 +207,6 @@ public class CuratedDocumentsExporter
             // - Since WebAnno 3.5.x, the CORRECTION_USER CAS is exported to 'annotation' and
             // 'annotation_ser'. So for projects exported from this version, the
             // AnnotationDocumentExporter takes care of importing the CORRECTION_USER CASes!
-
             // name of the annotation document
             fileName = fileName.replace(FilenameUtils.getName(fileName), "").replace("/", "");
             if (fileName.trim().isEmpty()) {

@@ -55,6 +55,8 @@ import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedSourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.xmi.XmiFormatSupport;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 
 public class AnnotationDocumentsExporterTest
 {
@@ -68,6 +70,8 @@ public class AnnotationDocumentsExporterTest
     private @Mock DocumentService documentService;
     private @Mock AnnotationSchemaService schemaService;
 
+    private @Mock CodebookImportExportService codebookImportExportService;
+    private @Mock CodebookSchemaService codebookService;
     private Project project;
     private File workFolder;
     private long nextDocId = 1;
@@ -94,8 +98,8 @@ public class AnnotationDocumentsExporterTest
                 backupProperties);
 
         importExportSerivce = new ImportExportServiceImpl(repositoryProperties,
-                asList(new XmiFormatSupport()), casStorageService, schemaService);
-
+                asList(new XmiFormatSupport()), casStorageService, schemaService,
+                codebookImportExportService, codebookService);
         sut = new AnnotationDocumentExporter(documentService, null, importExportSerivce,
                 repositoryProperties);
     }

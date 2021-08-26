@@ -114,7 +114,11 @@ public class Tsv3XCasDocumentBuilder
             if (aSchema.getIgnoredTypes().contains(type)) {
                 continue;
             }
-
+// TODO: check if getIgnoredTypes includes codebook types
+            //exclude codebook types
+            if (type.getName().startsWith("webanno.codebook")) {
+                continue;
+            }
             LayerType layerType = aSchema.getLayerType(type);
 
             boolean addDisambiguationIdIfStacked = SPAN.equals(layerType);
@@ -142,9 +146,11 @@ public class Tsv3XCasDocumentBuilder
                 // If the current annotation has leading whitespace, we have wrongly fetched the
                 // token before the start token using floorEntry(end) - so let's try to correct this
                 if (
-                // found begin token but found the wrong one
-                (beginTokenEntry != null && beginTokenEntry.getValue().getEnd() < begin
-                        && tokenEndIndex.higherEntry(begin) != null) ||
+                        // found begin token but found the wrong one
+                        (
+                                beginTokenEntry != null &&
+                                beginTokenEntry.getValue().getEnd() < begin
+                               && tokenEndIndex.higherEntry(begin) != null) ||
                 // didn't find begin token because annotation starts before the first token
                         beginTokenEntry == null) {
                     beginTokenEntry = tokenEndIndex.higherEntry(begin);
@@ -161,8 +167,10 @@ public class Tsv3XCasDocumentBuilder
                 // If the current annotation has trailing whitespace, we have wrongly fetched the
                 // token after the end token using ceilingEntry(end) - so let's try to correct this
                 if (
-                // found end token but found the wrong one
-                (endTokenEntry != null && endTokenEntry.getValue().getBegin() > end
+                        // found end token but found the wrong one
+                        (
+                                endTokenEntry != null &&
+                                endTokenEntry.getValue().getBegin() > end
                         && tokenEndIndex.lowerEntry(end) != null) ||
                 // didn't find end token because annotation ends beyond the last token
                         endTokenEntry == null) {
@@ -302,14 +310,14 @@ public class Tsv3XCasDocumentBuilder
         for (TsvColumn col : aUnit.getDocument().getSchema().getColumns()) {
             List<AnnotationFS> annotationsForColumn = aUnit.getAnnotationsForColumn(col);
             if (!annotationsForColumn.isEmpty()) {
-                // if (SPAN.equals(col.layerType) && SLOT_TARGET.equals(col.featureType)) {
-                // for (AnnotationFS aFS : annotationsForColumn) {
-                // FeatureStructure[] links = getFeature(aFS, col.uimaFeature,
-                // FeatureStructure[].class);
-                // if (links != null && links.length > 0) {
-                // }
-                // }
-                // }
+//                if (SPAN.equals(col.layerType) && SLOT_TARGET.equals(col.featureType)) {
+//                    for (AnnotationFS aFS : annotationsForColumn) {
+//                        FeatureStructure[] links = getFeature(aFS, col.uimaFeature,
+//                                FeatureStructure[].class);
+//                        if (links != null && links.length > 0) {
+//                        }
+//                    }
+//                }
 
                 if (!PLACEHOLDER.equals(col.featureType)) {
                     aUnit.getDocument().activateColumn(col);

@@ -2,13 +2,13 @@
  * Licensed to the Technische Universität Darmstadt under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The Technische Universität Darmstadt 
+ * regarding copyright ownership.  The Technische Universität Darmstadt
  * licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.
- *  
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -110,6 +110,8 @@ import de.tudarmstadt.ukp.clarin.webanno.model.TagSet;
 import de.tudarmstadt.ukp.clarin.webanno.support.logging.Logging;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
+import de.uhh.lt.codeanno.model.Codebook;
 
 /**
  * Implementation of methods defined in the {@link AnnotationSchemaService} interface
@@ -124,6 +126,7 @@ public class AnnotationSchemaServiceImpl
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final LayerSupportRegistry layerSupportRegistry;
+    private final CodebookSchemaService codebookService;
     private final FeatureSupportRegistry featureSupportRegistry;
     private final LoadingCache<TagSet, List<ImmutableTag>> immutableTagsCache;
     private final TypeSystemDescription builtInTypes;
@@ -131,11 +134,13 @@ public class AnnotationSchemaServiceImpl
     @Autowired
     public AnnotationSchemaServiceImpl(LayerSupportRegistry aLayerSupportRegistry,
             FeatureSupportRegistry aFeatureSupportRegistry,
-            ApplicationEventPublisher aApplicationEventPublisher)
+            ApplicationEventPublisher aApplicationEventPublisher,
+            CodebookSchemaService aCodebookService)
     {
         layerSupportRegistry = aLayerSupportRegistry;
         featureSupportRegistry = aFeatureSupportRegistry;
         applicationEventPublisher = aApplicationEventPublisher;
+        codebookService = aCodebookService;
 
         immutableTagsCache = Caffeine.newBuilder().expireAfterAccess(5, MINUTES)
                 .maximumSize(10 * 1024).build(this::loadImmutableTags);
@@ -150,13 +155,13 @@ public class AnnotationSchemaServiceImpl
 
     public AnnotationSchemaServiceImpl()
     {
-        this(null, null, (EntityManager) null);
+        this(null, null, null, null);
     }
 
     public AnnotationSchemaServiceImpl(LayerSupportRegistry aLayerSupportRegistry,
             FeatureSupportRegistry aFeatureSupportRegistry, EntityManager aEntityManager)
     {
-        this(aLayerSupportRegistry, aFeatureSupportRegistry, (ApplicationEventPublisher) null);
+        this(aLayerSupportRegistry, aFeatureSupportRegistry, null, null);
         entityManager = aEntityManager;
     }
 
@@ -398,6 +403,7 @@ public class AnnotationSchemaServiceImpl
         }
         catch (NoResultException e) {
             return false;
+
         }
     }
 
@@ -608,7 +614,6 @@ public class AnnotationSchemaServiceImpl
                     createdCount, updatedCount, tagSet.getName(), tagSet.getId(),
                     aProject.getName(), aProject.getId());
         }
-
         return tagSet;
     }
 
@@ -955,6 +960,12 @@ public class AnnotationSchemaServiceImpl
                 .forEachOrdered(layer -> layerSupportRegistry.getLayerSupport(layer)
                         .generateTypes(tsd, layer, allFeaturesInProject));
 
+        if (codebookService != null) // FIXME check necessary for testing
+            for (Codebook codebook : codebookService.listCodebook(aProject)) {
+                TypeDescription td = codebookService.getCodebookTypeDescription(codebook, tsd);
+                codebookService.generateFeatures(tsd, td, codebook);
+            }
+
         return tsd;
     }
 
@@ -994,6 +1005,14 @@ public class AnnotationSchemaServiceImpl
             // Explicitly add Sentence because the layer may not be declared in the project
             TypeSystemDescription tsd = new TypeSystemDescription_impl();
             exportBuiltInTypeDescription(builtInTypes, tsd, Sentence.class.getName());
+            allTsds.add(tsd);
+        }
+        {
+            TypeSystemDescription tsd = new TypeSystemDescription_impl();
+            for (Codebook codebook : codebookService.listCodebook(aProject)) {
+                TypeDescription td = codebookService.getCodebookTypeDescription(codebook, tsd);
+                codebookService.generateFeatures(tsd, td, codebook);
+            }
             allTsds.add(tsd);
         }
 

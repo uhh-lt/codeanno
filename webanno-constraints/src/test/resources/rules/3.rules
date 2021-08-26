@@ -1,3 +1,0 @@
-Format{
-@localdb = "utf" -> @outputformat="UTF8" (!) | outputFormat.option.PDF= "false";
-}

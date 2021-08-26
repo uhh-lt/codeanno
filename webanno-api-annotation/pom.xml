@@ -18,9 +18,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-    <artifactId>webanno</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <groupId>de.uhh.lt.codeanno</groupId>
+    <artifactId>codeanno</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>webanno-api-annotation</artifactId>
   <name>WebAnno - Core - Annotation API</name>
@@ -43,19 +43,19 @@
     </dependency>
 
     <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api</artifactId>
+      <groupId>de.uhh.lt.codeanno</groupId>
+      <artifactId>webanno-api-formats</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-      <artifactId>webanno-api-formats</artifactId>
+      <artifactId>webanno-api</artifactId>
     </dependency>
     <dependency>
       <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
       <artifactId>webanno-model-export</artifactId>
     </dependency>
     <dependency>
-      <groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
+      <groupId>de.uhh.lt.codeanno</groupId>
       <artifactId>webanno-ui-core</artifactId>
     </dependency>
     <dependency>
@@ -82,6 +82,7 @@
       <groupId>org.dkpro.core</groupId>
       <artifactId>dkpro-core-api-metadata-asl</artifactId>
     </dependency>
+
 
     <dependency>
       <groupId>commons-io</groupId>

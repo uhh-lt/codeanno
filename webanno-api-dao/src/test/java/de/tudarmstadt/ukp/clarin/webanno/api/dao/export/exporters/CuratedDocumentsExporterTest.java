@@ -57,6 +57,8 @@ import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedProject;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.xmi.XmiFormatSupport;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 
 public class CuratedDocumentsExporterTest
 {
@@ -70,6 +72,8 @@ public class CuratedDocumentsExporterTest
     private @Mock DocumentService documentService;
     private @Mock AnnotationSchemaService schemaService;
 
+    private @Mock CodebookImportExportService codebookImportExportService;
+    private @Mock CodebookSchemaService codebookService;
     private Project project;
     private File workFolder;
     private long nextDocId = 1;
@@ -96,8 +100,8 @@ public class CuratedDocumentsExporterTest
                 backupProperties));
 
         importExportSerivce = new ImportExportServiceImpl(repositoryProperties,
-                asList(new XmiFormatSupport()), casStorageService, schemaService);
-
+                asList(new XmiFormatSupport()), casStorageService, schemaService,
+                codebookImportExportService, codebookService);
         // documentService.getCasFile() is just a stupid wrapper around storageService.getCasFile()
         // and it is easiest we emulate it here
         when(documentService.getCasFile(any(), any())).thenAnswer(invocation -> {

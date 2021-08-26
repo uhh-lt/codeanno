@@ -32,8 +32,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -47,8 +49,6 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.select.BootstrapSelect;
 import de.tudarmstadt.ukp.clarin.webanno.api.AnnotationSchemaService;
@@ -61,6 +61,7 @@ import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotationPreferen
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.page.PreferencesUtil;
 import de.tudarmstadt.ukp.clarin.webanno.model.AnnotationLayer;
+import de.tudarmstadt.ukp.clarin.webanno.model.Mode;
 import de.tudarmstadt.ukp.clarin.webanno.security.UserDao;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxButton;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxFormComponentUpdatingBehavior;
@@ -74,9 +75,6 @@ public class AnnotationPreferencesDialogContent
     extends Panel
 {
     private static final long serialVersionUID = -2102136855109258306L;
-
-    private static final Logger LOG = LoggerFactory
-            .getLogger(AnnotationPreferencesDialogContent.class);
 
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean ProjectService projectService;
@@ -152,6 +150,14 @@ public class AnnotationPreferencesDialogContent
         form.add(new LambdaAjaxButton<>("save", this::actionSave));
         form.add(new LambdaAjaxLink("cancel", this::actionCancel));
 
+
+        WebMarkupContainer showEditorCont = new WebMarkupContainer("showEditorCont");
+        showEditorCont.add(new AttributeModifier("style",
+                stateModel.getObject().getMode().getName().equals(Mode.ANNOTATION.getName())
+                ? "visibility:visible"
+                : "visibility:hidden;display:none"));
+        CheckBox showEditor = new CheckBox("showEditor");
+        form.add(showEditorCont.add(showEditor));
         add(form);
     }
 
@@ -170,6 +176,8 @@ public class AnnotationPreferencesDialogContent
             prefs.setColorPerLayer(model.colorPerLayer);
             prefs.setReadonlyLayerColoringBehaviour(model.readonlyLayerColoringBehaviour);
             prefs.setEditor(model.editor.getKey());
+
+            prefs.setShowEditor(model.showEditor);
             prefs.setCollapseArcs(model.collapseArcs);
 
             state.setAllAnnotationLayers(annotationService.listAnnotationLayer(state.getProject()));
@@ -225,6 +233,7 @@ public class AnnotationPreferencesDialogContent
                                 // disable coreference annotation for correction/curation pages
                                 || state.getMode().equals(CURATION))))
                 .collect(Collectors.toList());
+        model.showEditor = prefs.isShowEditor();
 
         return model;
     }
@@ -292,6 +301,8 @@ public class AnnotationPreferencesDialogContent
         private List<AnnotationLayer> annotationLayers;
         private ReadonlyColoringBehaviour readonlyLayerColoringBehaviour;
         private Map<Long, ColoringStrategyType> colorPerLayer;
+
+        private boolean showEditor;
         private boolean collapseArcs;
     }
 }
