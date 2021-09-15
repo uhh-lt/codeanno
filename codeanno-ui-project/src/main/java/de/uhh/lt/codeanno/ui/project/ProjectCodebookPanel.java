@@ -83,7 +83,7 @@ import de.tudarmstadt.ukp.clarin.webanno.support.wicket.InputStreamResourceStrea
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.settings.ProjectSettingsPanelBase;
 import de.uhh.lt.codeanno.api.CodebookConstants;
 import de.uhh.lt.codeanno.api.event.CodebookConfigurationChangedEvent;
-import de.uhh.lt.codeanno.api.export.CodebookExporter;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
 import de.uhh.lt.codeanno.api.export.ExportedCodebook;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.model.Codebook;
@@ -109,7 +109,7 @@ public class ProjectCodebookPanel
 
     private @SpringBean AnnotationSchemaService annotationService;
     private @SpringBean CodebookSchemaService codebookService;
-    private @SpringBean CodebookExporter codebookExporter;
+    private @SpringBean CodebookImportExportService codebookExporter;
     private @SpringBean ApplicationEventPublisherHolder applicationEventPublisherHolder;
     private @SpringBean CasStorageService casStorageService;
     private @SpringBean DocumentService documentService;

@@ -24,6 +24,8 @@ import java.util.List;
 import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportRequest;
+import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedProject;
 import de.tudarmstadt.ukp.clarin.webanno.model.Mode;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
@@ -41,6 +43,10 @@ public interface CodebookImportExportService
     File exportCodebookDocument(SourceDocument document, String user, String fileName, Mode mode,
             File exportDir, boolean withHeaders, boolean withText, List<Codebook> codebooks)
         throws UIMAException, IOException, ClassNotFoundException;
+
+    void exportCodebookAnnotations(ProjectExportRequest aRequest, ExportedProject aExProject,
+            File aStage)
+        throws IOException, UIMAException;
 
     List<ExportedCodebook> exportCodebooks(List<Codebook> codebooks);
 

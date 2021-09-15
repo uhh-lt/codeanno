@@ -1,7 +1,7 @@
 /*
  * Copyright 2021
- * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt  
- *  and Language Technology Group  Universität Hamburg 
+ * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
+ *  and Language Technology Group  Universität Hamburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 package de.uhh.lt.codeanno.api.export;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.zip.ZipFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,27 +29,19 @@ import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExporter;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectImportRequest;
 import de.tudarmstadt.ukp.clarin.webanno.export.model.ExportedProject;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
-import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 
 @Component
-public class CodebookExporter
+public class CodebookAnnotationExporter
     implements ProjectExporter
 {
-    private static final String CODEBOOKS = "codebooks";
-
     private @Autowired CodebookImportExportService codebookImportExportService;
-    private @Autowired CodebookSchemaService codebookSchemaService;
 
     @Override
     public void exportData(ProjectExportRequest aRequest, ProjectExportTaskMonitor aMonitor,
             ExportedProject aExProject, File aStage)
         throws Exception
     {
-        // export the codebooks (w/o values)
-        List<ExportedCodebook> exportedCodebooks = codebookImportExportService
-                .exportCodebooks(codebookSchemaService.listCodebook(aRequest.getProject()));
-
-        aExProject.setProperty(CODEBOOKS, exportedCodebooks);
+        codebookImportExportService.exportCodebookAnnotations(aRequest, aExProject, aStage);
     }
 
     @Override
@@ -60,13 +49,6 @@ public class CodebookExporter
             ExportedProject aExProject, ZipFile aZip)
         throws Exception
     {
-        // create the codebooks and associate with the project
-        Optional<ExportedCodebook[]> exportedCodebooksArray = aExProject.getProperty(CODEBOOKS,
-                ExportedCodebook[].class);
-        if (exportedCodebooksArray.isPresent()) {
-            List<ExportedCodebook> exportedCodebooks = Arrays.asList(exportedCodebooksArray.get());
-            codebookImportExportService.importCodebooks(exportedCodebooks, aProject);
-        }
+        // nothing to do because the codebooks are interpreted as layers when imported
     }
-
 }
