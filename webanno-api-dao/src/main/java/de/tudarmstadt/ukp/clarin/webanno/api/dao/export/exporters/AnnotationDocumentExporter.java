@@ -226,6 +226,10 @@ public class AnnotationDocumentExporter
                             return fallbackFormat;
                         });
 
+                // Codebooks are exported separately
+                if (format.isDocumentLevel()) {
+                    format = new WebAnnoTsv3FormatSupport();
+                }
                 // Export annotations from regular users
                 for (AnnotationDocument annDoc : srcToAnnIdx.computeIfAbsent(srcDoc,
                         key -> emptyList())) {
@@ -307,7 +311,6 @@ public class AnnotationDocumentExporter
 
         Map<String, SourceDocument> nameToDoc = documentService.listSourceDocuments(aProject)
                 .stream().collect(toMap(SourceDocument::getName, identity()));
-
         importAnnotationDocuments(aExProject, aProject, nameToDoc);
         importAnnotationDocumentContents(aZip, aProject, nameToDoc);
 
@@ -368,7 +371,6 @@ public class AnnotationDocumentExporter
         // it makes the import quite a bit faster than using DocumentService.getCasFile(...)
         Path docRoot = repositoryProperties.getPath().toPath().resolve(PROJECT_FOLDER)
                 .resolve(aProject.getId().toString()).resolve(DOCUMENT_FOLDER);
-
         Set<SourceDocument> annotationFolderInitialized = new HashSet<>();
 
         for (Enumeration zipEnumerate = zip.entries(); zipEnumerate.hasMoreElements();) {

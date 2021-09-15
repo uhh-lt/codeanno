@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+#Copyright 2019
+#Ubiquitous Knowledge Processing (UKP) Lab and FG Language Technology
+#Technische Universität Darmstadt
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+  <wicket:panel>
+    <div class="flex-content card" style="min-height: 10em;">
+      <div class="card-header">
+        <wicket:message key="tags"/>
+        <div class="actions">
+          <button class="btn btn-primary" wicket:id="create">
+            <i class="fas fa-plus-square"></i>&nbsp;
+            <wicket:message key="create"/>
+          </button>
+          <button class="btn btn-danger" wicket:id="resetOrdering">
+            <i class="fas fa-sort-alpha-down"></i>&nbsp;
+            <wicket:message key="resetOrdering"/>
+          </button>
+          </div>
+        </div>
+
+      <div class="scrolling card-body fit-child-snug">
+        <select class="form-control" wicket:id="tag"></select>
+      </div>
+    </div>
+  </wicket:panel>
+</body>
+</html>

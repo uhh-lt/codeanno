@@ -56,6 +56,11 @@ public interface FormatSupport
     {
         return false;
     }
+    
+    default boolean isDocumentLevel()
+    {
+        return false;
+    }
 
     /**
      * @return a UIMA reader description.

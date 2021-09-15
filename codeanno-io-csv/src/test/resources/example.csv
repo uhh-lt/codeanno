@@ -1,0 +1,7 @@
+documentName,annotator,webanno.codebook.TestingCodebook1,webanno.codebook.TestingCodebook2,Text
+sampleCsvDoc.txt,florian,CB1_testTag2,CB2_testTag1,"This is a sample test document. It will be used
+for testing Csv import and export functionality for Codebook Annotations!
+There is a critical part. Commata have to be escaped, let's see if it works or not.
+Bye,
+Florian
+"

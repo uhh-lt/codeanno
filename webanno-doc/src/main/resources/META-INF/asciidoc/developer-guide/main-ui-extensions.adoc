@@ -1,5 +1,0 @@
-== Core UI
-
-=== Pages
-
-=== Menu items

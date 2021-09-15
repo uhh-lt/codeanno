@@ -63,6 +63,8 @@ public class ExportDocumentDialogContent
     private IModel<AnnotatorState> state;
     private IModel<Preferences> preferences;
 
+    private String format;
+
     public ExportDocumentDialogContent(String aId, final ModalWindow modalWindow,
             IModel<AnnotatorState> aModel)
     {
@@ -113,11 +115,14 @@ public class ExportDocumentDialogContent
             username = state.getObject().getUser().getUsername();
         }
 
+        format = preferences.getObject().format;
+        FormatSupport formatSuport = importExportService.getFormatByName(format).get();
+
+        String filename = state.getObject().getDocument().getName();
         try {
             downloadFile = importExportService.exportAnnotationDocument(
-                    state.getObject().getDocument(), username,
-                    importExportService.getFormatByName(preferences.getObject().format).get(),
-                    state.getObject().getDocument().getName(), state.getObject().getMode());
+                    state.getObject().getDocument(), username, formatSuport, filename,
+                    state.getObject().getMode());
         }
         catch (Exception e) {
             LOG.error("Export failed", e);
