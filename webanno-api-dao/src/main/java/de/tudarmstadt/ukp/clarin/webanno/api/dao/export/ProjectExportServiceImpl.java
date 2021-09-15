@@ -66,6 +66,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
+import de.tudarmstadt.ukp.clarin.webanno.api.dao.export.exporters.AggregatedAnnotationExporter;
+import de.tudarmstadt.ukp.clarin.webanno.api.dao.export.exporters.AnnotationDocumentExporter;
+import de.tudarmstadt.ukp.clarin.webanno.api.dao.export.exporters.CuratedDocumentsExporter;
+import de.tudarmstadt.ukp.clarin.webanno.api.dao.export.exporters.ProjectLogExporter;
+import de.tudarmstadt.ukp.clarin.webanno.api.dao.export.exporters.SourceDocumentExporter;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportException;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportRequest;
 import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportService;
@@ -78,12 +83,16 @@ import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.support.JSONUtil;
 import de.tudarmstadt.ukp.clarin.webanno.support.ZipUtils;
 import de.tudarmstadt.ukp.clarin.webanno.support.logging.LogMessage;
+import de.uhh.lt.codeanno.api.export.CodebookAnnotationExporter;
 
 @Component
 public class ProjectExportServiceImpl
     implements ProjectExportService, DisposableBean
 {
     public static final String EXPORTED_PROJECT = "exportedproject";
+    // this is hacky.. But to register a new "real" format, we would net to get the webanno-api
+    // module back to override..
+    public static final String COPY_PROJECT_FORMAT = "COPY_PROJECT_FORMAT";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -220,15 +229,17 @@ public class ProjectExportServiceImpl
                 }
 
                 if (initsSeen.containsAll(initializer.getExportDependencies())) {
-                    // if (!(initializer instanceof SourceDocumentExporter
-                    // || initializer instanceof AnnotationDocumentExporter
-                    // || initializer instanceof CuratedDocumentsExporter
-                    // || initializer instanceof ProjectLogExporter
-                    // || initializer instanceof AggregatedAnnotationExporter
-                    // || initializer instanceof CodebookExporter)) {
-                    // }
-                    log.debug("Applying project exporter: {}", initializer);
-                    initializer.exportData(aRequest, aMonitor, exProject, aStage);
+                    // hack to ignore docs and a
+                    if (aRequest.getFormat().equals(COPY_PROJECT_FORMAT)
+                            && !(initializer instanceof SourceDocumentExporter
+                                    || initializer instanceof AnnotationDocumentExporter
+                                    || initializer instanceof CuratedDocumentsExporter
+                                    || initializer instanceof ProjectLogExporter
+                                    || initializer instanceof AggregatedAnnotationExporter
+                                    || initializer instanceof CodebookAnnotationExporter)) {
+                        log.debug("Applying project exporter: {}", initializer);
+                        initializer.exportData(aRequest, aMonitor, exProject, aStage);
+                    }
                     initsSeen.add(initializer.getClass());
                     initsDeferred.clear();
                 }

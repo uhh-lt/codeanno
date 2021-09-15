@@ -1,14 +1,14 @@
 /*
- * Licensed to the Technische Universität Darmstadt under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The Technische Universität Darmstadt 
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.
- *  
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * Copyright 2021
+ * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
+ * and  Language Technology Universität Hamburg
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,21 @@
  */
 package de.tudarmstadt.ukp.clarin.webanno.ui.project;
 
+import static de.tudarmstadt.ukp.clarin.webanno.api.SessionMetaData.CURRENT_PROJECT;
 import static de.tudarmstadt.ukp.clarin.webanno.api.WebAnnoConst.PAGE_PARAM_PROJECT_ID;
 import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.visibleWhen;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipFile;
 
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
@@ -48,6 +52,11 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.ProjectService;
+import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportException;
+import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportRequest;
+import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportService;
+import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectExportTaskMonitor;
+import de.tudarmstadt.ukp.clarin.webanno.api.export.ProjectImportRequest;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.Tag;
 import de.tudarmstadt.ukp.clarin.webanno.model.TagSet;
@@ -56,6 +65,7 @@ import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.ApplicationContextProvider;
 import de.tudarmstadt.ukp.clarin.webanno.support.bootstrap.BootstrapAjaxTabbedPanel;
 import de.tudarmstadt.ukp.clarin.webanno.support.dialog.ChallengeResponseDialog;
+import de.tudarmstadt.ukp.clarin.webanno.support.dialog.ConfirmationDialog;
 import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.tudarmstadt.ukp.clarin.webanno.support.wicket.ModelChangedVisitor;
 import de.tudarmstadt.ukp.clarin.webanno.ui.core.page.ApplicationPageBase;
@@ -80,6 +90,9 @@ public class ProjectPage
     private static final Logger LOG = LoggerFactory.getLogger(ProjectPage.class);
 
     public static final String NEW_PROJECT_ID = "NEW";
+    // this is hacky.. But to register a new "real" format, we would net to get the webanno-api
+    // module back to override..
+    public static final String COPY_PROJECT_FORMAT = "COPY_PROJECT_FORMAT";
 
     private static final long serialVersionUID = -2102136855109258306L;
 
@@ -88,6 +101,7 @@ public class ProjectPage
     private @SpringBean ProjectSettingsPanelRegistry projectSettingsPanelRegistry;
     private @SpringBean UserDao userRepository;
     private @SpringBean ProjectService projectService;
+    private @SpringBean ProjectExportService exportService;
 
     private WebMarkupContainer sidebar;
     private WebMarkupContainer tabContainer;
@@ -96,6 +110,7 @@ public class ProjectPage
 
     private IModel<Project> selectedProject;
     private ChallengeResponseDialog deleteProjectDialog;
+    private ConfirmationDialog copyProjectDialog;
 
     private boolean preSelectedModelMode = false;
 
@@ -166,6 +181,10 @@ public class ProjectPage
                 .onConfigure((_this) -> _this.setEnabled(selectedProject.getObject() != null
                         && selectedProject.getObject().getId() != null)));
 
+        tabContainer.add(new LambdaAjaxLink("copy", this::actionCopy)
+                .onConfigure((_this) -> _this.setEnabled(selectedProject.getObject() != null
+                        && selectedProject.getObject().getId() != null)));
+
         tabPanel = new BootstrapAjaxTabbedPanel<ITab>("tabPanel", makeTabs())
         {
             private static final long serialVersionUID = -7356420977522213071L;
@@ -219,6 +238,105 @@ public class ProjectPage
                 target.addChildren(getPage(), IFeedback.class);
             }
         });
+
+        add(copyProjectDialog = new ConfirmationDialog("copyProjectDialog",
+                new StringResourceModel("CopyProjectDialog.title", this, null),
+                new StringResourceModel("CopyProjectDialog.text", this, null)));
+        copyProjectDialog.setOutputMarkupId(true);
+
+        copyProjectDialog.setConfirmAction((target) -> {
+            try {
+                this.copyProject();
+                target.add(getPage());
+            }
+            catch (IOException e) {
+                LOG.error("Unable to copy project :" + ExceptionUtils.getRootCauseMessage(e));
+                error("Unable to copy project " + ":" + ExceptionUtils.getRootCauseMessage(e));
+                target.addChildren(getPage(), IFeedback.class);
+            }
+        });
+    }
+
+    private void copyProject() throws IOException, ProjectExportException
+    {
+        // first we export the project (w/o the documents)
+        File projectExportZipFile = this.exportProjectIntoMemoryZipFile();
+        // then we import the project again
+        this.importProjectFromInMemoryZipFile(projectExportZipFile);
+    }
+
+    private File exportProjectIntoMemoryZipFile() throws IOException, ProjectExportException
+    {
+        ProjectExportRequest exRequest = new ProjectExportRequest(selectedProject.getObject(),
+                                                                  COPY_PROJECT_FORMAT,
+                                                                  false);
+        ProjectExportTaskMonitor monitor = new ProjectExportTaskMonitor();
+        try {
+            return exportService.exportProject(exRequest, monitor);
+        }
+        catch (ProjectExportException | IOException e) {
+            // TODO what to do
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private void importProjectFromInMemoryZipFile(File projectExportZipFile)
+        throws IOException, ProjectExportException
+    {
+        User currentUser = userRepository.getCurrentUser();
+        boolean currentUserIsAdministrator = userRepository.isAdministrator(currentUser);
+        boolean currentUserIsProjectCreator = userRepository.isProjectCreator(currentUser);
+
+        boolean createMissingUsers;
+        boolean importPermissions;
+
+        // Importing of permissions is only allowed if the importing user is an administrator
+        if (currentUserIsAdministrator) {
+            createMissingUsers = true;
+            importPermissions = true;
+        }
+        // ... otherwise we force-disable importing of permissions so that the only remaining
+        // permission for non-admin users is that they become the managers of projects they import.
+        else {
+            createMissingUsers = false;
+            importPermissions = false;
+        }
+
+        // If the current user is an administrator and importing of permissions is *DISABLED*, we
+        // configure the current user as a project manager. But if importing of permissions is
+        // *ENABLED*, we do not set the admin up as a project manager because we would assume that
+        // the admin wants to restore a project (maybe one exported from another instance) and in
+        // that case we want to maintain the permissions the project originally had without adding
+        // the admin as a manager.
+        Optional<User> manager = Optional.empty();
+        if (currentUserIsAdministrator) {
+            if (!importPermissions) {
+                manager = Optional.of(currentUser);
+            }
+        }
+        // If the current user is NOT an admin but a project creator then we assume that the user is
+        // importing the project for own use, so we add the user as a project manager.
+        else if (currentUserIsProjectCreator) {
+            manager = Optional.of(currentUser);
+        }
+
+        Project importedProject = null;
+
+        ProjectImportRequest request = new ProjectImportRequest(createMissingUsers,
+                importPermissions, manager);
+        try {
+            importedProject = exportService.importProject(request,
+                    new ZipFile(projectExportZipFile));
+        }
+        catch (ProjectExportException | IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        if (importedProject != null) {
+            selectedProject.setObject(importedProject);
+            Session.get().setMetaData(CURRENT_PROJECT, importedProject);
+        }
     }
 
     private List<ITab> makeTabs()
@@ -308,5 +426,10 @@ public class ProjectPage
     private void actionDelete(AjaxRequestTarget aTarget)
     {
         deleteProjectDialog.show(aTarget);
+    }
+
+    private void actionCopy(AjaxRequestTarget aTarget)
+    {
+        copyProjectDialog.show(aTarget);
     }
 }
