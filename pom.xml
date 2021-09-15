@@ -123,7 +123,6 @@
       <url>https://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-releases</url>
       <releases>
         <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
         <checksumPolicy>warn</checksumPolicy>
       </releases>
       <snapshots>
@@ -136,12 +135,37 @@
       <url>https://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-snapshots</url>
       <releases>
         <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
       </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>ukp-oss-releases</id>
+      <url>https://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-releases</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>ukp-oss-snapshots</id>
+      <url>https://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
   <dependencies>
     <!-- The logging subsystem used by WebAnno -->
     <dependency>
