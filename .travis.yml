@@ -15,4 +15,4 @@ git:
 
 script:
   - java --version
-  - mvn clean install -B -V
+  - mvn clean install -U -B -V
