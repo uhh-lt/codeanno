@@ -220,6 +220,13 @@ public class ProjectExportServiceImpl
                 }
 
                 if (initsSeen.containsAll(initializer.getExportDependencies())) {
+                    // if (!(initializer instanceof SourceDocumentExporter
+                    // || initializer instanceof AnnotationDocumentExporter
+                    // || initializer instanceof CuratedDocumentsExporter
+                    // || initializer instanceof ProjectLogExporter
+                    // || initializer instanceof AggregatedAnnotationExporter
+                    // || initializer instanceof CodebookExporter)) {
+                    // }
                     log.debug("Applying project exporter: {}", initializer);
                     initializer.exportData(aRequest, aMonitor, exProject, aStage);
                     initsSeen.add(initializer.getClass());

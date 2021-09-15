@@ -88,8 +88,8 @@ import de.tudarmstadt.ukp.clarin.webanno.security.model.Role;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
 import de.tudarmstadt.ukp.clarin.webanno.support.ApplicationContextProvider;
 import de.tudarmstadt.ukp.clarin.webanno.text.TextFormatSupport;
-import de.uhh.lt.codeanno.api.export.CodebookExporter;
 import de.uhh.lt.codeanno.api.export.CodebookImportExportService;
+import de.uhh.lt.codeanno.api.export.CodebookImportExportServiceImpl;
 import de.uhh.lt.codeanno.api.service.CodebookFeatureSupportRegistry;
 import de.uhh.lt.codeanno.api.service.CodebookFeatureSupportRegistryImpl;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
@@ -381,7 +381,7 @@ public class AeroRemoteApiControllerTest
         @Bean
         public CodebookImportExportService codebookImportExportService()
         {
-            return new CodebookExporter();
+            return new CodebookImportExportServiceImpl();
         }
 
         @Bean
