@@ -182,11 +182,14 @@ public class CodebookImportExportServiceImpl
         // create root ExCBs
         for (CodebookNode root : tree.getRootNodes()) {
             ExportedCodebook rootExCB = createExportedCodebook(tree.getCodebook(root), null);
-            // exportedCodebooks.add(rootExCB);
 
-            // create children recursively
-            for (Codebook child : tree.getChildren(tree.getCodebook(root)))
-                createExportedCodebookRecursively(child, rootExCB, exportedCodebooks, tree);
+            List<Codebook> children = tree.getChildren(tree.getCodebook(root));
+            if (children.size() == 0)
+                exportedCodebooks.add(rootExCB);
+            else
+                // create children recursively
+                for (Codebook child : children)
+                    createExportedCodebookRecursively(child, rootExCB, exportedCodebooks, tree);
         }
 
         return exportedCodebooks;
