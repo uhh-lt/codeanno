@@ -11,7 +11,7 @@ unzip ~/downloads/java-client-generated.zip -d /tmp/api_client
 cp -r /tmp/api_client/src/main/java/io/swagger/client/* .
 
 echo "fixing package"
-fd -e java -x sed -i 's/io.swagger.client/de.uhh.lt.codeanno.ui.automation.generated.apiclient/g' {}
+fd -e java -x sed -i 's/io.swagger.client/de.uhh.lt.codeanno.automation.generated.apiclient/g' {}
 
 echo "adding licence headers"
 read -d '' licence <<EOF
@@ -37,11 +37,22 @@ fd -e java -x sed -i -e 1,12d {}
 # add licence on top
 fd -j 1 -e java -x bash -c "echo '$licence' | cat - {} > /tmp/out && mv /tmp/out {}"
 
+echo "Replacing BigDecimal with Double"
+fd -e java -x sed -i 's/import java.math.BigDecimal;//g' {}
+fd -e java -x sed -i 's/BigDecimal/Double/g' {}
+
+
+echo "Replacing Object with ModelConfig in ModelMetadata"
+fd -e java ModelMetadata -x sed -i 's/Object /ModelConfig /g' {}
+fd -e java ModelMetadata -x sed -i 's/java.lang.ModelConfig/Object/g' {}
+
+
+echo "Adding 'implements Serializable' to all model classes"
+fd . './model' -e java -x sed -i -E 's/(public class \w*)( \{)/\1 implements Serializable \{/g' {}
+fd . './model' -e java -x sed -i 's/import java.util.Objects;/import java.util.Objects;\nimport java.io.Serializable;/g' {}
+
 echo "############################################################"
 echo "You still need to:"
-echo "\t- add 'implements Serializable' to all model classes"
-echo "\t- replace BigDecimal in ModelConfig to Double"
-echo "\t- replace Object with ModelConfig in ModelMetadata"
 echo "\t- resolve CheckStyle issues (too long lines, lamdbda indent, ...)"
-echo "\t- and of course adapt to the updated interfaces of the API (parameters, URLs, HTTP methods, ... )"
+echo "\t- adapt the code to the updated interfaces of the API (parameters, URLs, HTTP methods, ... )"
 echo "############################################################"
