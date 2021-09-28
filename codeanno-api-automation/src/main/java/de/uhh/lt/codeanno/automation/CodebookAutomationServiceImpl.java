@@ -62,6 +62,7 @@ import de.uhh.lt.codeanno.api.adapter.CodebookCasAdapter;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.automation.generated.apiclient.ApiException;
 import de.uhh.lt.codeanno.automation.generated.apiclient.api.GeneralApi;
+import de.uhh.lt.codeanno.automation.generated.apiclient.api.MappingApi;
 import de.uhh.lt.codeanno.automation.generated.apiclient.api.ModelApi;
 import de.uhh.lt.codeanno.automation.generated.apiclient.api.PredictionApi;
 import de.uhh.lt.codeanno.automation.generated.apiclient.model.DocumentDTO;
@@ -88,11 +89,11 @@ public class CodebookAutomationServiceImpl
     private final PredictionApi predictionApi;
     private final ModelApi modelApi;
     private final GeneralApi generalApi;
+    private final MappingApi mappingApi;
     // CodebookName -> Caller (AutomationSettingsPanel only for now)
     private final ConcurrentHashMap<String, Object> predictionInProgress;
     private final Object lock;
     private final Map<Codebook, Boolean> availabilityCache;
-    private final Map<Codebook, TagLabelMapping> tagLabelMappings;
     private final DocumentService documentService;
     private final ProjectService projectService;
     private final CodebookSchemaService codebookService;
@@ -129,8 +130,13 @@ public class CodebookAutomationServiceImpl
         generalApi.getApiClient().setReadTimeout(API_CALL_TIMEOUT_S);
         generalApi.getApiClient().setWriteTimeout(API_CALL_TIMEOUT_S);
 
+        mappingApi = new MappingApi();
+        mappingApi.getApiClient().setBasePath(baseUrl);
+        mappingApi.getApiClient().setConnectTimeout(API_CALL_TIMEOUT_S);
+        mappingApi.getApiClient().setReadTimeout(API_CALL_TIMEOUT_S);
+        mappingApi.getApiClient().setWriteTimeout(API_CALL_TIMEOUT_S);
+
         this.availabilityCache = new HashMap<>();
-        this.tagLabelMappings = new HashMap<>();
         this.predictionInProgress = new ConcurrentHashMap<>();
 
         if (!this.performHeartbeatCheck())
@@ -165,13 +171,40 @@ public class CodebookAutomationServiceImpl
     }
 
     @Override
-    public void updateTagLabelMapping(Codebook cb, String tag, String label)
+    public TagLabelMapping loadTagLabelMapping(Codebook cb, String modelVersion)
     {
-        this.tagLabelMappings.putIfAbsent(cb, new TagLabelMapping());
-        this.tagLabelMappings.computeIfPresent(cb, (codebook, tagLabelMapping) -> {
-            tagLabelMapping.getMap().put(tag, label);
-            return tagLabelMapping;
-        });
+        if (cb == null || modelVersion.equals(""))
+            return null;
+        try {
+            return this.mappingApi.getMappingGetGet(cb.getUiName(), modelVersion);
+        }
+        catch (ApiException e) {
+            e.printStackTrace();
+            // if the mapping cannot be retrieved (most probably due to 404 by CBA API), create a
+            // new one
+            return new TagLabelMapping().cbName(cb.getUiName()).version(modelVersion);
+        }
+    }
+
+    @Override
+    public void updateTagLabelMapping(Codebook cb, String modelVersion, String tag, String label)
+        throws ApiException
+    {
+        TagLabelMapping mapping = this.loadTagLabelMapping(cb, modelVersion);
+        mapping.getMap().put(tag, label);
+        this.mappingApi.updateMappingUpdatePost(mapping, cb.getUiName());
+    }
+
+    @Override
+    public void registerTagLabelMapping(TagLabelMapping mapping) throws ApiException
+    {
+        this.mappingApi.registerMappingRegisterPut(mapping);
+    }
+
+    @Override
+    public void unregisterTagLabelMapping(Codebook cb, String modelVersion) throws ApiException
+    {
+        this.mappingApi.unregisterMappingUnregisterDelete(cb.getUiName(), modelVersion);
     }
 
     @Override
@@ -573,7 +606,8 @@ public class CodebookAutomationServiceImpl
         PredictionRequest request = new PredictionRequest();
 
         DocumentDTO docm = buildDocumentModel(proj, sdoc);
-        TagLabelMapping mapping = tagLabelMappings.get(cb);
+
+        TagLabelMapping mapping = this.loadTagLabelMapping(cb, modelVersion);
 
         return request.cbName(cb.getUiName()).doc(docm).mapping(mapping).modelVersion(modelVersion);
     }
@@ -586,7 +620,8 @@ public class CodebookAutomationServiceImpl
         List<DocumentDTO> docModels = sdocs.stream()
                 .map(sourceDocument -> this.buildDocumentModel(proj, sourceDocument))
                 .collect(Collectors.toList());
-        TagLabelMapping mapping = tagLabelMappings.get(cb);
+
+        TagLabelMapping mapping = this.loadTagLabelMapping(cb, modelVersion);
 
         return req.cbName(cb.getUiName()).docs(docModels).mapping(mapping)
                 .modelVersion(modelVersion);

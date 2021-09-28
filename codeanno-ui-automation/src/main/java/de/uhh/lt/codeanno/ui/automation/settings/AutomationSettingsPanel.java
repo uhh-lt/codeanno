@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -48,6 +49,7 @@ import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.automation.CodebookAutomationService;
 import de.uhh.lt.codeanno.automation.generated.apiclient.ApiException;
 import de.uhh.lt.codeanno.automation.generated.apiclient.model.ModelMetadata;
+import de.uhh.lt.codeanno.automation.generated.apiclient.model.TagLabelMapping;
 import de.uhh.lt.codeanno.model.Codebook;
 import de.uhh.lt.codeanno.model.CodebookTag;
 
@@ -64,7 +66,6 @@ public class AutomationSettingsPanel
     private static final String AUTOMATION_AVAILABLE = "alert-success";
     private static final String AUTOMATION_UNAVAILABLE = "alert-danger";
 
-    private WebMarkupContainer modelVersionSelectionPanel;
     private WebMarkupContainer metadataPanel;
     private WebMarkupContainer tagLabelMappingPanel;
     private Form<TagLabelMappingFormModel> tagLabelMappingForm;
@@ -99,18 +100,21 @@ public class AutomationSettingsPanel
 
     private void createOrUpdateModelVersionSelection()
     {
-
-        this.modelVersionSelectionPanel = new WebMarkupContainer("modelVersionSelectionPanel");
+        WebMarkupContainer modelVersionSelectionPanel = new WebMarkupContainer(
+                "modelVersionSelectionPanel");
 
         // get the available models for the Codebook
         List<String> modelVersionChoices = null;
+        IModel<String> selectedModelVersion = Model.of();
         try {
             List<ModelMetadata> availableModels = this
                     .getAvailableModels(getModelObject().getCodebook() != null);
             modelVersionChoices = availableModels.stream().map(ModelMetadata::getVersion)
                     .collect(Collectors.toList());
-            if (modelVersionChoices.size() == 1)
+            if (modelVersionChoices.size() == 1) {
                 getModelObject().setModelVersion(modelVersionChoices.get(0));
+                selectedModelVersion = Model.of(modelVersionChoices.get(0));
+            }
         }
         catch (ApiException e) {
             e.printStackTrace();
@@ -118,7 +122,7 @@ public class AutomationSettingsPanel
 
         // provide the choices in the selection
         DropDownChoice<String> modelVersionSelection = new BootstrapSelect<>(
-                "modelVersionSelection", Model.of(), modelVersionChoices);
+                "modelVersionSelection", selectedModelVersion, modelVersionChoices);
         modelVersionSelection.add(new FormComponentUpdatingBehavior()
         {
 
@@ -149,7 +153,7 @@ public class AutomationSettingsPanel
             }
         });
 
-        this.modelVersionSelectionPanel.add(modelVersionSelection);
+        modelVersionSelectionPanel.add(modelVersionSelection);
         this.addOrReplace(modelVersionSelectionPanel);
     }
 
@@ -186,6 +190,26 @@ public class AutomationSettingsPanel
     }
 
     protected void actionStartPredictions(AjaxRequestTarget aTarget)
+    {
+        Codebook cb = this.getModelObject().getCodebook();
+        Project project = this.getModelObject().getProject();
+        String userName = userService.getCurrentUsername();
+        String modelVersion = this.getModelObject().getModelVersion();
+
+        // start async prediction for all docs in the project
+        try {
+            codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion, this);
+            // disable the buttons
+            this.createOrUpdateStartPredictionsButton();
+            aTarget.add(this.startPredictionsButton);
+        }
+        catch (ApiException exception) {
+            exception.printStackTrace();
+        }
+
+    }
+
+    protected void actionStoreTagLabelMapping(AjaxRequestTarget aTarget)
     {
         Codebook cb = this.getModelObject().getCodebook();
         Project project = this.getModelObject().getProject();
@@ -339,6 +363,16 @@ public class AutomationSettingsPanel
         // }
     }
 
+    private TagLabelMapping getTagLabelMapping()
+    {
+        Codebook cb = this.getModelObject().getCodebook();
+        String modelVersion = this.getModelObject().getModelVersion();
+        TagLabelMapping mapping = this.codebookAutomationService.loadTagLabelMapping(cb,
+                modelVersion);
+        this.getModelObject().setTagLabelMapping(mapping);
+        return mapping;
+    }
+
     private void createOrUpdateTagLabelMappingPanel()
     {
         if (tagLabelMappingPanel == null) {
@@ -353,7 +387,10 @@ public class AutomationSettingsPanel
 
         ModelMetadata metadata = this.getModelObject().getModelMetadata();
         Codebook cb = this.getModelObject().getCodebook();
+        String modelVersion = this.getModelObject().getModelVersion();
+        TagLabelMapping mapping = this.getTagLabelMapping();
 
+        // TODO only allow label choices which are not taken yet!
         List<String> labelChoices = new ArrayList<>();
         if (metadata != null)
             for (Map.Entry<String, String> e : metadata.getLabels().entrySet())
@@ -368,19 +405,33 @@ public class AutomationSettingsPanel
             protected void populateItem(ListItem<CodebookTag> item)
             {
                 item.add(new Label("name", item.getModelObject().getName()));
+
+                // get persisted label for the tag if available
+                String tag = item.getModelObject().getName();
+                IModel<String> persistedLabel = Model.of();
+                if (mapping != null && mapping.getMap().get(tag) != null)
+                    persistedLabel = Model.of(mapping.getMap().get(tag));
+
+                // TODO only allow label choices which are not taken yet!
                 DropDownChoice<String> ddChoice = new BootstrapSelect<>("labelSelection",
-                        Model.of(), labelChoices);
+                        persistedLabel, labelChoices);
                 ddChoice.add(new FormComponentUpdatingBehavior()
                 {
-
                     private static final long serialVersionUID = -7017410239431970221L;
 
                     @Override
                     protected void onUpdate()
                     {
                         super.onUpdate();
-                        codebookAutomationService.updateTagLabelMapping(cb,
-                                item.getModelObject().getName(), ddChoice.getModelObject());
+                        try {
+                            // persist the updated mapping
+                            codebookAutomationService.updateTagLabelMapping(cb, modelVersion, tag,
+                                    ddChoice.getModelObject());
+                        }
+                        catch (ApiException e) {
+                            // TODO what to do?
+                            e.printStackTrace();
+                        }
                     }
                 });
                 item.add(ddChoice);

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.uhh.lt.codeanno.automation.generated.apiclient.model.ModelMetadata;
+import de.uhh.lt.codeanno.automation.generated.apiclient.model.TagLabelMapping;
 import de.uhh.lt.codeanno.model.Codebook;
 
 class AutomationSettingsPanelModel
@@ -37,6 +38,7 @@ class AutomationSettingsPanelModel
     private Map<String, ModelMetadata> availableModels;
     private Project project;
     private Codebook codebook;
+    private TagLabelMapping tagLabelMapping;
 
     public AutomationSettingsPanelModel()
     {
@@ -48,6 +50,7 @@ class AutomationSettingsPanelModel
         this.resetData();
         this.project = project;
         this.codebook = null;
+        this.tagLabelMapping = null;
     }
 
     public void resetData()
@@ -55,6 +58,7 @@ class AutomationSettingsPanelModel
         this.predictionInProgress = false;
         this.modelVersion = "";
         this.availableModels = Collections.emptyMap();
+        this.tagLabelMapping = null;
     }
 
     public Codebook getCodebook()
@@ -111,5 +115,15 @@ class AutomationSettingsPanelModel
     public Map<String, ModelMetadata> getAvailableModels()
     {
         return availableModels;
+    }
+
+    public TagLabelMapping getTagLabelMapping() {
+        return tagLabelMapping;
+    }
+
+    public void setTagLabelMapping(
+            TagLabelMapping tagLabelMapping
+    ) {
+        this.tagLabelMapping = tagLabelMapping;
     }
 }

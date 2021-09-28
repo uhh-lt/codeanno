@@ -35,6 +35,7 @@ import de.uhh.lt.codeanno.automation.generated.apiclient.model.MultiDocumentPred
 import de.uhh.lt.codeanno.automation.generated.apiclient.model.MultiDocumentPredictionResult;
 import de.uhh.lt.codeanno.automation.generated.apiclient.model.PredictionRequest;
 import de.uhh.lt.codeanno.automation.generated.apiclient.model.PredictionResult;
+import de.uhh.lt.codeanno.automation.generated.apiclient.model.TagLabelMapping;
 import de.uhh.lt.codeanno.model.Codebook;
 
 public interface CodebookAutomationService
@@ -44,7 +45,13 @@ public interface CodebookAutomationService
 
     boolean performHeartbeatCheck();
 
-    void updateTagLabelMapping(Codebook cb, String tag, String label);
+    TagLabelMapping loadTagLabelMapping(Codebook cb, String modelVersion);
+
+    void updateTagLabelMapping(Codebook cb, String modelVersion, String tag, String label) throws ApiException;
+
+    void registerTagLabelMapping(TagLabelMapping mapping) throws ApiException;
+
+    void unregisterTagLabelMapping(Codebook cb, String modelVersion) throws ApiException;
 
     boolean isPredictionInProgress(Codebook cb, Object caller);
 
