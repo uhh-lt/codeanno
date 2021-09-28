@@ -180,6 +180,7 @@ public class CodebookAutomationSettingsPanel
         codebookSelectionForm.setDefaultModel(null);
         createPropertiesCard(null);
         updateAutomationSettingsPanel(null);
+        this.updateTree();
     }
 
     class CodebookSelectionForm
