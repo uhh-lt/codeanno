@@ -80,31 +80,25 @@ public class CodebookAutomationServiceImpl
 {
     private final static Logger logger = LoggerFactory
             .getLogger(CodebookAutomationServiceImpl.class);
-
+    private static final String DEFAULT_VERSION = "default";
+    // 1 minute time out.. just in case (could take longer when deployed)
+    private static final Integer API_CALL_TIMEOUT_S = 60 * 1000;
+    private static final String CBA_API_HOST_ENV_VAR = "CBA_API_HOST";
+    private static final String CBA_API_PORT_ENV_VAR = "CBA_API_PORT";
     private final PredictionApi predictionApi;
     private final ModelApi modelApi;
     private final GeneralApi generalApi;
-
     // CodebookName -> Caller (AutomationSettingsPanel only for now)
     private final ConcurrentHashMap<String, Object> predictionInProgress;
     private final Object lock;
-
     private final Map<Codebook, Boolean> availabilityCache;
     private final Map<Codebook, TagLabelMapping> tagLabelMappings;
-
     private final DocumentService documentService;
     private final ProjectService projectService;
     private final CodebookSchemaService codebookService;
     private final CorrectionDocumentService correctionDocumentService;
     private final UserDao userService;
     private final ApplicationEventPublisher eventPublisher;
-
-    private static final String DEFAULT_VERSION = "default";
-    // 1 minute time out.. just in case (could take longer when deployed)
-    private static final Integer API_CALL_TIMEOUT_S = 60 * 1000;
-    private static final String CBA_API_HOST_ENV_VAR = "CBA_API_HOST";
-    private static final String CBA_API_PORT_ENV_VAR = "CBA_API_PORT";
-
     private boolean heartbeat;
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import de.uhh.lt.codeanno.automation.generated.apiclient.Pair;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-09-27T14:25:41.880Z[GMT]")
 public class ApiKeyAuth
     implements Authentication
 {

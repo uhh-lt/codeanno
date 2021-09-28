@@ -59,8 +59,8 @@ public class PersistMultiPredResultToCasCallback
         try {
             // TODO save the predictions in the DB to get probabilities of all predictions
             String sb = "Successfully received Codebook Automation Results" + " for <"
-                    + result.getCodebookName() + "> Codebook and Document with IDs=<"
-                    + result.getPredictedTags().keySet().toString() + ">!";
+                        + result.getCodebookName() + "> Codebook and Document with IDs=<"
+                        + result.getPredictedTags().keySet() + ">!";
             logger.info(sb);
 
             this.initCasStorageSession();

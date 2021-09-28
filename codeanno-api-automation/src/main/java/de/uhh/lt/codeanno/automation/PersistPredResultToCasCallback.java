@@ -37,7 +37,7 @@ public class PersistPredResultToCasCallback
             .getLogger(PersistPredResultToCasCallback.class);
 
     public PersistPredResultToCasCallback(CodebookAutomationService codebookAutomationService,
-                                          String userName)
+            String userName)
     {
         super(codebookAutomationService, userName);
     }

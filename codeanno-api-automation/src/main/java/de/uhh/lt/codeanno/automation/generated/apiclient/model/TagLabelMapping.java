@@ -29,12 +29,62 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * TagLabelMapping
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-09-27T14:25:41.880Z[GMT]")
 public class TagLabelMapping
     implements Serializable
 {
+    @SerializedName("cb_name")
+    private String cbName = null;
+
+    @SerializedName("version")
+    private String version = "default";
+
     @SerializedName("map")
     private Map<String, String> map = new HashMap<String, String>();
+
+    public TagLabelMapping cbName(String cbName)
+    {
+        this.cbName = cbName;
+        return this;
+    }
+
+    /**
+     * The name of the related Codebook
+     * 
+     * @return cbName
+     **/
+    @Schema(required = true, description = "The name of the related Codebook")
+    public String getCbName()
+    {
+        return cbName;
+    }
+
+    public void setCbName(String cbName)
+    {
+        this.cbName = cbName;
+    }
+
+    public TagLabelMapping version(String version)
+    {
+        this.version = version;
+        return this;
+    }
+
+    /**
+     * The version of the related model
+     * 
+     * @return version
+     **/
+    @Schema(example = "default", description = "The version of the related model")
+    public String getVersion()
+    {
+        return version;
+    }
+
+    public void setVersion(String version)
+    {
+        this.version = version;
+    }
 
     public TagLabelMapping map(Map<String, String> map)
     {
@@ -74,13 +124,15 @@ public class TagLabelMapping
             return false;
         }
         TagLabelMapping tagLabelMapping = (TagLabelMapping) o;
-        return Objects.equals(this.map, tagLabelMapping.map);
+        return Objects.equals(this.cbName, tagLabelMapping.cbName)
+                && Objects.equals(this.version, tagLabelMapping.version)
+                && Objects.equals(this.map, tagLabelMapping.map);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(map);
+        return Objects.hash(cbName, version, map);
     }
 
     @Override
@@ -89,6 +141,8 @@ public class TagLabelMapping
         StringBuilder sb = new StringBuilder();
         sb.append("class TagLabelMapping {\n");
 
+        sb.append("    cbName: ").append(toIndentedString(cbName)).append("\n");
+        sb.append("    version: ").append(toIndentedString(version)).append("\n");
         sb.append("    map: ").append(toIndentedString(map)).append("\n");
         sb.append("}");
         return sb.toString();

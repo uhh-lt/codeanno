@@ -20,7 +20,6 @@ import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUt
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -165,9 +164,8 @@ public class CodebookCorrectionNodePanel
         if (automationSuggestions == null)
             return preds;
 
-        for (Map.Entry<String, BigDecimal> e : automationSuggestions.getProbabilities()
-                .entrySet()) {
-            preds.add(new PredictionPojo(e.getKey(), e.getValue().doubleValue()));
+        for (Map.Entry<String, Double> e : automationSuggestions.getProbabilities().entrySet()) {
+            preds.add(new PredictionPojo(e.getKey(), e.getValue()));
         }
         return preds;
     }
