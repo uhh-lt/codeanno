@@ -115,9 +115,7 @@ public class CodebookAutomationSettingsPanel
 
     private void createPropertiesCard(Codebook selectedCodebook)
     {
-        String id = "propertiesCard";
-
-        propertiesCard = new WebMarkupContainer(id);
+        propertiesCard = new WebMarkupContainer("propertiesCard");
         propertiesCard.setDefaultModel(new CompoundPropertyModel<>(selectedCodebook));
 
         propertiesCard

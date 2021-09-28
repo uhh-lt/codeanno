@@ -117,13 +117,13 @@ class AutomationSettingsPanelModel
         return availableModels;
     }
 
-    public TagLabelMapping getTagLabelMapping() {
+    public TagLabelMapping getTagLabelMapping()
+    {
         return tagLabelMapping;
     }
 
-    public void setTagLabelMapping(
-            TagLabelMapping tagLabelMapping
-    ) {
+    public void setTagLabelMapping(TagLabelMapping tagLabelMapping)
+    {
         this.tagLabelMapping = tagLabelMapping;
     }
 }
