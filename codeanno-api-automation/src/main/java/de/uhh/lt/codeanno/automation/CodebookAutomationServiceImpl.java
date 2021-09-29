@@ -468,6 +468,7 @@ public class CodebookAutomationServiceImpl
 
             // FIXME we really need to get rid of the cb features to increase code
             // understandability a lot
+            // write to CAS
             CodebookFeature feature = codebookService.listCodebookFeature(cb).get(0);
             CodebookCasAdapter adapter = new CodebookCasAdapter(cb);
             AnnotationFS existingFs = adapter.getExistingFs(correctionCas);
@@ -475,6 +476,7 @@ public class CodebookAutomationServiceImpl
                     : adapter.add(correctionCas);
             adapter.setFeatureValue(correctionCas, feature, annoId, predTag);
 
+            // persist the changes in the CAS
             correctionDocumentService.writeCorrectionCas(correctionCas, state.getDocument());
             updateDocumentTimestampAfterWrite(state,
                     correctionDocumentService.getCorrectionCasTimestamp(state.getDocument()));

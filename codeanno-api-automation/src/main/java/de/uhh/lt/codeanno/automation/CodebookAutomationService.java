@@ -108,4 +108,6 @@ public interface CodebookAutomationService
 
     CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
         throws IOException, UIMAException;
+
+
 }
