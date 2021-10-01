@@ -523,6 +523,17 @@ public class CodebookAutomationServiceImpl
         this.removeFromPredictionInProgress(result);
     }
 
+    @Override
+    public String readPredictedTagValueFromCorrectionCas(Codebook cb, SourceDocument sdoc)
+        throws IOException
+    {
+        CAS correctionCas = correctionDocumentService.readCorrectionCas(sdoc);
+
+        CodebookFeature feature = codebookService.listCodebookFeature(cb).get(0);
+        CodebookCasAdapter adapter = new CodebookCasAdapter(cb);
+        return  (String) adapter.getExistingCodeValue(correctionCas, feature);
+    }
+
     private AnnotatorState createAnnotatorState(SourceDocument doc, Project project,
             String userName)
         throws IOException

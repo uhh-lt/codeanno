@@ -109,5 +109,6 @@ public interface CodebookAutomationService
     CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
         throws IOException, UIMAException;
 
-
+    String readPredictedTagValueFromCorrectionCas(Codebook cb, SourceDocument sdoc)
+            throws IOException, AnnotationException;
 }
