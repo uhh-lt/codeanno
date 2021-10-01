@@ -1,6 +1,6 @@
 /*
- * Copyright 2019
- * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt 
+ * Copyright 2021
+ * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
  * and  Language Technology Universität Hamburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,11 +42,9 @@ import com.googlecode.wicket.kendo.ui.form.combobox.ComboBox;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.uhh.lt.codeanno.api.adapter.CodebookCasAdapter;
-import de.uhh.lt.codeanno.api.service.CodebookFeatureState;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.model.Codebook;
 import de.uhh.lt.codeanno.model.CodebookFeature;
-import de.uhh.lt.codeanno.model.CodebookTag;
 import de.uhh.lt.codeanno.tree.model.CodebookNode;
 
 public abstract class CodebookEditorPanel
@@ -100,15 +98,15 @@ public abstract class CodebookEditorPanel
         try {
             cas = getCodebookCas();
         }
-        catch (IOException e1) {
-            // TODO why it is here??
+        catch (IOException e) {
+            return null;
         }
 
         return (String) adapter.getExistingCodeValue(cas, feature);
     }
 
     public AjaxFormComponentUpdatingBehavior createOnChangeSaveUpdatingBehavior(
-            ComboBox<CodebookTag> comboBox, Codebook codebook, CodebookFeature feature)
+            ComboBox<?> comboBox, Codebook codebook, CodebookFeature feature)
     {
         return new AjaxFormComponentUpdatingBehavior("change")
         {
@@ -117,24 +115,8 @@ public abstract class CodebookEditorPanel
             @Override
             public void onUpdate(AjaxRequestTarget aTarget)
             {
-                try { // to persist the changes made to the codebook
-                    CAS jcas = getCodebookCas();
-                    if (comboBox.getModelObject() == null) {
-                        // combo box got cleared or NONE was selected
-                        CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
-                        adapter.delete(jcas, feature);
-                        writeCodebookCas(jcas);
-                    }
-                    else {
-                        CodebookEditorModel state = CodebookEditorPanel.this.getModelObject();
-                        state.getCodebookFeatureStates()
-                                .add(new CodebookFeatureState(feature, comboBox.getModelObject()));
-                        saveCodebookAnnotation(feature, jcas);
-                    }
-                }
-                catch (IOException | AnnotationException e) {
-                    error("Unable to update" + e.getMessage());
-                }
+                persistCodebookAnnotationInUserCas(comboBox.getModelObject(), codebook, feature);
+
                 // update the tag selection combo boxes of the child nodes so that they offer
                 // only
                 // the valid tags based on the currently selected tag..
@@ -155,6 +137,32 @@ public abstract class CodebookEditorPanel
         };
     }
 
+    public void persistCodebookAnnotationInUserCas(String codebookTagValue, Codebook codebook,
+            CodebookFeature feature)
+    {
+        try { // to persist the changes made to the codebook
+            CAS jcas = getCodebookCas();
+            CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
+
+            if (codebookTagValue == null) {
+                // combo box got cleared or NONE was selected
+                adapter.delete(jcas, feature);
+            }
+            else {
+                // store the value in the CAS
+                AnnotationFS existingFs = adapter.getExistingFs(jcas);
+                int annoId = existingFs != null ? getAddr(existingFs) : adapter.add(jcas);
+                adapter.setFeatureValue(jcas, feature, annoId, codebookTagValue);
+
+            }
+            // persist changes
+            writeCodebookCas(jcas);
+        }
+        catch (IOException | AnnotationException e) {
+            error("Unable to update" + e.getMessage());
+        }
+    }
+
     public void setModel(AjaxRequestTarget aTarget, CodebookEditorModel aState)
     {
         setDefaultModelObject(aState);
@@ -165,40 +173,6 @@ public abstract class CodebookEditorPanel
         codebookEditorTreePanel.initTree();
         if (aTarget != null)
             aTarget.add(codebookEditorTreePanel);
-    }
-
-    private void saveCodebookAnnotation(CodebookFeature aCodebookFeature, CAS aJCas)
-        throws AnnotationException, IOException
-    {
-        CodebookCasAdapter adapter = new CodebookCasAdapter(aCodebookFeature.getCodebook());
-        writeCodebookFeatureModelsToCas(adapter, aJCas);
-
-        // persist changes
-        writeCodebookCas(aJCas);
-
-    }
-
-    private void writeCodebookFeatureModelsToCas(CodebookCasAdapter aAdapter, CAS aJCas)
-        throws IOException, AnnotationException
-    {
-        CodebookEditorModel state = getModelObject();
-        List<CodebookFeatureState> featureStates = state.getCodebookFeatureStates();
-
-        for (CodebookFeatureState featureState : featureStates) {
-            LOG.trace("writeFeatureEditorModelsToCas() " + featureState.feature.getUiName() + " = "
-                    + featureState.value);
-
-            AnnotationFS existingFs = aAdapter.getExistingFs(aJCas);
-            int annoId;
-
-            if (existingFs != null) {
-                annoId = getAddr(existingFs);
-            }
-            else {
-                annoId = aAdapter.add(aJCas);
-            }
-            aAdapter.setFeatureValue(aJCas, featureState.feature, annoId, featureState.value);
-        }
     }
 
     private CAS getCodebookCas() throws IOException
@@ -220,9 +194,7 @@ public abstract class CodebookEditorPanel
         // Update timestamp in state
         Optional<Long> diskTimestamp = documentService
                 .getAnnotationCasTimestamp(state.getDocument(), state.getUser().getUsername());
-        if (diskTimestamp.isPresent()) {
-            onJCasUpdate(diskTimestamp.get());
-        }
+        diskTimestamp.ifPresent(this::onJCasUpdate);
     }
 
     // package private by intention
