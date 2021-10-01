@@ -20,8 +20,19 @@
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.3-strict.dtd">
 <body>
 <wicket:panel>
-    <form class="flex-content mb-1" wicket:id="codebookTagSelectionForm">
-        <div class="form-row ml-0 mr-0 border rounded border-dark">
+    <form class="flex-content mb-1 border rounded border-dark" wicket:id="codebookTagSelectionForm">
+        <!--  AUTOMATED TAG HINT  -->
+        <div class="d-flex" wicket:id="automatedCodebookHintPanel">
+            <div class="w-100 align-self-center text-danger text-center font-italic">
+                <i class="fas fa-exclamation-triangle text-danger"></i>
+                <span class="col-form-label">
+                    <wicket:message key="automatedCodebookLabelText"/>
+                </span>
+                <i class="fas fa-exclamation-triangle text-danger"></i>
+            </div>
+        </div>
+        <!--  TAG SELECTION COMBOBOX  -->
+        <div class="form-row ml-0 mr-0">
             <label class="col-md-4 col-form-label pull-left font-weight-bold"
                    style="font-size: small; overflow-wrap: break-word; word-break: break-all"
                    wicket:id="codebookNameLabel"></label>
@@ -29,6 +40,16 @@
                 <input class="form-control" style="font-size: small" type="text"
                        wicket:id="codebookTagBox"/>
             </div>
+        </div>
+        <!--  ACCEPT AUTOMATED TAG BUTTON  -->
+        <div class="d-flex" wicket:id="automatedCodebookButtonPanel">
+            <button class="w-100 btn btn-sm btn-primary mr-1 ml-1 p-0"
+                    wicket:id="automatedCodebookAcceptButton" type="button">
+                <span class="btn-action-label">
+                    <wicket:message key="automatedCodebookAccept"/>
+                </span>
+                <i class="fas fa-save"></i>
+            </button>
         </div>
     </form>
 </wicket:panel>
