@@ -99,7 +99,7 @@ public abstract class CodebookEditorPanel
         return (CodebookEditorModel) getDefaultModelObject();
     }
 
-    public String getExistingCode(Codebook codebook)
+    public String getExistingCodeFromUserCas(Codebook codebook)
     {
         CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
@@ -142,6 +142,7 @@ public abstract class CodebookEditorPanel
                 childNodePanels.forEach(CodebookEditorNodePanel::clearSelection);
                 // add the node panels to the ajax target for re-rendering
                 childNodePanels.forEach(aTarget::add);
+                aTarget.add(CodebookEditorPanel.this);
             }
         };
     }

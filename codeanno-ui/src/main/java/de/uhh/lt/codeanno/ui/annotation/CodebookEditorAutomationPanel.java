@@ -25,7 +25,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
@@ -43,7 +42,6 @@ public class CodebookEditorAutomationPanel
 
     private @SpringBean CodebookAutomationService codebookAutomationService;
     private @SpringBean CodebookSchemaService codebookSchemaService;
-    private @SpringBean DocumentService documentService;
 
     private final CodebookEditorPanel parentEditorPanel;
 
@@ -65,15 +63,15 @@ public class CodebookEditorAutomationPanel
         Project proj = parentEditorPanel.getModelObject().getProject();
         for (Codebook cb : codebookSchemaService.listCodebook(proj)) {
             try {
-                if (!codebookAutomationService.isAutomationAvailable(cb, false))
-                    return false;
+                if (codebookAutomationService.isAutomationAvailable(cb, true))
+                    return true;
             }
             catch (ApiException e) {
-                return false;
+                // do nothing
             }
         }
 
-        return true;
+        return false;
     }
 
     private void actionAutomateCodebooks(AjaxRequestTarget ajaxRequestTarget)

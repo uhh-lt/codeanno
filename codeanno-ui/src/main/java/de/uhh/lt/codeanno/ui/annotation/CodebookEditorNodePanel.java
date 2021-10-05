@@ -125,7 +125,7 @@ public class CodebookEditorNodePanel
 
     private void setUserTag()
     {
-        this.userTag = this.parentEditor.getExistingCode(this.node.getCodebook());
+        this.userTag = this.parentEditor.getExistingCodeFromUserCas(this.node.getCodebook());
     }
 
     private void actionAcceptAutomatedCodebook(AjaxRequestTarget ajaxRequestTarget)
@@ -213,16 +213,6 @@ public class CodebookEditorNodePanel
     void updateTagSelectionCombobox()
     {
         this.tagSelectionForm.addOrReplace(createTagSelectionComboBox());
-    }
-
-    public CodebookSchemaService getCodebookService()
-    {
-        return codebookService;
-    }
-
-    public CodebookEditorPanel getParentEditor()
-    {
-        return parentEditor;
     }
 
     @Override
