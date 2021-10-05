@@ -27,6 +27,10 @@
 	<name>CodeAnno - UI</name>
 	<packaging>jar</packaging>
 	<dependencies>
+		<dependency>
+			<groupId>de.uhh.lt.codeanno</groupId>
+			<artifactId>webanno-api-annotation</artifactId>
+		</dependency>
 	    <dependency>
 			<groupId>de.uhh.lt.codeanno</groupId>
 			<artifactId>codeanno-api</artifactId>
@@ -52,10 +56,6 @@
 			<artifactId>webanno-security</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
-			<artifactId>webanno-api-annotation</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.clarin.webanno</groupId>
 			<artifactId>webanno-model</artifactId>
