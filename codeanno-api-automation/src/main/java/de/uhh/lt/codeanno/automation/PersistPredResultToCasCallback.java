@@ -36,10 +36,9 @@ public class PersistPredResultToCasCallback
     private final static Logger logger = LoggerFactory
             .getLogger(PersistPredResultToCasCallback.class);
 
-    public PersistPredResultToCasCallback(CodebookAutomationService codebookAutomationService,
-            String userName)
+    public PersistPredResultToCasCallback(CodebookAutomationService codebookAutomationService)
     {
-        super(codebookAutomationService, userName);
+        super(codebookAutomationService);
     }
 
     @Override
@@ -63,7 +62,7 @@ public class PersistPredResultToCasCallback
             logger.info(sb);
 
             this.initCasStorageSession();
-            codebookAutomationService.writePredictedTagToCorrectionCas(result, userName);
+            codebookAutomationService.writePredictedTagToCorrectionCas(result);
         }
         catch (IOException | UIMAException | AnnotationException e) {
             e.printStackTrace();

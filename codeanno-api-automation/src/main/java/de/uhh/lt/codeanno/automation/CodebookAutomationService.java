@@ -26,7 +26,6 @@ import org.apache.uima.cas.CAS;
 import com.squareup.okhttp.Call;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
-import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.uhh.lt.codeanno.automation.generated.apiclient.ApiException;
@@ -47,7 +46,8 @@ public interface CodebookAutomationService
 
     TagLabelMapping loadTagLabelMapping(Codebook cb, String modelVersion);
 
-    void updateTagLabelMapping(Codebook cb, String modelVersion, String tag, String label) throws ApiException;
+    void updateTagLabelMapping(Codebook cb, String modelVersion, String tag, String label)
+        throws ApiException;
 
     void registerTagLabelMapping(TagLabelMapping mapping) throws ApiException;
 
@@ -68,31 +68,31 @@ public interface CodebookAutomationService
 
     boolean isAutomationAvailable(Codebook cb, boolean updateCache) throws ApiException;
 
-    Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName)
+    PredictionResult predictTag(Codebook cb, Project proj, SourceDocument sdoc) throws ApiException;
+
+    PredictionResult predictTag(Codebook cb, Project proj, SourceDocument sdoc, String modelVersion)
         throws ApiException;
 
-    Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String userName,
-            String modelVersion, Object caller)
-        throws ApiException;
+    Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc) throws ApiException;
 
-    Call predictTagsAsync(Codebook cb, Project proj, String userName) throws ApiException;
-
-    Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion)
-        throws ApiException;
-
-    Call predictTagsAsync(Codebook cb, Project proj, String userName, String modelVersion,
+    Call predictTagAsync(Codebook cb, Project proj, SourceDocument sdoc, String modelVersion,
             Object caller)
         throws ApiException;
 
-    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName)
+    Call predictTagsAsync(Codebook cb, Project proj) throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, String modelVersion) throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, String modelVersion, Object caller)
         throws ApiException;
 
-    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName,
-            String modelVersion)
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs) throws ApiException;
+
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String modelVersion)
         throws ApiException;
 
-    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String userName,
-            String modelVersion, Object caller)
+    Call predictTagsAsync(Codebook cb, Project proj, List<SourceDocument> docs, String modelVersion,
+            Object caller)
         throws ApiException;
 
     ModelMetadata getModelMetadata(Codebook cb) throws ApiException;
@@ -101,14 +101,14 @@ public interface CodebookAutomationService
 
     List<ModelMetadata> getAvailableModels(Codebook cb) throws ApiException;
 
-    void writePredictedTagToCorrectionCas(PredictionResult result, String userName)
+    void writePredictedTagToCorrectionCas(PredictionResult result)
         throws IOException, UIMAException, AnnotationException;
 
-    void writePredictedTagsToCorrectionCas(MultiDocumentPredictionResult result, String userName);
+    void writePredictedTagsToCorrectionCas(MultiDocumentPredictionResult result);
 
-    CAS readOrCreateCorrectionCas(AnnotatorState state, boolean upgrade)
+    CAS readOrCreateCorrectionCas(SourceDocument sdoc, boolean upgrade)
         throws IOException, UIMAException;
 
     String readPredictedTagValueFromCorrectionCas(Codebook cb, SourceDocument sdoc)
-            throws IOException, AnnotationException;
+        throws IOException, AnnotationException;
 }

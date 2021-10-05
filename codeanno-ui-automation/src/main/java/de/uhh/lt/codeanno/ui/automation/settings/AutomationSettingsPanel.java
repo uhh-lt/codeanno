@@ -193,32 +193,11 @@ public class AutomationSettingsPanel
     {
         Codebook cb = this.getModelObject().getCodebook();
         Project project = this.getModelObject().getProject();
-        String userName = userService.getCurrentUsername();
         String modelVersion = this.getModelObject().getModelVersion();
 
         // start async prediction for all docs in the project
         try {
-            codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion, this);
-            // disable the buttons
-            this.createOrUpdateStartPredictionsButton();
-            aTarget.add(this.startPredictionsButton);
-        }
-        catch (ApiException exception) {
-            exception.printStackTrace();
-        }
-
-    }
-
-    protected void actionStoreTagLabelMapping(AjaxRequestTarget aTarget)
-    {
-        Codebook cb = this.getModelObject().getCodebook();
-        Project project = this.getModelObject().getProject();
-        String userName = userService.getCurrentUsername();
-        String modelVersion = this.getModelObject().getModelVersion();
-
-        // start async prediction for all docs in the project
-        try {
-            codebookAutomationService.predictTagsAsync(cb, project, userName, modelVersion, this);
+            codebookAutomationService.predictTagsAsync(cb, project, modelVersion, this);
             // disable the buttons
             this.createOrUpdateStartPredictionsButton();
             aTarget.add(this.startPredictionsButton);

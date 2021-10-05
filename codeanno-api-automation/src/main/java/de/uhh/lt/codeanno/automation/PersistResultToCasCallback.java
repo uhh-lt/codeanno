@@ -26,14 +26,11 @@ public abstract class PersistResultToCasCallback<T>
 {
 
     protected final CodebookAutomationService codebookAutomationService;
-    protected final String userName;
     protected CasStorageSession casStorageSession;
 
-    public PersistResultToCasCallback(CodebookAutomationService codebookAutomationService,
-            String userName)
+    public PersistResultToCasCallback(CodebookAutomationService codebookAutomationService)
     {
         this.codebookAutomationService = codebookAutomationService;
-        this.userName = userName;
     }
 
     public synchronized void initCasStorageSession()
