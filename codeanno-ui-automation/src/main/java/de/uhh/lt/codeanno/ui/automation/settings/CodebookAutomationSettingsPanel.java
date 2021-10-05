@@ -115,9 +115,7 @@ public class CodebookAutomationSettingsPanel
 
     private void createPropertiesCard(Codebook selectedCodebook)
     {
-        String id = "propertiesCard";
-
-        propertiesCard = new WebMarkupContainer(id);
+        propertiesCard = new WebMarkupContainer("propertiesCard");
         propertiesCard.setDefaultModel(new CompoundPropertyModel<>(selectedCodebook));
 
         propertiesCard
@@ -182,6 +180,7 @@ public class CodebookAutomationSettingsPanel
         codebookSelectionForm.setDefaultModel(null);
         createPropertiesCard(null);
         updateAutomationSettingsPanel(null);
+        this.updateTree();
     }
 
     class CodebookSelectionForm

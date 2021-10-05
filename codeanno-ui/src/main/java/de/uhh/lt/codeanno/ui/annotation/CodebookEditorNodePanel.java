@@ -16,11 +16,16 @@
  */
 package de.uhh.lt.codeanno.ui.annotation;
 
+import static de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaBehavior.visibleWhen;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -29,11 +34,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
+import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.support.DescriptionTooltipBehavior;
+import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
+import de.uhh.lt.codeanno.automation.CodebookAutomationService;
 import de.uhh.lt.codeanno.model.Codebook;
-import de.uhh.lt.codeanno.model.CodebookFeature;
 import de.uhh.lt.codeanno.model.CodebookTag;
 import de.uhh.lt.codeanno.tree.model.CodebookNode;
 import de.uhh.lt.codeanno.tree.ui.CodebookNodePanel;
@@ -45,8 +52,11 @@ public class CodebookEditorNodePanel
     protected @SpringBean DocumentService documentService;
     private final CodebookTagSelectionComboBox tagSelectionComboBox;
     private @SpringBean CodebookSchemaService codebookService;
+    private @SpringBean CodebookAutomationService automationService;
     private final CodebookEditorPanel parentEditor;
     private final Form<CodebookTag> tagSelectionForm;
+    private String automatedTag;
+    private String userTag;
 
     public CodebookEditorNodePanel(String id, IModel<CodebookNode> node,
             CodebookEditorPanel parentEditor)
@@ -55,6 +65,11 @@ public class CodebookEditorNodePanel
 
         this.node = node.getObject();
         this.parentEditor = parentEditor;
+
+        // get the automated tag if there is one
+        this.setAutomatedTag();
+        // set the user tag if there is one
+        this.setUserTag();
 
         // form
         IModel<CodebookTag> selectedTag = Model.of();
@@ -73,16 +88,65 @@ public class CodebookEditorNodePanel
         Codebook codebook = this.node.getCodebook();
         this.add(new DescriptionTooltipBehavior(codebook.getUiName(), codebook.getDescription()));
 
+        // automatedCodebookButtonPanel
+        WebMarkupContainer automatedCodebookButtonPanel = new WebMarkupContainer(
+                "automatedCodebookButtonPanel");
+        automatedCodebookButtonPanel.setOutputMarkupId(true);
+        automatedCodebookButtonPanel
+                .add(visibleWhen(() -> this.automatedTag != null && this.userTag == null));
+        // automatedCodebookAcceptButton
+        automatedCodebookButtonPanel.add(new LambdaAjaxLink("automatedCodebookAcceptButton",
+                this::actionAcceptAutomatedCodebook));
+        this.tagSelectionForm.add(automatedCodebookButtonPanel);
+        // automatedCodebookButtonPanel
+        WebMarkupContainer automatedCodebookHintPanel = new WebMarkupContainer(
+                "automatedCodebookHintPanel");
+        automatedCodebookHintPanel.setOutputMarkupId(true);
+        automatedCodebookHintPanel
+                .add(visibleWhen(() -> this.automatedTag != null && this.userTag == null));
+        this.tagSelectionForm.add(automatedCodebookHintPanel);
+
         this.add(this.tagSelectionForm);
+    }
+
+    private void setAutomatedTag()
+    {
+        try {
+            // check if there is a Codebook Annotation in the correction CAS (which is the CAS in
+            // which predicted i.e. automated Codebook Annotations from CBA are stored)
+            Codebook cb = this.node.getCodebook();
+            SourceDocument sdoc = this.parentEditor.getModelObject().getDocument();
+            this.automatedTag = automationService.readPredictedTagValueFromCorrectionCas(cb, sdoc);
+        }
+        catch (IOException | AnnotationException e) {
+            this.automatedTag = null;
+        }
+    }
+
+    private void setUserTag()
+    {
+        this.userTag = this.parentEditor.getExistingCodeFromUserCas(this.node.getCodebook());
+    }
+
+    private void actionAcceptAutomatedCodebook(AjaxRequestTarget ajaxRequestTarget)
+    {
+        Codebook cb = this.node.getCodebook();
+        this.parentEditor.persistCodebookAnnotationInUserCas(this.automatedTag, cb);
+        this.userTag = this.automatedTag;
+        // write the automated value in the USER CAS!
+        // set the automatedTag to null
+        ajaxRequestTarget.add(this.parentEditor);
     }
 
     private CodebookTagSelectionComboBox createTagSelectionComboBox()
     {
-
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
-        String existingCode = this.parentEditor.getExistingCode(this.node.getCodebook());
+        String existingCode = null;
+        if (this.userTag != null)
+            existingCode = this.userTag;
+        else if (this.automatedTag != null)
+            existingCode = this.automatedTag;
 
-        String userName = this.parentEditor.getModelObject().getUser().getUsername();
         CodebookTagSelectionComboBox tagSelection = new CodebookTagSelectionComboBox(this,
                 "codebookTagBox", new Model<>(existingCode), tagChoices, node);
 
@@ -93,9 +157,8 @@ public class CodebookEditorNodePanel
                 parentEditor.getModelObject().getUser()));
 
         Codebook codebook = this.node.getCodebook();
-        CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         AjaxFormComponentUpdatingBehavior updatingBehavior = parentEditor
-                .createOnChangeSaveUpdatingBehavior(tagSelection, codebook, feature);
+                .createOnChangeSaveUpdatingBehavior(tagSelection, codebook);
         tagSelection.add(updatingBehavior);
         tagSelection.setOutputMarkupId(true);
         return tagSelection;
@@ -150,16 +213,6 @@ public class CodebookEditorNodePanel
     void updateTagSelectionCombobox()
     {
         this.tagSelectionForm.addOrReplace(createTagSelectionComboBox());
-    }
-
-    public CodebookSchemaService getCodebookService()
-    {
-        return codebookService;
-    }
-
-    public CodebookEditorPanel getParentEditor()
-    {
-        return parentEditor;
     }
 
     @Override

@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ModelConfig
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-09-27T14:25:41.880Z[GMT]")
 public class ModelConfig
     implements Serializable
 {
@@ -40,7 +40,7 @@ public class ModelConfig
     private List<Integer> hiddenUnits = null;
 
     @SerializedName("dropout")
-    private Double dropout = 0.2;
+    private Double dropout = new Double(0.2);
 
     @SerializedName("optimizer")
     private OptimizerIdentifier optimizer = null;

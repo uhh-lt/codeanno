@@ -33,10 +33,9 @@ public class PersistMultiPredResultToCasCallback
     private final static Logger logger = LoggerFactory
             .getLogger(PersistMultiPredResultToCasCallback.class);
 
-    public PersistMultiPredResultToCasCallback(CodebookAutomationService codebookAutomationService,
-            String userName)
+    public PersistMultiPredResultToCasCallback(CodebookAutomationService codebookAutomationService)
     {
-        super(codebookAutomationService, userName);
+        super(codebookAutomationService);
     }
 
     @Override
@@ -60,12 +59,12 @@ public class PersistMultiPredResultToCasCallback
             // TODO save the predictions in the DB to get probabilities of all predictions
             String sb = "Successfully received Codebook Automation Results" + " for <"
                     + result.getCodebookName() + "> Codebook and Document with IDs=<"
-                    + result.getPredictedTags().keySet().toString() + ">!";
+                    + result.getPredictedTags().keySet() + ">!";
             logger.info(sb);
 
             this.initCasStorageSession();
 
-            codebookAutomationService.writePredictedTagsToCorrectionCas(result, userName);
+            codebookAutomationService.writePredictedTagsToCorrectionCas(result);
             codebookAutomationService.removeFromPredictionInProgress(result);
         }
         finally {

@@ -21,16 +21,16 @@ import de.tudarmstadt.ukp.clarin.webanno.api.casstorage.CasSessionException;
 import de.tudarmstadt.ukp.clarin.webanno.api.dao.casstorage.CasStorageSession;
 import de.uhh.lt.codeanno.automation.generated.apiclient.ApiCallback;
 
-public abstract class PersistResultToCasCallback<T> implements ApiCallback<T> {
+public abstract class PersistResultToCasCallback<T>
+    implements ApiCallback<T>
+{
 
     protected final CodebookAutomationService codebookAutomationService;
-    protected final String userName;
     protected CasStorageSession casStorageSession;
 
-    public PersistResultToCasCallback(
-            CodebookAutomationService codebookAutomationService, String userName) {
+    public PersistResultToCasCallback(CodebookAutomationService codebookAutomationService)
+    {
         this.codebookAutomationService = codebookAutomationService;
-        this.userName = userName;
     }
 
     public synchronized void initCasStorageSession()

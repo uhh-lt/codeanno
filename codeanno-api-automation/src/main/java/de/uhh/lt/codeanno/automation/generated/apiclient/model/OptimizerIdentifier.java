@@ -17,7 +17,6 @@
 package de.uhh.lt.codeanno.automation.generated.apiclient.model;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
@@ -30,8 +29,6 @@ import com.google.gson.stream.JsonWriter;
  */
 @JsonAdapter(OptimizerIdentifier.Adapter.class)
 public enum OptimizerIdentifier
-    implements
-    Serializable
 {
     ADAM("Adam"), SGD("SGD"), ADAGRAD("Adagrad"), RMSPROP("RMSProp"), FTRL("Ftrl");
 
@@ -76,7 +73,7 @@ public enum OptimizerIdentifier
         @Override
         public OptimizerIdentifier read(final JsonReader jsonReader) throws IOException
         {
-            String value = jsonReader.nextString();
+            Object value = jsonReader.nextString();
             return OptimizerIdentifier.fromValue(String.valueOf(value));
         }
     }

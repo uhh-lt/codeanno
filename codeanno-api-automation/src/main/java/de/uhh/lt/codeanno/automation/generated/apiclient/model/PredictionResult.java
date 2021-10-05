@@ -17,7 +17,6 @@
 package de.uhh.lt.codeanno.automation.generated.apiclient.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * PredictionResult
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2020-12-23T17:53:55.514Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-09-27T14:25:41.880Z[GMT]")
 public class PredictionResult
     implements Serializable
 {
@@ -47,7 +46,7 @@ public class PredictionResult
     private String predictedTag = null;
 
     @SerializedName("probabilities")
-    private Map<String, BigDecimal> probabilities = new HashMap<String, BigDecimal>();
+    private Map<String, Double> probabilities = new HashMap<String, Double>();
 
     public PredictionResult docId(Integer docId)
     {
@@ -137,13 +136,13 @@ public class PredictionResult
         this.predictedTag = predictedTag;
     }
 
-    public PredictionResult probabilities(Map<String, BigDecimal> probabilities)
+    public PredictionResult probabilities(Map<String, Double> probabilities)
     {
         this.probabilities = probabilities;
         return this;
     }
 
-    public PredictionResult putProbabilitiesItem(String key, BigDecimal probabilitiesItem)
+    public PredictionResult putProbabilitiesItem(String key, Double probabilitiesItem)
     {
         this.probabilities.put(key, probabilitiesItem);
         return this;
@@ -155,12 +154,12 @@ public class PredictionResult
      * @return probabilities
      **/
     @Schema(required = true, description = "")
-    public Map<String, BigDecimal> getProbabilities()
+    public Map<String, Double> getProbabilities()
     {
         return probabilities;
     }
 
-    public void setProbabilities(Map<String, BigDecimal> probabilities)
+    public void setProbabilities(Map<String, Double> probabilities)
     {
         this.probabilities = probabilities;
     }

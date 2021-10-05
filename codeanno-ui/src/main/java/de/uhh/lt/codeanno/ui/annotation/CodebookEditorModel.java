@@ -1,6 +1,6 @@
 /*
- * Copyright 2019
- * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt 
+ * Copyright 2021
+ * Ubiquitous Knowledge Processing (UKP) Lab Technische Universität Darmstadt
  * and  Language Technology Universität Hamburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,28 +18,22 @@
 package de.uhh.lt.codeanno.ui.annotation;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.tudarmstadt.ukp.clarin.webanno.model.Project;
 import de.tudarmstadt.ukp.clarin.webanno.model.SourceDocument;
 import de.tudarmstadt.ukp.clarin.webanno.security.model.User;
-import de.uhh.lt.codeanno.api.service.CodebookFeatureState;
 
 public class CodebookEditorModel
     implements Serializable
 {
-
     private static final long serialVersionUID = -628789175872734603L;
+
     private User user;
     private SourceDocument document;
     private Project project;
 
-    private List<CodebookFeatureState> codebookFeatureStates = new ArrayList<>();
-
     public CodebookEditorModel()
     {
-
     }
 
     public SourceDocument getDocument()
@@ -50,16 +44,6 @@ public class CodebookEditorModel
     public void setDocument(SourceDocument document)
     {
         this.document = document;
-    }
-
-    public List<CodebookFeatureState> getCodebookFeatureStates()
-    {
-        return codebookFeatureStates;
-    }
-
-    public void setCodebookFeatureStates(List<CodebookFeatureState> codebookFeatureStates)
-    {
-        this.codebookFeatureStates = codebookFeatureStates;
     }
 
     public User getUser()

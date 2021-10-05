@@ -225,16 +225,8 @@ public class CodebookCurationNodePanel
             String tagValue, CAS aJCas)
         throws IOException, AnnotationException
     {
-
         AnnotationFS existingFs = aAdapter.getExistingFs(aJCas);
-        int annoId;
-
-        if (existingFs != null) {
-            annoId = getAddr(existingFs);
-        }
-        else {
-            annoId = aAdapter.add(aJCas);
-        }
+        int annoId = existingFs != null ? getAddr(existingFs) :  aAdapter.add(aJCas);
         aAdapter.setFeatureValue(aJCas, feature, annoId, tagValue);
     }
 

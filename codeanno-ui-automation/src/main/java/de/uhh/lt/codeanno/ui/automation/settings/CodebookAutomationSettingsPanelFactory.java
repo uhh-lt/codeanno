@@ -53,6 +53,7 @@ public class CodebookAutomationSettingsPanelFactory
     @Override
     public boolean applies(Project aProject)
     {
-        return WebAnnoConst.PROJECT_TYPE_AUTOMATION.equals(aProject.getMode());
+        return WebAnnoConst.PROJECT_TYPE_AUTOMATION.equals(aProject.getMode())
+                || WebAnnoConst.PROJECT_TYPE_ANNOTATION.equals(aProject.getMode());
     }
 }

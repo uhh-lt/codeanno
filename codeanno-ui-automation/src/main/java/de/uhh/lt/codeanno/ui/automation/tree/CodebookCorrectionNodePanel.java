@@ -16,11 +16,11 @@
  */
 package de.uhh.lt.codeanno.ui.automation.tree;
 
+import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorStateUtils.updateDocumentTimestampAfterWrite;
 import static de.tudarmstadt.ukp.clarin.webanno.api.annotation.util.WebAnnoCasUtil.getAddr;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +44,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.context.event.EventListener;
 
+import de.tudarmstadt.ukp.clarin.webanno.api.CorrectionDocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.DocumentService;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.exception.AnnotationException;
 import de.tudarmstadt.ukp.clarin.webanno.api.annotation.model.AnnotatorState;
@@ -85,6 +86,7 @@ public class CodebookCorrectionNodePanel
     private @SpringBean DocumentService documentService;
     private @SpringBean UserDao userRepository;
     private @SpringBean CodebookAutomationService automationService;
+    private @SpringBean CorrectionDocumentService correctionDocumentService;
 
     public CodebookCorrectionNodePanel(String id, IModel<CodebookNode> node,
             PredictionResult automationSuggestions, CodebookCorrectionTreePanel parentTreePanel)
@@ -165,29 +167,30 @@ public class CodebookCorrectionNodePanel
         if (automationSuggestions == null)
             return preds;
 
-        for (Map.Entry<String, BigDecimal> e : automationSuggestions.getProbabilities()
-                .entrySet()) {
-            preds.add(new PredictionPojo(e.getKey(), e.getValue().doubleValue()));
+        for (Map.Entry<String, Double> e : automationSuggestions.getProbabilities().entrySet()) {
+            preds.add(new PredictionPojo(e.getKey(), e.getValue()));
         }
         return preds;
     }
 
     private CodebookTagSelectionComboBox createAutomationComboBox()
     {
-        CAS automationCas = null;
+        CAS correctionCas = null;
         try {
-            automationCas = parentTreePanel.getParentPage().getEditorCas();
+            // returns the correction CAS
+            correctionCas = parentTreePanel.getParentPage().getEditorCas();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
+        // get the predicted CodebookTag from the correction CAS
         Codebook codebook = this.node.getCodebook();
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         CodebookCasAdapter adapter = new CodebookCasAdapter(feature.getCodebook());
         User user = userRepository.getCurrentUser();
+        String existingValue = (String) adapter.getExistingCodeValue(correctionCas, feature);
 
-        String existingValue = (String) adapter.getExistingCodeValue(automationCas, feature);
         List<CodebookTag> tagChoices = this.getPossibleTagChoices();
         CodebookTagSelectionComboBox comboBox = new CodebookTagSelectionComboBox(this,
                 "codebookTagSelectionComboBox", Model.of(existingValue), tagChoices, node);
@@ -203,19 +206,10 @@ public class CodebookCorrectionNodePanel
             @Override
             protected void onUpdate(AjaxRequestTarget target)
             {
-                // persist changes in automation cas
+                // persist changes in correction cas
                 try {
                     CAS cas = parentTreePanel.getParentPage().getEditorCas();
-
-                    if (comboBox.getModelObject() == null) {
-                        // combo box got cleared or NONE was selected
-                        CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
-                        adapter.delete(cas, feature);
-                        writeCodebookCas(cas);
-                    }
-                    else {
-                        saveCodebookAnnotation(feature, comboBox.getModelObject(), cas);
-                    }
+                    saveCodebookAnnotation(feature, comboBox.getModelObject(), cas);
                 }
                 catch (IOException | AnnotationException e) {
                     error("Unable to update" + e.getMessage());
@@ -228,52 +222,48 @@ public class CodebookCorrectionNodePanel
         return comboBox;
     }
 
-    private void saveCodebookAnnotation(CodebookFeature feature, String value, CAS curationCas)
+    private void saveCodebookAnnotation(CodebookFeature feature, String value, CAS correctionCas)
         throws AnnotationException, IOException
     {
-
         CodebookCasAdapter adapter = new CodebookCasAdapter(feature.getCodebook());
+        // combo box got cleared or NONE was selected remove the value from the cas
         if (value == null) {
-            adapter.delete(curationCas, feature);
-            writeCodebookCas(curationCas);
+            adapter.delete(correctionCas, feature);
+            // persist changes
+            writeCorrectionCas(correctionCas);
             return;
         }
 
-        writeCodebookToCas(adapter, feature, value, curationCas);
+        // write (add) the Codebook annotation to the editor CAS (which is the correction cas)
+        writeCodebookToCas(adapter, feature, value, correctionCas);
 
         // persist changes
-        writeCodebookCas(curationCas);
-
+        writeCorrectionCas(correctionCas);
     }
 
     private void writeCodebookToCas(CodebookCasAdapter aAdapter, CodebookFeature feature,
-            String value, CAS aJCas)
+            String value, CAS correctionCas)
         throws IOException, AnnotationException
     {
-
-        AnnotationFS existingFs = aAdapter.getExistingFs(aJCas);
+        AnnotationFS existingFs = aAdapter.getExistingFs(correctionCas);
         int annoId;
 
         if (existingFs != null) {
             annoId = getAddr(existingFs);
         }
         else {
-            annoId = aAdapter.add(aJCas);
+            annoId = aAdapter.add(correctionCas);
         }
-        aAdapter.setFeatureValue(aJCas, feature, annoId, value);
+        aAdapter.setFeatureValue(correctionCas, feature, annoId, value);
     }
 
-    private void writeCodebookCas(CAS aJCas) throws IOException
+    private void writeCorrectionCas(CAS correctionCas) throws IOException, AnnotationException
     {
-
         AnnotatorState state = parentTreePanel.getParentPage().getModelObject();
-        documentService.writeAnnotationCas(aJCas, state.getDocument(), state.getUser(), true);
-
-        // Update timestamp in state
-        Optional<Long> diskTimestamp = documentService
-                .getAnnotationCasTimestamp(state.getDocument(), state.getUser().getUsername());
-        diskTimestamp.ifPresent(aLong -> parentTreePanel.getParentPage().getModelObject()
-                .setAnnotationDocumentTimestamp(aLong));
+        correctionDocumentService.writeCorrectionCas(correctionCas, state.getDocument());
+        Optional<Long> diskTimestamp = correctionDocumentService
+                .getCorrectionCasTimestamp(state.getDocument());
+        updateDocumentTimestampAfterWrite(state, diskTimestamp);
     }
 
     private List<CodebookTag> getPossibleTagChoices()

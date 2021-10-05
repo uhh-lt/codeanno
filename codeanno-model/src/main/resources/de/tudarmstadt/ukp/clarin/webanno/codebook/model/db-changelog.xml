@@ -282,4 +282,5 @@
 		/>
 	</changeSet>
 
+	<!--	TODO remove cba_tag_label_mapping table! it is now persisted in CBA API-->
 </databaseChangeLog>
