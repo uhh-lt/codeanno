@@ -66,7 +66,8 @@ public abstract class CodebookEditorPanel
     private @SpringBean DocumentService documentService;
     private @SpringBean CodebookSchemaService codebookService;
 
-    private final CodebookEditorTreePanel codebookEditorTreePanel;
+    private CodebookEditorTreePanel codebookEditorTreePanel;
+    private CodebookEditorAutomationPanel codebookEditorAutomationPanel;
 
     public CodebookEditorPanel(String id, IModel<CodebookEditorModel> aModel)
     {
@@ -75,7 +76,15 @@ public abstract class CodebookEditorPanel
         setOutputMarkupId(true);
 
         this.setDefaultModel(aModel);
+        this.createOrUpdateCodebookTree(aModel);
 
+        codebookEditorAutomationPanel = new CodebookEditorAutomationPanel(
+                "codebookEditorAutomationPanel", this);
+        addOrReplace(codebookEditorAutomationPanel);
+    }
+
+    public void createOrUpdateCodebookTree(IModel<CodebookEditorModel> aModel)
+    {
         // add but don't init the tree
         codebookEditorTreePanel = new CodebookEditorTreePanel("codebookEditorTreePanel", aModel,
                 this);
