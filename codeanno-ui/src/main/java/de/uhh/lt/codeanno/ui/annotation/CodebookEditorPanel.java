@@ -96,7 +96,7 @@ public abstract class CodebookEditorPanel
         CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         CAS cas = null;
         try {
-            cas = getCodebookCas();
+            cas = getUserCas();
         }
         catch (IOException e) {
             return null;
@@ -106,7 +106,7 @@ public abstract class CodebookEditorPanel
     }
 
     public AjaxFormComponentUpdatingBehavior createOnChangeSaveUpdatingBehavior(
-            ComboBox<?> comboBox, Codebook codebook, CodebookFeature feature)
+            ComboBox<?> comboBox, Codebook codebook)
     {
         return new AjaxFormComponentUpdatingBehavior("change")
         {
@@ -115,7 +115,7 @@ public abstract class CodebookEditorPanel
             @Override
             public void onUpdate(AjaxRequestTarget aTarget)
             {
-                persistCodebookAnnotationInUserCas(comboBox.getModelObject(), codebook, feature);
+                persistCodebookAnnotationInUserCas(comboBox.getModelObject(), codebook);
 
                 // update the tag selection combo boxes of the child nodes so that they offer
                 // only
@@ -137,29 +137,30 @@ public abstract class CodebookEditorPanel
         };
     }
 
-    public void persistCodebookAnnotationInUserCas(String codebookTagValue, Codebook codebook,
-            CodebookFeature feature)
+    public void persistCodebookAnnotationInUserCas(String codebookTagValue, Codebook cb)
     {
         try { // to persist the changes made to the codebook
-            CAS jcas = getCodebookCas();
-            CodebookCasAdapter adapter = new CodebookCasAdapter(codebook);
+            CodebookFeature feature = codebookService.listCodebookFeature(cb).get(0);
+            CAS userCas = getUserCas();
+            CodebookCasAdapter adapter = new CodebookCasAdapter(cb);
 
             if (codebookTagValue == null) {
                 // combo box got cleared or NONE was selected
-                adapter.delete(jcas, feature);
+                adapter.delete(userCas, feature);
             }
             else {
                 // store the value in the CAS
-                AnnotationFS existingFs = adapter.getExistingFs(jcas);
-                int annoId = existingFs != null ? getAddr(existingFs) : adapter.add(jcas);
-                adapter.setFeatureValue(jcas, feature, annoId, codebookTagValue);
+                AnnotationFS existingFs = adapter.getExistingFs(userCas);
+                int annoId = existingFs != null ? getAddr(existingFs) : adapter.add(userCas);
+                adapter.setFeatureValue(userCas, feature, annoId, codebookTagValue);
 
             }
             // persist changes
-            writeCodebookCas(jcas);
+            writeUserCas();
         }
         catch (IOException | AnnotationException e) {
             error("Unable to update" + e.getMessage());
+            LOG.error("Unable to update" + e.getMessage());
         }
     }
 
@@ -171,11 +172,13 @@ public abstract class CodebookEditorPanel
         // initialize the tree with the project's codebooks
         codebookEditorTreePanel.setDefaultModelObject(aState);
         codebookEditorTreePanel.initTree();
-        if (aTarget != null)
+        if (aTarget != null) {
             aTarget.add(codebookEditorTreePanel);
+            aTarget.add(this);
+        }
     }
 
-    private CAS getCodebookCas() throws IOException
+    /* package private */ CAS getUserCas() throws IOException
     {
         CodebookEditorModel state = getModelObject();
 
@@ -185,11 +188,12 @@ public abstract class CodebookEditorPanel
         return (onGetJCas());
     }
 
-    private void writeCodebookCas(CAS aJCas) throws IOException
+    /* package private */ void writeUserCas() throws IOException
     {
+        CAS userCas = getUserCas();
 
         CodebookEditorModel state = getModelObject();
-        documentService.writeAnnotationCas(aJCas, state.getDocument(), state.getUser(), true);
+        documentService.writeAnnotationCas(userCas, state.getDocument(), state.getUser(), true);
 
         // Update timestamp in state
         Optional<Long> diskTimestamp = documentService
@@ -197,8 +201,7 @@ public abstract class CodebookEditorPanel
         diskTimestamp.ifPresent(this::onJCasUpdate);
     }
 
-    // package private by intention
-    Map<CodebookNode, CodebookEditorNodePanel> getNodePanels()
+    /* package private */ Map<CodebookNode, CodebookEditorNodePanel> getNodePanels()
     {
         return this.codebookEditorTreePanel.getNodePanels();
     }

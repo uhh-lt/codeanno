@@ -41,7 +41,6 @@ import de.tudarmstadt.ukp.clarin.webanno.support.lambda.LambdaAjaxLink;
 import de.uhh.lt.codeanno.api.service.CodebookSchemaService;
 import de.uhh.lt.codeanno.automation.CodebookAutomationService;
 import de.uhh.lt.codeanno.model.Codebook;
-import de.uhh.lt.codeanno.model.CodebookFeature;
 import de.uhh.lt.codeanno.model.CodebookTag;
 import de.uhh.lt.codeanno.tree.model.CodebookNode;
 import de.uhh.lt.codeanno.tree.ui.CodebookNodePanel;
@@ -132,8 +131,7 @@ public class CodebookEditorNodePanel
     private void actionAcceptAutomatedCodebook(AjaxRequestTarget ajaxRequestTarget)
     {
         Codebook cb = this.node.getCodebook();
-        CodebookFeature feature = codebookService.listCodebookFeature(cb).get(0);
-        this.parentEditor.persistCodebookAnnotationInUserCas(this.automatedTag, cb, feature);
+        this.parentEditor.persistCodebookAnnotationInUserCas(this.automatedTag, cb);
         this.userTag = this.automatedTag;
         // write the automated value in the USER CAS!
         // set the automatedTag to null
@@ -159,9 +157,8 @@ public class CodebookEditorNodePanel
                 parentEditor.getModelObject().getUser()));
 
         Codebook codebook = this.node.getCodebook();
-        CodebookFeature feature = codebookService.listCodebookFeature(codebook).get(0);
         AjaxFormComponentUpdatingBehavior updatingBehavior = parentEditor
-                .createOnChangeSaveUpdatingBehavior(tagSelection, codebook, feature);
+                .createOnChangeSaveUpdatingBehavior(tagSelection, codebook);
         tagSelection.add(updatingBehavior);
         tagSelection.setOutputMarkupId(true);
         return tagSelection;
