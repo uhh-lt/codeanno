@@ -262,6 +262,8 @@ public class ProjectPage
         // first we export the project (w/o the documents)
         File projectExportZipFile = this.exportProjectIntoMemoryZipFile();
         // then we import the project again
+        // FIXME Flo: if an exception is thrown, make sure all data is correctly rolled back. For
+        //  CBs this is not the case at the moment...
         this.importProjectFromInMemoryZipFile(projectExportZipFile);
     }
 
