@@ -229,14 +229,17 @@ public class ProjectExportServiceImpl
                 }
 
                 if (initsSeen.containsAll(initializer.getExportDependencies())) {
-                    // hack to ignore docs and a
+                    // hack to ignore docs and annotations when copying project
                     if (aRequest.getFormat().equals(COPY_PROJECT_FORMAT)
-                            && !(initializer instanceof SourceDocumentExporter
+                            && (initializer instanceof SourceDocumentExporter
                                     || initializer instanceof AnnotationDocumentExporter
                                     || initializer instanceof CuratedDocumentsExporter
                                     || initializer instanceof ProjectLogExporter
                                     || initializer instanceof AggregatedAnnotationExporter
                                     || initializer instanceof CodebookAnnotationExporter)) {
+                        log.debug("Skipping project exporter: {}", initializer);
+                    }
+                    else {
                         log.debug("Applying project exporter: {}", initializer);
                         initializer.exportData(aRequest, aMonitor, exProject, aStage);
                     }
